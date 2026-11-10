@@ -1,0 +1,596 @@
+      STUDENT SUMMER INTERNSHIP TECHNICAL REPORT
+
+
+
+
+Development of Double Shell Tank Annulus
+                 Vacuum Crawler System
+
+                   DOE-FIU SCIENCE & TECHNOLOGY
+               WORKFORCE DEVELOPMENT PROGRAM
+
+                                                     Date submitted:
+                                                     October 28, 2025
+
+
+                                             Principal Investigators:
+                                 Ronald Verde (DOE Fellow Student)
+                                       Florida International University
+                                      Doug Reid Ph.D., P.E. (Mentor)
+                     Hanford Tank Waste Operations & Closure (H2C)
+                     Josue Estrada Martinez BS. (H2C Engineer/SME)
+                     Hanford Tank Waste Operations & Closure (H2C)
+                           Rogeiro Renteria BS. (H2C Engineer/SME)
+                     Hanford Tank Waste Operations & Closure (H2C)
+                                    Amer Awwad Ph.D., P.E. (Mentor)
+                                       Florida International University
+                                Anthony Abrahao Ph.D., P.E. (Mentor)
+                                       Florida International University
+                             Ravi Gudavalli Ph.D. (Program Manager)
+                                       Florida International University
+                        Leonel Lagos Ph.D., PMP® (Program Director)
+                                       Florida International University
+
+                                                        Submitted to:
+                                          U.S. Department of Energy
+                               Office of Environmental Management
+                     Under Cooperative Agreement # DE-EM0005213
+                                          DISCLAIMER
+This report was prepared as an account of work sponsored by an agency of the United States
+government. Neither the United States government nor any agency thereof, nor any of their
+employees, nor any of its contractors, subcontractors, nor their employees makes any warranty,
+express or implied, or assumes any legal liability or responsibility for the accuracy, completeness,
+or usefulness of any information, apparatus, product, or process disclosed, or represents that its
+use would not infringe upon privately owned rights. Reference herein to any specific commercial
+product, process, or service by trade name, trademark, manufacturer, or otherwise does not
+necessarily constitute or imply its endorsement, recommendation, or favoring by the United States
+government or any other agency thereof. The views and opinions of authors expressed herein do
+not necessarily state or reflect those of the United States government or any agency thereof.
+FIU-ARC-2025                                                         Double Shell Annulus Crawler Vacuum
+
+
+
+                              EXECUTIVE SUMMARY
+
+This research work has been supported by the DOE-FIU Science & Technology Workforce
+Development Initiative, an innovative program developed by the U.S. Department of Energy’s
+Office of Environmental Management (DOE-EM) and Florida International University’s Applied
+Research Center (FIU-ARC). The initiative was supported by Sr. Research Scientist Dr. Amer
+Awwad. During the summer of 2025, DOE Fellow intern Ronald Verde undertook a 10-week
+internship at Hanford Tank Waste Operations & Closure (H2C) Chief Technology Office (CTO),
+with guidance from Dr. Douglas J. Reid and Rogeiro G. Renteria. The project, which began on
+May 28, 2024, and concluded on August 9, 2024, continued on June 9, 2025, and concluded on
+August 14, 2025, focused on the development of a robotic vacuum crawler aimed at enhancing
+inspection and cleaning operations within the annulus space of double-shell tanks (DSTs). The
+work was aligned with the needs of H2C’s Tank and Pipeline Integrity (TAPI) organization, as
+outlined in the Technology Element Description Summary (TEDS) MTW-89. This document
+highlights the necessity of remote cleaning for concrete surfaces painted with a special protective
+coating (SPC), required for Resource Conservation and Recovery Act permit compliance, to
+enable proper inspection and repair in high-radiation environment.
+
+
+
+
+                                                iii
+FIU-ARC-2025                                                                                       Double Shell Annulus Crawler Vacuum
+
+
+
+                                            TABLE OF CONTENTS
+
+EXECUTIVE SUMMARY ........................................................................................................... iii
+TABLE OF CONTENTS ............................................................................................................... iv
+LIST OF FIGURES ........................................................................................................................ v
+TRADEMARKS ............................................................................................................................. 6
+LIST OF ACRONYMS .................................................................................................................. 6
+1      INTRODUCTION .................................................................................................................. 7
+2      RESEARCH DESCRIPTION................................................................................................. 9
+3      RESULTS AND ANALYSIS ............................................................................................... 14
+4      CONCLUSION ..................................................................................................................... 17
+5      REFERENCES ..................................................................................................................... 19
+6      APPENDIX ........................................................................................................................... 20
+
+
+
+
+                                                                     iv
+FIU-ARC-2025                                                                                    Double Shell Annulus Crawler Vacuum
+
+
+
+                                                LIST OF FIGURES
+
+Figure 1. (28) The Underground Double-Shell Tanks constructed in 1968-1986 .......................... 7
+Figure 2. Debris Inside of the Annulus Double Shell Tank AY-101.............................................. 8
+Figure 3. Cold Test Facility Double- Shell Annulus Tank Deployment Mock (Left) .................... 9
+Figure 4. Diagram of the Developed Deployment Strategy ......................................................... 10
+Figure 5. Established Control Room............................................................................................. 10
+Figure 6. Chassis prototype........................................................................................................... 12
+Figure 7. Air Compressor and Air Lines. ..................................................................................... 13
+Figure 8. New Control Interface Featuring a Custom Control Box.............................................. 14
+Figure 9. Deployment in the Mock Double Shell Tank at Cold Test Facility. ............................. 15
+Figure 10. Microcontrollers in Crawler. Performance and Efficiency Testing: ........................... 15
+Figure 11. Sullair Air Compressor Used for Validation of the Vacuum Performance. ................ 16
+Figure 12. LineVac Venturi Injector Design. ............................................................................... 16
+Figure 13. Successful Deployment and Control System Operation. ............................................ 19
+
+
+
+
+                                                                   v
+FIU-ARC-2025                                                    Double Shell Annulus Crawler Vacuum
+
+
+
+                                  TRADEMARKS
+
+   •   Exair Line Vac 6080 is a registered trademark of EXAIR, 11510 Goldcoast Dr
+       Cincinnati, OH, USA.
+   •   Intel® RealSense™ D415 camera is a registered trademark of Intel Corporation, USA.
+   •   Stratasys F170 3D printer is a registered trademark of Stratasys, 7665 Commerce Way
+       Eden Prairie, MN USA.
+
+
+
+
+                              LIST OF ACRONYMS
+
+
+ ABS                  Acrylonitrile butadiene styrene
+ CTF                  Cold Test Facility
+ CTO                  Chief Technology Office
+ DOE-EM               Department of Energy’s Office of Environmental Management
+ DSTs                 Double-shell tanks
+ FIU                  Florida International University
+ FIU-ARC              Florida International University’s Applied Research Center
+ H2C                  Hanford Tank Waste Operations & Closure
+ PCB                  Printed Circuit Board
+ SCFM                 Standard Cubic Feet per Minute
+ SPC                  Special protective coating
+ TAPI                 Tank and Pipeline Integrity
+ TEDS                 Technology Element Description Summary
+ TLR                  Technology Readiness Level
+ VCS                  Vacuum Crawler System
+
+
+
+
+                                             6
+FIU-ARC-2025                                                        Double Shell Annulus Crawler Vacuum
+
+
+
+                                 1 INTRODUCTION
+During the summer of 2025, Ronald Verde, a mechanical engineering student from Florida
+International University (FIU), joined the Chief Technology Officer (CTO) at Hanford Tank Waste
+Operations & Closure (H2C) to contribute to a key research and development project for the Tank
+and Pipeline Integrity (TAPI) organization. This project, which focuses on remote cleaning
+solutions for the annulus space of double-shell tanks (DSTs), directly supports the U.S.
+Department of Energy's environmental remediation goals. This work is executed in alignment with
+the strategic vision of the Technology and Innovation Roadmap, RPP-PLAN-43988 (now in
+Rev.09 [1]), which identifies the need for the development of robotic platforms and remote
+technologies for radiological surveying, inspections, and manipulations to significantly reduce
+human exposure to hazardous environments. The specific need for this remote cleaning solution is
+detailed in the Technology Element Description Summary (TEDS) MTW-89, which highlights the
+requirement for remote cleaning of concrete surfaces painted with a special protective coating
+(SPC). The core of this project focused on the design and development of the remotely operated
+robotic vacuum crawler intended for the inspection and cleaning of the annulus space in double-
+shell tanks (DSTs).
+
+
+
+
+         Figure 1. (28) The Underground Double-Shell Tanks constructed in 1968-1986
+
+Hanford's Double-Shell Tanks (DSTs) are critical infrastructure for storing radioactive waste, and
+their annular spaces must be regularly inspected and maintained to ensure structural integrity, as
+shown in Figure 1. A primary challenge in this process is the accumulation of various forms of
+debris which hinder crucial inspection procedures such as ultrasonic testing. The Annulus Vacuum
+Crawler project was developed to address this issue by providing a robotic solution to navigate
+these confined and hazardous spaces to remove debris, thereby enabling proper inspections. The
+urgency of this project has been heightened by the introduction of new debris, specifically
+powdered residue from recent cold spray repairs, which adds to the original debris on the annulus
+floor.
+
+
+
+                                                7
+FIU-ARC-2025                                                        Double Shell Annulus Crawler Vacuum
+
+
+
+1.1    Project Outline
+Over time, Hanford’s Double Shell Tanks accumulated debris, with some tanks experiencing
+buildup as deep as 1 foot, as shown in Figure 2. The annulus space approximately 30 inches wide
+with access points ranging from 12 to 24 inches in diameter, presents significant engineering
+challenges for robotic systems designed to operate within such confined environments.
+
+
+
+
+               Figure 2. Debris Inside of the Annulus Double Shell Tank AY-101
+
+
+This report examines the methods, testing processes, and project outcomes associated with annulus
+waste management. It highlights the hazardous nature of the annulus space and its critical role in
+maintaining nuclear site integrity. In alignment with the U.S. Energy Sector's Environmental
+Management Program, continuous development efforts aim to improve the reliability, efficiency
+and safety of the systems. The scope of the 2025 summer internship will focus on advancing the
+Annulus Vacuum Robot from a laboratory-validated system to an operational-ready prototype.
+
+                                                8
+FIU-ARC-2025                                                         Double Shell Annulus Crawler Vacuum
+
+
+These developments are a refinement of a tool that enhances H2C’s Tank Inspection capabilities
+by adding to the operations’ toolbox. Improvements on this tool will be directly guided and
+validated by these groups, who will directly determine the system’s readiness for test deployment.
+These stages of validation would be analogous to DOE’s Technology Readiness Levels (TRL) 4
+and 6 respectively. The internship work will focus on critical research, development, testing, and
+refinement activities executed through targeted methodological advancements for the Annulus
+Vacuum Robot system.
+
+
+                         2 RESEARCH DESCRIPTION
+
+2.1 Deployment strategies
+
+The initial stage of the internship focused on developing a deployment strategy for the crawler
+through both the 24-inch and 12-inch Mockup Risers at the Cold Test Facility, as photographed in
+Figure 3 . This deployment strategy, depicted in Figure 4, involves using an electric hoist to drop
+the crawler face down. The design ensures that the crawler's wheels make initial contact with the
+annulus floor, allowing it to drive forward and orient itself correctly upon landing. Key
+considerations included managing the descent to ensure the wheels touch down first, thereby
+preventing the front nozzle from impacting the floor. This method also allows for manual retrieval
+using a safety suspension cable in the event of a mechanical failure.
+
+
+
+
+       Figure 3. Cold Test Facility Double- Shell Annulus Tank Deployment Mock (Left)
+                               and the Cold Test Facility (Right)
+
+
+
+                                                9
+FIU-ARC-2025                                                         Double Shell Annulus Crawler Vacuum
+
+
+
+
+                    Figure 4. Diagram of the Developed Deployment Strategy
+
+The operators' exceptional skill in handling the hoist system was a major factor in the success of
+our mock demonstrations. Their ability to make small, precise adjustments during the descent
+made the process significantly smoother and more controlled. Furthermore, their established
+control room, seen in Figure 5 , located 500 feet away from the tank, was equipped with an
+external camera that provided them with enhanced visibility. This remote vantage point was
+critical, allowing the team to carefully monitor the crawler's deployment and ensure a seamless
+entry into the annulus.
+
+
+
+
+                              Figure 5. Established Control Room.
+
+
+
+
+                                                10
+FIU-ARC-2025                                                          Double Shell Annulus Crawler Vacuum
+
+
+A series of essential modifications were made directly to the crawler, eliminating the need for the
+external harness that was previously required. A newly manufactured cage and an onboard bag for
+debris collection were added to the crawler itself. This streamlined the entire system, making the
+separate, suspended debris collector obsolete. As a result of these improvements, the main
+connection to the crawler is now limited to just the vacuum hose, electrical cable, level cable, and
+safety cable. This simplified setup improves deployment and retrieval efficiency, while also
+minimizing the risk of entanglement within the confined space of the tank annulus.
+
+2.2 Design
+The project's primary objective is to develop a tool capable of removing debris from the Double-
+Shell Tank annulus, thereby facilitating accurate and thorough inspection of the tank walls for
+thickness and integrity. This work directly supports the Hanford Tank Waste Operations &
+Closure (H2C) mission.
+
+2.1.1   On-Board Debris Collection Cage
+
+To achieve this, several key design components were developed and refined. The on-board debris
+collection cage was designed for both strength and functionality. Its frame structure was built using
+SolidWorks' 3D sketch capabilities, with swept features forming a curved top section to fit the 12-
+inch riser. This design allows the operator to quickly and easily dispose of collected debris.
+
+2.1.2   Advanced Hub Design
+
+The hub assembly also underwent significant customization. The purchased hubs were too large,
+prompting the team to design a compact, integrated solution in SolidWorks. This custom design
+ensures a perfect fit with our specific wheel and motor shaft, providing direct and efficient power
+transfer to the wheels.
+
+2.1.3   Enhanced Chassis for Vacuum System
+
+The chassis was redesigned to accommodate the new vacuum system and better navigate the tank
+environment. Integrated channels were added to route airflow and wiring internally, minimizing
+external hoses and snag hazards. The chassis also allows the crawler system to traverse conduits,
+and modular service panels created using advanced surfacing techniques to provide easy
+maintenance access to all internal components.
+
+2.1.4   Redesigned Vacuum Head
+
+The vacuum head was completely redesigned to improve performance. SolidWorks' cavity feature
+and flow simulation analysis were used to create a multi-zone suction system with parametric
+control for optimized debris pickup. The design included an adjustable height mechanism with
+linear actuators and guide rails, allowing adaptation to uneven surfaces. Internal baffles, created
+with swept cuts and lofted features, prevent oversized objects from clogging the system. The new
+head is specifically sized to efficiently vacuum debris up to 1/4-inch in diameter and includes an
+onboard collection bag to reduce travel distance for debris, increasing efficiency.
+
+                                                 11
+FIU-ARC-2025                                                          Double Shell Annulus Crawler Vacuum
+
+
+2.1.5   Crawler System Upgrades
+
+Key upgrades during the internship included the fabrication of a new all-aluminum chassis,
+replacing the previous 3D-printed plastic frame. This enhancement significantly increased the
+crawler's durability and radiation tolerance. The system also features newly designed treaded
+aluminum wheels for improved traction and the ability to cross obstacles up to ½ inch in height.
+Its compact dimensions allow it to pass through both 12-inch and 24-inch riser access points, and
+the design enables 180-degree maneuverability within the 30-inch-wide annular space, a critical
+feature for effective navigation. To further enhance structural integrity and support the new
+onboard debris collection system, a CNC-machined cage was manufactured to secure the
+equipment bag. The chassis prototype is illustrated in Figure 6.
+
+
+
+
+                                   Figure 6. Chassis prototype
+
+
+2.3 Vacuum System Design & Development
+The robot is built around a two-line vacuum configuration using two Exair Line Vac pneumatic
+vacuum modules positioned in series to optimize suction power. One module is mounted directly
+on the crawler, while the other is integrated on the top of the crawler itself. This design ensures
+maximum airflow and pulls force at the cleaning nozzle. During development, the coupling size
+was changed from 3/8" to 1/2" to increase the volume of suction. For the demonstration, a 1-inch
+hose line was used, which was then connected to a 1/2-inch hose line leading to the crawler. An
+appropriately sized portable air compressor as seen in Figure 7 rated at 185 standard cubic feet per
+minute (SCFM), provides the necessary flow rate.
+
+
+
+                                                12
+FIU-ARC-2025                                                           Double Shell Annulus Crawler Vacuum
+
+
+
+
+                             Figure 7. Air Compressor and Air Lines.
+
+The vacuum crawler system (VCS) is built around powerful vacuum architecture. The previous
+design configuration, which had one module on the umbilical harness, has been superseded. In the
+modified model, two EXAIR Line Vac pneumatic vacuum modules are now installed in series and
+onboard the crawler itself. This was made possible by new alterations to the chassis and the design
+of a CNC-machined cage that allows the debris collection bag to be mounted directly on the
+crawler. This system-integrated module maximizes both vacuum force and airflow at the cleaning
+nozzle. The pneumatic vacuum system is powered by an appropriately sized portable air
+compressor, rated at 185 SCFM, which provides the necessary flow rate.
+
+2.4 Electronics & Controls
+
+Completely modernized the system's electronics and controls by implementing a new, custom-
+designed Printed Circuit Board (PCB). This PCB created a highly organized and reliable
+connection between the main components, including the Raspberry Pi, Teensy, RoboClaw motor
+controllers, and the motors themselves. This consolidated architecture eliminates the traditional
+mess of wires and significantly enhances signal integrity and overall system stability.
+
+The new control interface features a custom control box, seen in Figure 8, with an integrated touch
+screen that runs on a Linux with Ubuntu operating system. This setup provides a professional and
+intuitive user experience. Replaced the traditional joystick with a Logitech controller for simplified
+and precise operation. This allows for seamless control of the robot, its cameras, and the on-board
+lights. The touch screen also provides a platform for displaying live, real-time video feedback,
+giving the operator crucial situational awareness.
+
+
+                                                 13
+FIU-ARC-2025                                                       Double Shell Annulus Crawler Vacuum
+
+
+To manage the system's functions, developed specialized ROS2 (Robot Operating System 2)
+nodes. These nodes are the core of our control logic, handling everything from the motor
+functions for the wheels to the servo motor that controls the camera's movement. Used "joy
+nodes" and "telejoy nodes" to translate inputs from the Logitech controller into precise
+commands for the robot. A separate ROS2 node was created for our dual-camera setup, and a
+dedicated launch script was developed to configure and activate all these nodes simultaneously.
+This robust integration allows for real-time navigation and remote control, all supported by a
+carefully designed power management system that ensures extended operational time.
+
+
+
+
+               Figure 8. New Control Interface Featuring a Custom Control Box.
+
+
+                         3 RESULTS AND ANALYSIS
+The VCS underwent rigorous, multi-stage testing at both the FIU Robotics Lab and the Cold Test
+Facility (CTF) to evaluate its performance under conditions simulating the annulus space of the
+DSTs. These evaluations focused on the system’s core subsystems: vacuum performance,
+maneuverability, and control system responsiveness. Deployment strategies were tested in a
+mock DST environment, seen in Figure 9, and the crawler’s onboard microcontrollers were
+assessed for reliability and integration, seen in Figure 10.
+
+
+
+
+                                               14
+FIU-ARC-2025                                                      Double Shell Annulus Crawler Vacuum
+
+
+
+
+           Figure 9. Deployment in the Mock Double Shell Tank at Cold Test Facility.
+
+
+
+
+          Figure 10. Microcontrollers in Crawler. Performance and Efficiency Testing:
+
+
+
+                                              15
+FIU-ARC-2025                                                       Double Shell Annulus Crawler Vacuum
+
+
+Vaccum Performance Testing involved assessing the suction power and airflow of the onboard
+two-line Exair Line Vac modules, which were mounted in series on a newly designed aluminum
+chassis. This configuration, supported by a CNC- machined cage for the onboard debris
+collection bag, eliminated the need for an external umbilical harness and demonstrated effective
+debris removal, when tested with various aggregates of debris and cold spray powder. The
+onboard dual-module setup enhanced airflow and reduced the risk of clogging, demonstrating the
+viability of the new, more compact design. Efficiency was further validated using a Sullair air
+compressor, shown in Figure 11. capable of delivering 185 SCFM at 120 psig, ensuring optimal
+airflow and pressure. The Line Vac Venturi injector design, Figure 12, enabled high output flows
+while remaining maintenance-free due to the absence of moving parts.
+
+
+
+
+       Figure 11. Sullair Air Compressor Used for Validation of the Vacuum Performance.
+
+
+
+
+                          Figure 12. LineVac Venturi Injector Design.
+
+
+
+
+                                              16
+FIU-ARC-2025                                                        Double Shell Annulus Crawler Vacuum
+
+
+
+3.1 Maneuverability Testing
+The crawler's ability to traverse obstacles and navigate around welds up to ½ inch in height was
+thoroughly tested. The new aluminum chassis and treaded wheels were evaluated to ensure
+reliable performance on warped liner bottoms and slope surfaces within the annulus space. The
+differential drive control system was fine-tuned to optimize the crawler’s responsiveness and
+stability during operation, and the crawler successfully demonstrated 180° maneuverability
+within the confined 30" wide space.
+
+3.2 Control System Validation and Performance
+The VCS’s control system, comprising a newly developed control box, custom PCBs, and
+ROS2-based architecture, underwent thorough testing to evaluate its responsiveness, reliability,
+and operational precision. The system demonstrated excellent responsiveness to operator inputs,
+with ROS2 nodes reliably managing camera feeds and teleoperation functions. Real-time video
+feedback with low latency was validated, ensuring effective remote operation and precise
+crawler navigation within the confined annulus space. The physical setup of the control box
+connected to the crawler during testing is shown in Figure 13. illustrating the integration if
+hardware components used to validate system performance. The Elimination of traditional
+analog circuits and joystick interfaces marked significant improvement in system simplicity and
+stability. The advanced controller streamlined operation and enhanced user control, allowing
+operators to maintain crawler stability during complex maneuvers. Overall, the control system’s
+performance confirms that the current design meets the fundamental requirements for DST
+annulus cleaning. Insights gained from this comprehensive analysis will guide further
+refinement of the system, focusing on optimizing vacuum efficiency and ensuring the crawler's
+durability and reliability in the nuclear environment.
+
+                                   4 CONCLUSION
+The development and testing of the vacuum crawler system during this internship successfully
+demonstrated its capability to address the critical challenges associated with the inspection and
+cleaning of the annulus space in Double-Shell Tanks (DSTs) at DOE's Hanford site. The crawler's
+robust new aluminum chassis ensured reliable maneuverability, and the new ROS2-based control
+system provided precise operation with low-latency video feedback, contributing to the overall
+effectiveness of the system. The crawler successfully performed its primary function of debris
+removal, thus validating its design and operational capabilities.
+
+
+
+
+                                               17
+FIU-ARC-2025                                                         Double Shell Annulus Crawler Vacuum
+
+
+The success of these initial testing trials indicates that the vacuum crawler system (VCS) is well-
+positioned to advance into further stages of development, with the potential to significantly
+enhance the safety and efficiency of hazardous waste management in nuclear facilities. Insights
+gained from these trials will guide the next steps in refining the system's design. Planned
+improvements for future iterations include:
+
+   •   Full integration of the sensor suite with obstacle avoidance capabilities.
+   •   Deployment of a comprehensive Graphical User Interface (GUI) for operator monitoring.
+   •   Continued suction efficiency testing with various debris types, including cold spray
+       powder.
+   •   Radiation-hardening of components to achieve full in-tank readiness.
+   •   Achieving Technology Readiness Level (TRL) 6 with a final CTF test and validation.
+
+Additional improvements will focus on addressing:
+
+   •   Weight distribution by adding ballast to the front of the crawler to achieve a more balanced
+       center of gravity.
+   •   Implementing a fail-safe start/stop system to enhance operational safety.
+   •   Investigating the use of larger wheels to further improve obstacle traversal capabilities.
+   •   Employing a non-moving vacuum head to optimize debris collection efficiency.
+
+This project has demonstrated the viability of using remotely operated robotic systems for complex
+environmental management tasks, contributing to the broader mission of the U.S. Department of
+Energy's environmental remediation efforts. With continued development, the VCS has the
+capability to become a valuable tool in supporting the maintenance of nuclear storage facilities.
+The System’s successful deployment, as shown in Figure 12, underscores its readiness for further
+testing and integration into hazardous waste management operations.
+
+
+
+
+                                                18
+FIU-ARC-2025                                                     Double Shell Annulus Crawler Vacuum
+
+
+
+
+               Figure 13. Successful Deployment and Control System Operation.
+
+
+
+                                 5 REFERENCES
+[1] RPP-PLAN-43988 Rev.09, "Technology and Innovation Roadmap, Rev. 9," Washington
+River Protection Solutions, LLC, Richland, Washington, 2024.
+
+[2] Department of Energy. Accessed on August 20, 2024. Site : https://www.energy.gov/
+
+
+
+
+                                             19
+FIU-ARC-2025                                             Double Shell Annulus Crawler Vacuum
+
+
+
+
+                                6 APPENDIX
+               Technology Element Description Summary (TEDS) MTW-89:
+
+
+
+
+                                        20
+FIU-ARC-2025        Double Shell Annulus Crawler Vacuum
+
+
+
+
+               21
+FIU-ARC-2025        Double Shell Annulus Crawler Vacuum
+
+
+
+
+               22
+FIU-ARC-2025        Double Shell Annulus Crawler Vacuum
+
+
+
+
+               23
+

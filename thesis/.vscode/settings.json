@@ -1,0 +1,43 @@
+﻿{
+    "latex-workshop.latex.outDir":  "%DIR%",
+    "latex-workshop.latex.autoBuild.run":  "onSave",
+    "latex-workshop.latex.autoBuild.cleanAndRetry.enabled":  false,
+    "latex-workshop.view.pdf.viewer":  "tab",
+    "latex-workshop.latex.recipe.default":  "MiKTeX texify (PDF)",
+    "latex-workshop.latex.recipes":  [
+                                         {
+                                             "name":  "MiKTeX texify (PDF)",
+                                             "tools":  [
+                                                           "miktex-texify"
+                                                       ]
+                                         }
+                                     ],
+    "latex-workshop.latex.tools":  [
+                                       {
+                                           "name":  "miktex-texify",
+                                           "command":  "C:/Users/juanh/AppData/Local/Programs/MiKTeX/miktex/bin/x64/texify.exe",
+                                           "args":  [
+                                                        "--pdf",
+                                                        "--batch",
+                                                        "--tex-option=-interaction=nonstopmode",
+                                                        "--tex-option=-synctex=1",
+                                                        "%DOC_EXT%"
+                                                    ]
+                                       }
+                                   ],
+    "editor.wordWrap":  "on",
+    "files.exclude":  {
+                          "**/*.aux":  true,
+                          "**/*.bbl":  true,
+                          "**/*.blg":  true,
+                          "**/*.fdb_latexmk":  true,
+                          "**/*.fls":  true,
+                          "**/*.lof":  true,
+                          "**/*.log":  true,
+                          "**/*.lot":  true,
+                          "**/*.out":  true,
+                          "**/*.synctex.gz":  true,
+                          "**/*.toc":  true
+                      },
+    "latex-workshop.latex.clean.method":  "glob"
+}

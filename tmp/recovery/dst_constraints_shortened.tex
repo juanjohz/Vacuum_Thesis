@@ -1,0 +1,47 @@
+\section{Double-Shell Tank Annulus Constraints and Requirements}
+\label{sec:dst-constraints}
+\begingroup
+\setlength{\emergencystretch}{2em}
+
+The crawler must satisfy the access, mobility, and cleaning requirements of the complete deployed system, including its vacuum hose and control connections. The dimensions below are preliminary project inputs to be confirmed against the selected tank geometry.
+
+The crawler must pass through a nominal 12-inch-diameter riser and transition onto the annulus floor. The project access arrangement considers four risers approximately $90^{\circ}$ apart, providing alternative entry points for cleaning areas that support subsequent inspection. The deployment envelope must include cameras, lights, and hose connections, with clearance for insertion and retrieval.
+
+% Temporary reference supplied by the author; replace with the selected DST drawing.
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{Tank_layout_placeholder.png}
+\caption{Reference tank layout (placeholder: tank 241-A-101).}
+\label{fig:Tank layoutplaceholder}
+\end{figure}
+
+Within the nominal 32-inch project annulus spacing, the crawler must travel, reverse, and turn while accounting for the reduced floor clearance near the curved tank bottom. Figure~\ref{fig:annulus-clearance} illustrates the curvature and installed piping. Mobility must also include crossing a preliminary 0.75-inch obstacle height, representing protective pipes associated with thermocouple temperature instrumentation. The final obstacle profile requires confirmation of the pipe diameter and installed height. During these maneuvers, the crawler must remain stable with its hose attached and avoid damaging the tank or instrumentation.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{annulus_dimension.jpg}
+\caption{Annulus floor, curved tank surfaces, and installed piping.}
+\label{fig:annulus-clearance}
+\end{figure}
+
+The vacuum system must collect loose debris and convey it into a collection system without persistent blockage. The required debris-size range is \textbf{[minimum size] to [maximum size], [units]}, pending mentor confirmation. Recovery targets and the representative debris mixture will be defined before testing.
+
+Continuous video feedback and onboard lighting must allow the operator to guide motion, observe the inlet, and monitor obstacles. Remote viewing is also identified in earlier Hanford inspection-system requirements \citep{pardini2001DSTRequirements}. A proposed control requirement is to stop the drive system upon loss of the command link and require deliberate restart. Recovery, service access, and environmental protection will be addressed when finalizing the deployment requirements.
+\par
+\endgroup
+
+\section{Planned Validation at the Cold Test Facility}
+\label{sec:ctf-validation}
+\begingroup
+\setlength{\emergencystretch}{2em}
+
+Full-system validation of the crawler is planned at Hanford's Cold Test Facility (CTF), shown in Figure~\ref{fig:ctf}. The facility has supported mockup demonstrations of robotic deployment and navigation in a simulated DST annulus \citep{doe2024CTFDemonstration}. For this project, testing will evaluate riser deployment and retrieval, maneuverability, obstacle traversal, debris recovery, and operator feedback with the vacuum hose and control system connected. The test configuration and acceptance criteria will be established before the demonstration. These tests will assess integrated operation under representative conditions; radiation tolerance and any specified splash-resistance rating require separate qualification.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{CTF_Picture.png}
+\caption{Cold Test Facility in Richland, Washington.}
+\label{fig:ctf}
+\end{figure}
+\par
+\endgroup

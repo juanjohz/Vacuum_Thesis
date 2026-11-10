@@ -1,0 +1,3163 @@
+            FLORIDA INTERNATIONAL UNIVERSITY
+
+                            Miami, Florida
+
+
+
+
+LIGHT DETECTION AND RANGING (LIDAR) BACKPACK DEVELOPMENT
+
+  FOR AUTOMATED SALT CLOSURE MONITORING AT THE WASTE
+                    ISOLATION PILOT PLANT
+
+
+
+
+            A thesis submitted in partial fulfillment of the
+                    requirements for the degree of
+
+                       MASTER OF SCIENCE
+                                   in
+                  MECHANICAL ENGINEERING
+
+                                  by
+                           Benjamin Vargas
+
+
+
+
+                                 2026
+To: Interim Dean Ines Triay
+    College of Engineering and Computing
+
+This thesis, written by Benjamin Vargas, and entitled Light Detection and Ranging
+(LIDAR) Backpack Development for Automated Salt Closure Monitoring at the
+Waste Isolation Pilot Plant, having been approved in respect to style and intellectual
+content, is referred to you for judgment.
+
+We have read this thesis and recommend that it be approved.
+
+
+
+                                                                   Dwayne McDaniel
+
+
+
+                                                                      Ibrahim Tansel
+
+
+
+                                                       Leonel Lagos, Major Professor
+
+
+Date of Defense: March 27, 2026
+
+The thesis of Benjamin Vargas is approved.
+
+
+
+
+                                                             Interim Dean Ines Triay
+                                               College of Engineering and Computing
+
+
+
+                                                                   Andrés G. Gil
+                    Senior Vice President for Research and Economic Development
+                                      and Dean of the University Graduate School
+
+
+
+
+                       Florida International University, 2026
+
+
+
+
+                                          ii
+© Copyright 2026 by Benjamin Vargas
+         All rights reserved.
+
+
+
+
+                 iii
+                             ACKNOWLEDGMENTS
+
+I am deeply grateful to the team at the Florida International University Applied
+Research Center and the U.S. Department of Energy’s Office of Environmental
+Management – FIU Cooperative Agreement (under Contract No. DE-EM0005213)
+
+for their continued support throughout this work. Access to facilities, technical
+guidance, and daily collaboration made this research possible. I also thank the
+faculty and staff of FIU’s Department of Mechanical and Materials Engineering for
+
+providing the academic foundation and mentorship that supported this project. I
+extend my sincere appreciation to my lab mentor, Mr. Anthony Abrahao, for his
+consistent guidance, practical insight, and high standard of professionalism. His
+
+feedback during system design, integration, and testing strengthened both the
+technical quality and execution of this work. Finally, I thank the Robotics Lab
+
+researchers for their collaboration and shared problem-solving. The collective
+effort and dedication of the team played an important role in advancing this
+research and bringing the project to completion.
+
+
+
+
+                                         iv
+                          ABSTRACT OF THE THESIS
+
+LIGHT DETECTION AND RANGING (LIDAR) BACKPACK DEVELOPMENT
+    FOR AUTOMATED SALT CLOSURE MONITORING AT THE WASTE
+                           ISOLATION PILOT PLANT
+
+                                         by
+                                 Benjamin Vargas
+                       Florida International University, 2026
+
+                                  Miami, Florida
+                     Professor Leonel Lagos, Major Professor
+
+The Waste Isolation Pilot Plant (WIPP) is the United States’ only deep geological
+repository for defense-related transuranic waste and requires continuous monitoring
+
+of tunnel deformation caused by salt creep. Traditional instruments provide limited
+spatial coverage, motivating a mobile, high-fidelity mapping approach. This research
+develops a wearable Light Detection and Ranging (LIDAR) based system to generate
+
+accurate three-dimensional representations of underground corridors.
+   The system integrates an Ouster OS1 LIDAR, four calibrated cameras, and
+Simultaneous Localization and Mapping (SLAM) within the Robot Operating Sys-
+
+tem 2 (ROS2). Rigid-body transformations and intrinsic camera modeling project
+three-dimensional LIDAR points into image space, producing geometrically consis-
+tent colorized point clouds. The lightweight frame supports stable, operator-based
+
+deployment in GPS-denied environments.
+   Experimental validation demonstrates metrically consistent reconstructions suit-
+
+able for temporal alignment and differential analysis. The resulting maps support
+quantitative change detection to measure salt closure over time, providing a scalable
+monitoring approach aligned with Department of Energy operational objectives at
+
+WIPP.
+
+
+
+                                         v
+                              TABLE OF CONTENTS
+CHAPTER                                                                          PAGE
+
+1. INTRODUCTION . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .          1
+1.1 Background . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .     1
+1.2 Motivation . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   4
+1.3 WIPP Constraints and Requirements . . . . . . . . . . . . . . . . . . . .          6
+
+2. LITERATURE REVIEW . . . . . . . . . . . . . . . . . . . . . . . . . . .             10
+2.1 Current Mapping Technologies . . . . . . . . . . . . . . . . . . . . . . . .       10
+2.1.1 Static Laser Scanning . . . . . . . . . . . . . . . . . . . . . . . . . . .      10
+2.1.2 Mobile Laser Scanning . . . . . . . . . . . . . . . . . . . . . . . . . . .      11
+2.1.3 3D Reconstruction and Photogrammetry . . . . . . . . . . . . . . . . .           12
+2.1.4 Robotic Platforms for Access-Limited Mapping . . . . . . . . . . . . .           12
+2.1.5 Use at WIPP and Current Practice . . . . . . . . . . . . . . . . . . . .         12
+2.2 Light Detection and Ranging . . . . . . . . . . . . . . . . . . . . . . . .        14
+2.2.1 Pulsed Time-of-Flight Ranging . . . . . . . . . . . . . . . . . . . . . .        14
+2.2.2 Amplitude-Modulated Continuous-Wave Ranging . . . . . . . . . . . .              14
+2.2.3 Frequency-Modulated Continuous-Wave Ranging . . . . . . . . . . . .              15
+2.2.4 From Range Samples to 3D Points . . . . . . . . . . . . . . . . . . . .          15
+2.2.5 Return Strength and the LIDAR Equation . . . . . . . . . . . . . . . .           16
+2.2.6 Supporting Salt-Closure Monitoring . . . . . . . . . . . . . . . . . . .         16
+2.3 Current LIDAR Technologies . . . . . . . . . . . . . . . . . . . . . . . .         18
+2.3.1 Velodyne VLP Series . . . . . . . . . . . . . . . . . . . . . . . . . . . .      18
+2.3.2 Trimble X-Series . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .     20
+2.3.3 Ouster OS-Series . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .     22
+2.3.4 Considerations for Underground Monitoring . . . . . . . . . . . . . . .          23
+2.4 Simultaneous Localization and Mapping . . . . . . . . . . . . . . . . . .          24
+2.4.1 LIDAR-Centric SLAM and Scan Registration . . . . . . . . . . . . . .             25
+2.4.2 Loop Closure and Pose Graph Optimization . . . . . . . . . . . . . . .           26
+2.4.3 Relevant Open-Source SLAM Packages . . . . . . . . . . . . . . . . . .           27
+2.4.4 Kitware LidarSLAM . . . . . . . . . . . . . . . . . . . . . . . . . . . .        28
+2.5 LIDAR-Camera Sensor Fusion . . . . . . . . . . . . . . . . . . . . . . . .         28
+2.5.1 Geometric Foundations of Fusion . . . . . . . . . . . . . . . . . . . . .        29
+2.5.2 Calibration Approaches . . . . . . . . . . . . . . . . . . . . . . . . . .       30
+2.5.3 Colorization and Dense Visual Mapping . . . . . . . . . . . . . . . . .          31
+2.5.4 Benefits and Limitations in Underground Environments . . . . . . . .             32
+2.5.5 Role in Salt Closure Monitoring . . . . . . . . . . . . . . . . . . . . . .      32
+
+
+
+
+                                           vi
+3. SYSTEM DESIGN . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .         34
+3.1 Components Used . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .      34
+3.1.1 LIDAR Sensor . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .       34
+3.1.2 Cameras . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .    35
+3.1.3 Computer for Pointcloud Processing . . . . . . . . . . . . . . . . . . .         36
+3.1.4 Battery . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .    37
+3.2 Generative Designed Mounts . . . . . . . . . . . . . . . . . . . . . . . . .       38
+3.2.1 Sensor Package Mount . . . . . . . . . . . . . . . . . . . . . . . . . . .       39
+3.2.2 Tube Clamp . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .     41
+3.2.3 Computer Mount . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .       41
+3.2.4 Battery Mount . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .      42
+3.3 System Assembly . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .      43
+3.4 Sensor Testing . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   45
+3.4.1 LIDAR IP Configuration . . . . . . . . . . . . . . . . . . . . . . . . . .       45
+3.4.2 Bandwidth Restraints with Cameras . . . . . . . . . . . . . . . . . . .          45
+3.5 ROS2 Integration . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .     46
+3.5.1 Ouster Package . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .     46
+3.5.2 USB Camera Package . . . . . . . . . . . . . . . . . . . . . . . . . . .         47
+3.5.3 LidarSlam Package . . . . . . . . . . . . . . . . . . . . . . . . . . . . .      47
+
+4. SENSOR FUSION AND COLORIZATION . . . . . . . . . . . . . . . . .                    48
+4.1 Transform Architecture and Coordinate Frames . . . . . . . . . . . . . .           48
+4.2 Intrinsic Calibration and Camera Model . . . . . . . . . . . . . . . . . .         52
+4.3 Projection-Based Colorization Algorithm . . . . . . . . . . . . . . . . . .        55
+4.4 Integration with SLAM and Map Consistency . . . . . . . . . . . . . . .            56
+4.5 Validation Assessment and Interpretive Impact . . . . . . . . . . . . . .          56
+
+5. POINT CLOUD CHANGE DETECTION . . . . . . . . . . . . . . . . . . 60
+5.1 Point Cloud Post-Processing . . . . . . . . . . . . . . . . . . . . . . . . . 60
+5.2 Point Cloud Registration . . . . . . . . . . . . . . . . . . . . . . . . . . . 66
+
+6. CONCLUSION . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .        71
+6.1 Summary of Objectives and Contributions . . . . . . . . . . . . . . . . .          71
+6.2 Implications for Salt Closure Monitoring at WIPP . . . . . . . . . . . . .         72
+6.3 Limitations . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .    73
+6.4 Future Work . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .      74
+6.4.1 Optimization of the Colorization Node . . . . . . . . . . . . . . . . . .        74
+6.4.2 Demonstration at WIPP . . . . . . . . . . . . . . . . . . . . . . . . . .        76
+6.5 Closing Remarks . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .      76
+
+BIBLIOGRAPHY . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 78
+
+
+
+
+                                          vii
+                                LIST OF FIGURES
+FIGURE                                                                           PAGE
+
+1.1   Overview of the Waste Isolation Pilot Plant [1]. . . . . . . . . . . . . . .    2
+
+1.2   Shipment of TRU waste [2]. . . . . . . . . . . . . . . . . . . . . . . . . .    3
+1.3   WIPP undergrounds operations [3]. . . . . . . . . . . . . . . . . . . . .       3
+1.4   Salt convergence at WIPP [4]. . . . . . . . . . . . . . . . . . . . . . . .     5
+
+1.5   Example of homogeneous surfaces at WIPP [5]. . . . . . . . . . . . . . .        7
+1.6   Robust environment at WIPP [6]. . . . . . . . . . . . . . . . . . . . . .       8
+2.1   Manual static measurement in Panel 8’s Room 7 at WIPP [7]. . . . . . . 11
+
+2.2   Velodyne Puck Lite LIDAR.       . . . . . . . . . . . . . . . . . . . . . . . . 19
+2.3   Trimble X7 LIDAR. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 21
+2.4   Ouster OS1 LIDAR. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 22
+
+2.5   SLAM generation example. . . . . . . . . . . . . . . . . . . . . . . . . . 24
+2.6   Kitware’s LidarSLAM algorithm used to create 3D maps. . . . . . . . . 28
+2.7   Point cloud colorization example. . . . . . . . . . . . . . . . . . . . . . . 31
+
+3.1   One of four ELP USB cameras. . . . . . . . . . . . . . . . . . . . . . . . 36
+3.2   Jetson Orin Nano computer used for LIDAR backpack system. . . . . . 37
+3.3   Morphie Powerstation Pro battery pack. . . . . . . . . . . . . . . . . . . 38
+
+3.4   CAD model of generatively designed sensor package mount. . . . . . . . 40
+3.5   Custom tube clamp connecting the sensor mount to the structural frame. 41
+3.6   Generatively designed computer mounting bracket. . . . . . . . . . . . . 42
+
+3.7   Battery mounting bracket integrated into the backpack frame. . . . . . . 43
+3.8   Full CAD model of the LIDAR backpack. . . . . . . . . . . . . . . . . . 44
+3.9   Workflow of a ROS2 node. . . . . . . . . . . . . . . . . . . . . . . . . . 46
+
+4.1   Side view of the LIDAR-camera sensor package with dimensions used
+         for static transform calculations. . . . . . . . . . . . . . . . . . . . . 49
+
+
+
+
+                                         viii
+4.2   Transform (TF) tree of the LIDAR-camera nodal network running on
+         ROS2. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 52
+
+4.3   Colorized point cloud generated in FIU’s Applied Research Center Robotics
+         Laboratory. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 57
+5.1   Trimble X7 scanning setup used for controlled millimeter-scale validation. 61
+
+5.2   Cloud-to-cloud distance map showing approximately 2 mm displacement
+         relative to baseline. . . . . . . . . . . . . . . . . . . . . . . . . . . . . 63
+5.3   Cloud-to-cloud distance map showing approximately 4 mm displacement
+         relative to baseline. . . . . . . . . . . . . . . . . . . . . . . . . . . . . 63
+
+5.4   Cloud-to-cloud distance map showing approximately 6 mm displacement
+         relative to baseline. . . . . . . . . . . . . . . . . . . . . . . . . . . . . 64
+5.5   Cloud-to-cloud distance map showing approximately 8 mm displacement
+         relative to baseline. . . . . . . . . . . . . . . . . . . . . . . . . . . . . 64
+
+5.6   Cloud-to-cloud distance map showing approximately 10 mm displace-
+         ment relative to baseline. . . . . . . . . . . . . . . . . . . . . . . . . 65
+5.7   Overview of the Port of Miami Tunnel in Miami, FL. . . . . . . . . . . . 67
+5.8   Port of Miami tunnel reconstruction shown in two registered halves prior
+         to final stitching. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 68
+5.9   Full 171 m section of the Port of Miami tunnel stitched into a single
+         continuous point cloud using SLAM-based registration. . . . . . . . . 68
+
+
+
+
+                                           ix
+                LIST OF ABBREVIATIONS
+
+
+
+Abbreviation   Meaning
+
+WIPP           Waste Isolation Pilot Plant
+
+FIU            Florida International University
+
+DOE            Department of Energy
+
+TRU            Transuranic
+
+LIDAR          Light Detection and Ranging
+
+SLAM           Simultaneous Localization and Mapping
+
+ROS2           Robot Operating System 2
+
+IMU            Inertial Measurement Unit
+
+LOAM           LIDAR Odometry and Mapping
+
+ICP            Iterative Closest Point
+
+C2C            Cloud-to-Cloud
+
+C2M            Cloud-to-Mesh
+
+GPU            Graphics Processing Unit
+
+CUDA           Compute Unified Device Architecture
+
+RGB            Red, Green, Blue
+
+TF             Transform Frame
+
+
+
+
+                                x
+ARC   Applied Research Center
+
+CAD   Computer-Aided Design
+
+USB   Universal Serial Bus
+
+
+
+
+                     xi
+              LIST OF SYMBOLS
+
+
+
+Symbol   Meaning
+
+x        Horizontal coordinate in the map frame
+
+y        Vertical coordinate in the map frame
+
+z        Height coordinate
+
+θ        Orientation angle
+
+R        Rotation matrix
+
+t        Translation vector
+
+T        Homogeneous transformation matrix
+
+p        3D point in space
+
+p′       Transformed 3D point
+
+pi       i-th point in a point cloud
+
+qi       Corresponding point in a second point cloud
+
+di       Minimum Euclidean distance between points
+
+M        Point cloud map
+
+M (t)    Point cloud map at time t
+
+d(·)     Distance metric between point clouds or surfaces
+
+u        Pixel coordinate (horizontal)
+
+
+
+
+                        xii
+v      Pixel coordinate (vertical)
+
+fx     Focal length in x-direction
+
+fy     Focal length in y-direction
+
+cx     Principal point x-coordinate
+
+cy     Principal point y-coordinate
+
+K      Camera intrinsic matrix
+
+D      Distortion coefficients
+
+n      Surface normal vector
+
+α      Angle between vectors
+
+∆t     Time difference between sensor measurements
+
+σs     Measurement noise standard deviation
+
+σr     Registration uncertainty standard deviation
+
+σd     Effective deformation detection threshold
+
+∆(x)   Deformation field between registered maps
+
+∥·∥    Euclidean norm
+
+
+
+
+                      xiii
+                                    CHAPTER 1
+
+                               INTRODUCTION
+
+
+1.1    Background
+
+The enduring management of radioactive waste constitutes one of the most per-
+
+sistent challenges linked to nuclear technology. In the United States, substantial
+amounts of radioactive waste were produced during World War II and the Cold War
+due to nuclear weapons research, development, and production initiatives. These
+
+efforts led to the generation of transuranic (TRU) waste, principally composed of
+materials contaminated with long-lived alpha-emitting radionuclides, including plu-
+tonium [8]. The primary goal of the U.S. Department of Energy (DOE) has been to
+
+guarantee the secure separation of nuclear waste from the biosphere across geological
+durations.
+   The Waste Isolation Pilot Plant (WIPP), situated in Carlsbad, New Mexico, was
+
+created to tackle this issue and functions as the nation’s sole deep geological repos-
+itory for defense-related transuranic waste. Sanctioned by Congress via the Waste
+Isolation Pilot Plant Land Withdrawal Act, WIPP commenced disposal operations
+
+in 1999 and receives waste produced by DOE facilities around the United States
+[3]. The facility is essential to the national nuclear cleanup initiative by offering
+a permanent disposal solution that mitigates environmental hazards and long-term
+
+management obligations.
+   WIPP is situated roughly 650 meters beneath the surface in the Salado For-
+mation, a substantial salt deposit chosen for its advantageous geomechanical and
+
+hydrological characteristics (as shown in Figure 1.1). Rock salt demonstrates min-
+imal permeability, lacks moving groundwater, and undergoes plastic deformation
+under prolonged stress. This plastic deformation induces the progressive creep of
+
+
+
+                                          1
+salt, leading to the closure of cracks, voids, and excavated apertures, a phenomenon
+
+generally known as natural closure [9]. As disposal chambers undergo deformation
+over time, the adjacent salt encases the waste, offering a passive and self-sealing
+isolation mechanism independent of active engineered systems.
+
+
+
+
+            Figure 1.1: Overview of the Waste Isolation Pilot Plant [1].
+
+
+   The long-term safety approach at WIPP depends on the synergistic performance
+of manmade barriers and natural geological processes, as illustrated in Figure 1.2.
+
+Waste containers, backfill materials, and repository design elements are enhanced
+by the inherent creep characteristics of salt, which gradually diminishes empty space
+and constrains possible routes for radioactive migration [10]. Performance evalua-
+
+tions conducted by the Department of Energy and assessed by the U.S. Environ-
+mental Protection Agency, as shown in Figure 1.3, analyze repository functionality
+over regulatory durations exceeding 10,000 years.
+
+
+
+
+                                         2
+                      Figure 1.2: Shipment of TRU waste [2].
+
+
+
+
+                  Figure 1.3: WIPP undergrounds operations [3].
+
+
+   Besides its disposal function, WIPP possesses national importance as a singular
+
+operational demonstration of deep geological disposal for radioactive waste in the
+United States. The facility facilitates remediation initiatives at several historical
+DOE locations and supplies essential data for comprehending long-term repository
+
+
+
+
+                                         3
+dynamics. Ongoing surveillance of subterranean conditions, particularly tunnel de-
+
+formation due to salt creep, is crucial for maintaining operating safety, adhering to
+regulations, and verifying long-term performance.
+   The subterranean conditions of WIPP impose distinctive operational limitations,
+
+such as restricted access, changing tunnel configurations, and diminished vision.
+These reasons drive the advancement of sophisticated sensing and mapping systems
+that can precisely delineate subsurface geometry in areas devoid of GPS. High-
+
+fidelity spatial data are essential for quantifying deformation trends, facilitating
+maintenance planning, and improving situational awareness, hence directly motivat-
+ing the development of the Light Detection and Ranging (LIDAR)-based mapping
+
+system in this research.
+
+
+
+1.2    Motivation
+
+Comprehending and measuring the rate of salt creep is essential for the secure
+
+operation and long-term performance evaluation of WIPP. In salt formations, the
+ongoing viscoplastic deformation of halite dictates the sealing of excavated voids, the
+development of porosity and permeability, and finally the entrapment of deposited
+
+waste [11].
+   Salt creep affects the design and predictive models employed in performance
+evaluations by regulating the rate of shrinkage in mined areas and the healing of
+
+fractures. Preliminary studies at WIPP revealed that the measured closure rates
+underground were markedly more rapid than initial laboratory predictions, prompt-
+ing an ongoing research initiative to align field observations with laboratory results
+
+and enhance constitutive models of salt deformation [11]. Precise characterization of
+
+
+
+
+                                          4
+creep rate is essential to guarantee that models accurately predict repository closure
+
+behavior throughout operational and regulatory timeframes.
+   Operationally, salt creep impacts ground control in subterranean settings. The
+gradual yet continuous deformation of the ceiling, ribs, and floor of access drifts
+
+necessitates regular maintenance, fastening, and monitoring to provide safe working
+conditions and safeguard installed infrastructure [12]. Should creep rates surpass
+projections, ground support systems must adjust to mitigate any undue deformation
+
+that may endanger workers or equipment.
+
+
+
+
+                     Figure 1.4: Salt convergence at WIPP [4].
+
+
+   The capacity of salt to flow and self-seal is fundamental to the safety argument of
+WIPP from a performance assessment standpoint. Salt creep gradually diminishes
+
+void space and compacts crushed salt backfill, steering the repository towards a low-
+permeability condition that restricts fluid travel paths [13]. Creep-induced closure,
+as seen in Figure 1.4, directly affects essential repository performance indicators,
+
+
+
+
+                                          5
+such as brine transport, alterations in disturbed rock zone characteristics, and the
+
+development of permeability surrounding excavations [14].
+   Measuring salt creep rates also guides engineering decisions about trash em-
+placement sequencing and retrievability. Accelerated closure rates may need more
+
+frequent scheduling of garbage insertion and backfilling activities to maintain ac-
+cessibility of apertures during operations. Conversely, comprehending long-term
+creep behavior facilitates the planning for post-closure performance and regulatory-
+
+required predictions of radioactive containment over millennia. These considerations
+collectively designate the assessment of salt creep rates as a pragmatic and scientific
+priority for WIPP. Precise creep metrics enhance model accuracy, bolster operational
+
+safety, and strengthen the enduring isolation properties essential for the repository’s
+regulatory adherence and national objectives.
+
+
+
+1.3    WIPP Constraints and Requirements
+
+The subterranean conditions at WIPP impose a series of physical, operational, and
+legal limitations that directly affect the viability of deformation monitoring equip-
+ment. Access to disposal panels and service drifts is constrained both spatially and
+
+temporally because of ongoing waste emplacement, ground control operations, and
+safety regulations regarding worker exposure [3]. As salt creep gradually modifies
+tunnel geometry, monitoring systems must function inside constantly evolving cross-
+
+sections and in restricted regions where fixed instrumentation coverage is necessarily
+constrained.
+   Visibility conditions in the subterranean environment are difficult and fluctuate
+
+with operational activities. The illumination is artificial and uneven, dust may
+accumulate from vehicular activity or maintenance tasks, and surfaces frequently
+
+
+
+
+                                          6
+appear optically uniform, as illustrated in Figure 1.5. These variables diminish
+
+the efficacy of conventional optical surveying methods and hinder feature-based
+measures that depend on significant visual contrast. The subterranean environment
+is entirely devoid of GPS, necessitating the use of local coordinate systems and
+
+internally coherent localization techniques for all spatial data references.
+
+
+
+
+            Figure 1.5: Example of homogeneous surfaces at WIPP [5].
+
+
+   From an operational perspective, monitoring technology must reduce disrup-
+
+tion to standard repository operations. Stationary convergence monitoring devices,
+however efficient at specific sites, offer restricted spatial resolution and necessitate
+installation, upkeep, and regular recalibration [12]. These constraints elevate labor
+
+needs and constrain the capacity to swiftly characterize deformation throughout
+extensive tunnel networks. Consequently, there is a want for mobile sensing tech-
+nologies that can obtain spatially continuous measurements without the need for
+
+permanent installation.
+
+
+
+
+                                           7
+   Technologies utilized underground must be resilient to severe environmental con-
+
+ditions as illustrated in Figure 1.6. Equipment must withstand high humidity, salt
+dust, vibrations from vehicular traffic, and prolonged operation in confined environ-
+ments. Power availability is limited, encouraging devices with minimal energy use
+
+or battery-operated functionality. Data acquisition systems must function indepen-
+dently due to the constraints of wireless transmission capacity and the assumption
+of continuous distant access being unreliable.
+
+
+
+
+                   Figure 1.6: Robust environment at WIPP [6].
+
+
+   To adequately facilitate salt creep monitoring at WIPP, a sensing platform must
+fulfill certain essential criteria. The system must deliver centimeter-level geometric
+
+precision across extended corridor distances to identify gradual deformation trends.
+It must operate dependably in GPS-denied contexts and sustain localization con-
+sistency despite restricted geometric features. The platform must be portable and
+
+swiftly deployable to decrease operating overhead and mitigate disruption to subter-
+ranean activities. The system must produce consistent, high-fidelity spatial datasets
+
+
+
+
+                                          8
+that facilitate quantitative comparisons over time, allowing for the identification of
+
+subtle convergence rates rather than only qualitative observations.
+   These constraints jointly drive the creation of a transportable, LIDAR-based
+mapping device proficient in generating dense three-dimensional representations of
+
+subterranean geometry. This technology enhances current fixed equipment by of-
+fering geographical context, broadening coverage over entire drifts and panels, and
+facilitating deformation evaluation at a scale aligned with the operational and safety
+
+requirements of WIPP.
+
+
+
+
+                                          9
+                                    CHAPTER 2
+
+                             LITERATURE REVIEW
+
+
+
+2.1     Current Mapping Technologies
+
+Subterranean facilities are increasingly relying on 3D spatial data for inspection,
+documentation, and change detection in areas without GPS. Today’s technologies at
+WIPP include (1) static laser scanning and classic surveying procedures, (2) mobile
+
+scanning equipment for walk-through or vehicle data collection, and (3) image-
+based reconstruction methods for building 3D models from photographic data. The
+primary purpose of these methods is to offer metrically consistent geometry that
+
+enables temporal comparison and quantification of deformation, clearance changes,
+and infrastructure status.
+
+
+
+2.1.1    Static Laser Scanning
+
+Terrestrial static laser scanning is a popular reference technique for producing high-
+precision as-built documentation in tunnels, drifts, and other constrained environ-
+
+ments; however, it often necessitates multiple scanning installations, line-of-sight
+considerations, and time-consuming field operations. This minimizes the frequency
+of static searches in big networks, particularly when access times are limited or
+
+neighboring activity must continue. Figure 2.1 demonstrates that static scanning
+may achieve low centimeter-level errors under controlled procedures, making it suit-
+able for baseline models and validation datasets [15].
+
+
+
+
+                                         10
+    Figure 2.1: Manual static measurement in Panel 8’s Room 7 at WIPP [7].
+
+
+
+2.1.2    Mobile Laser Scanning
+
+Mobile laser scanning has emerged as the preferable solution in cases where coverage
+length and field duration are critical operating restrictions. Recent tunnel studies
+show that mobile scanning methods achieve equivalent accuracy at tunnel size to
+
+static procedures while significantly increasing measurement speed, enabling for
+more frequent mapping of vast corridors [15]. In deformation-monitoring scenarios,
+repeated mobile scans are often regarded as an excellent method for transitioning
+
+from sparse, point-based observations to spatially continuous geometry that includes
+the entire drift length. Current tunnel deformation research demonstrates a move
+from manual or constrained techniques to mobile point-cloud collecting for change
+
+detection in vast tunnel networks [16].
+
+
+
+
+                                          11
+2.1.3    3D Reconstruction and Photogrammetry
+
+Photogrammetry and image-based reconstruction techniques are used to create
+3D representations of subterranean environments for research and documentation.
+These methods can produce visually interpretable results while using relatively
+
+lightweight camera equipment. Tunnel-centric research shows that expedited cap-
+ture workflows can produce models that align with laser scan references at the
+centimeter scale for brief segments, achieving significant reductions in acquisition
+
+time compared to traditional imaging methods [17]. Image-based techniques are
+typically utilized when visual context is crucial, payload weight must be reduced, or
+the operational goal prioritizes qualitative condition evaluation with geometry.
+
+
+
+2.1.4    Robotic Platforms for Access-Limited Mapping
+
+The use of robotic platforms to reduce worker exposure and access sites that are dif-
+ficult, unstable, or otherwise unsuitable for direct entry has been a big step forward
+
+in subsurface mapping. In these circumstances, the mapping goal is often linked
+to situational awareness and early examination, followed by more precise modeling
+after access is restored. This operating pattern is compatible with the widespread
+
+usage of mobile sensing payloads on unmanned devices to provide rapid assessment
+of limited subsurface areas prior to deploying troops for entry.
+
+
+
+2.1.5    Use at WIPP and Current Practice
+
+Geotechnical monitoring at WIPP is crucial for ensuring operational safety and de-
+termining long-term performance. WIPP’s geotechnical program plan specifies an
+
+instrumentation-based monitoring methodology that includes tape extensometers,
+convergence meters, borehole extensometers, piezometers, strain gauges, load cells,
+
+
+
+                                         12
+and crack meters [18]. This methodology enables regular assessment of excavation
+
+stability and closure, resulting in periodic datasets that highlight potential instabil-
+ity zones and inform correction processes [18].
+   According to the regulatory and compliance monitoring documents, this activity
+
+is a systematic monitoring program with established parameters, collection frequen-
+cies, and annual reports. The 2019 Compliance Recertification Application appendix
+defines geotechnical monitoring metrics such as creep closure, stress measurements,
+
+and brittle deformation indicators. Data collection frequency ranges from weekly to
+monthly, depending on repository circumstances, with annual reporting and assess-
+ment cycles [19]. According to the article [19], the monitoring system includes both
+
+remotely monitored and manually read devices. Engineers collect data quarterly or
+as frequently as needed.
+   In addition to these well-known procedures, WIPP has recently utilized robotic
+
+inspection to facilitate assessments in restricted access areas. The DOE has an-
+nounced a 2024 subsurface aerial survey in which an unmanned aerial system would
+visually assess an underground exhaust drift that was previously only accessible
+
+to personnel. This was accomplished using onboard video cameras and LIDAR to
+allow for remote examination before determining the suitability of human ingress
+[20]. This example demonstrates a current operational framework in which remote
+
+sensing is used to aid in safety decisions, followed by higher-resolution assessments
+once conditions have been evaluated.
+   WIPP relies on point-based instrumentation and inspections but lacks the abil-
+
+ity to rapidly generate continuous 3D geometry across large drift networks. Mobile
+mapping addresses this gap by providing consistent, corridor-scale data for quanti-
+tative change analysis while meeting WIPP’s operational and safety constraints.
+
+
+
+
+                                          13
+2.2     Light Detection and Ranging
+
+LIDAR estimates distance by aiming laser energy at a surface and detecting the
+
+reflected signal. A 3D scan is made by continuously measuring the range from
+multiple directions while tracking the sensor’s position, resulting in a collection of
+points with coordinates and properties (such as return intensity). The measurement
+
+ideas are the same across all ranging modalities, but the encoding of time, phase,
+or frequency information vary between broadcast and received signals [21, 22].
+
+
+
+2.2.1     Pulsed Time-of-Flight Ranging
+
+In pulsed time-of-flight ranging, the device sends out a brief optical pulse and mea-
+
+sures the round-trip time between transmission and reception. The line-of-sight
+distance R is calculated by using the measured round-trip duration ∆t:
+                                             c ∆t
+                                       R=         ,                              (2.1)
+                                               2
+where c is the speed of light [21]. The factor of 1/2 appears because the pulse
+travels to the target and back. One practical application of 3D scanning is that the
+precision of time measurement determines the available range resolution. With a
+
+time uncertainty of σt , first-order error propagation yields
+                                             c
+                                      σR ≈     σt .                              (2.2)
+                                             2
+This relationship leads to designs that minimize timing jitter and enhance return
+detection stability in low-reflectivity or dusty situations [23].
+
+
+
+2.2.2     Amplitude-Modulated Continuous-Wave Ranging
+
+In amplitude-modulated continuous-wave (AMCW) ranging, the emitted optical
+radiation is modulated at frequency fm , and the receiver calculates the phase delay
+
+
+
+                                           14
+∆ϕ between the sent and received modulation. Estimated range is
+
+                                          c
+                                  R=         ∆ϕ,                               (2.3)
+                                        4πfm
+
+with ∆ϕ typically wrapped to [0, 2π), which introduces an ambiguity interval
+
+                                               c
+                                   Ramb =         .                            (2.4)
+                                              2fm
+
+AMCW is frequently employed alongside time-of-flight techniques to measure depth
+
+based on temporal aspects of the return signal [24, 25].
+
+
+
+2.2.3    Frequency-Modulated Continuous-Wave Ranging
+
+In frequency-modulated continuous-wave (FMCW) ranging, the optical frequency
+
+chirps. The incoming signal is combined with a local reference to provide a beat
+frequency fb , which represents the delay. For a linear chirp with a slope S = B/T
+(where B is bandwidth and T is sweep time), a frequent connection is
+
+                                           c
+                                    R=       fb .                              (2.5)
+                                          2S
+
+A key result is that range resolution scales with bandwidth:
+
+                                               c
+                                    ∆R ≈         .                             (2.6)
+                                              2B
+
+FMCW offers a coherent alternative to pulsed and AMCW techniques, with mea-
+
+surements based on frequency content after mixing [24].
+
+
+
+2.2.4    From Range Samples to 3D Points
+
+Each measurement yields a range Ri along a known beam direction. In the LIDAR
+coordinate frame, a common point parameterization is
+
+                                    pLi = Ri ûi ,                             (2.7)
+
+
+
+                                         15
+where ûi is a unit vector for the beam direction (determined by scan angles). To
+express points in a fixed map frame, the system applies the estimated pose (rotation
+
+R and translation t) at the acquisition time:
+
+                               pM         L
+                                i = RM L pi + tM L .                             (2.8)
+
+This transformation transforms unprocessed ranging into a metrically coherent point
+cloud appropriate for mapping and temporal comparison [21, 22].
+
+
+
+2.2.5    Return Strength and the LIDAR Equation
+
+The amount of optical power provided to the receiver once it engages with the
+
+target and transmits over the channel determines the detectability of the return.
+The LIDAR range equation [26, 27] shows that received power decreases with dis-
+tance (typically with an inverse-square relationship) and is affected by transmitter
+
+power, receiver aperture, target reflectance or backscatter, and transmission losses.
+This paradigm describes how dust, surface features, and incidence angle affect data
+density and noise patterns during a scan in subterranean environments.
+
+
+
+2.2.6    Supporting Salt-Closure Monitoring
+
+In salt-closure monitoring, a consistent three-dimensional depiction of drift geometry
+is more important than a single range measurement. The aforementioned equations
+
+are linked to the monitoring workflow in three explicit ways:
+
+
+1) Metric geometry for change detection. Equation 2.1 (or its AMCW/FMCW
+
+equivalents) defines the radial distances that make up the point cloud. Equations
+2.7–2.8 illustrate how distances are converted into three-dimensional coordinates in-
+side a stable reference frame. This enables the comparison of scans from different
+
+
+
+                                         16
+dates using cloud-to-cloud distance, cross-sectional profiles, and surface-to-surface
+
+deviation maps. The monitoring problem becomes a geometric differencing chal-
+lenge rather than a sparse point-instrument conundrum [21].
+
+
+
+2) Budgetary uncertainty for modest deformations. Equation 2.2 illustrates a first-
+order link between timing uncertainty and range uncertainty. In conjunction with
+registration and pose imperfections, it enables an error budget for the lowest visible
+
+convergence rate over a certain time period. This is crucial for setting the frequency
+of follow-up surveys and establishing acceptable values for change maps.
+
+
+
+3) Operational stability in low-contrast, dusty environments. The LIDAR equation
+shows how data completeness varies with range and visibility while the underlying
+geometry remains constant. This encourages collecting procedures that increase re-
+
+peatability (uniform traversal paths, constant scan coverage, and quality judgments
+on return density) and post-processing processes that accommodate for fluctuating
+return strength [26].
+
+
+
+   These findings lend support to LIDAR as a viable measuring foundation for
+spatially continuous deformation monitoring in a repository environment without
+
+GPS. They also present specific variables that can be linked to system-level criteria
+(detectable deformation magnitude, repeat mapping interval, permitted drift, and
+scan coverage limitations) before getting into specific sensor hardware.
+
+
+
+
+                                         17
+2.3     Current LIDAR Technologies
+
+Commercial LIDAR systems differ greatly in architecture, scanning methodology,
+
+data transfer rates, range capabilities, and target application areas. The most sig-
+nificant variations in subsurface deformation monitoring are (1) static versus mobile
+operation, (2) mechanical versus solid-state scanning, (3) data density versus porta-
+
+bility, and (4) integration flexibility with robotic or wearable platforms. This section
+looks at three representative system families that are important to subsurface map-
+ping and corridor-scale documentation.
+
+
+
+2.3.1     Velodyne VLP Series
+
+The Velodyne VLP series (Figure 2.2) consists of mechanically rotating, multi-
+
+channel LIDAR sensors, originally designed for autonomous vehicle research and
+robotics applications [28]. These devices give 360-degree horizontal coverage by
+continuously rotating, while vertically stacking multiple laser channels to provide a
+
+three-dimensional field of vision.
+
+
+
+
+                                          18
+                      Figure 2.2: Velodyne Puck Lite LIDAR.
+
+
+   The VLP architecture enables high data rates while remaining lightweight, mak-
+
+ing it appropriate for mobile robotics and real-time mapping applications. Conven-
+tional systems in this category have scan speeds ranging from 5 to 20 Hz and create
+hundreds of thousands of points per second, allowing for the creation of thick point
+
+clouds during continuous movement. Their small size and low power consumption
+make them excellent for use in wearable and terrestrial robotic equipment.
+   Mechanically rotating multi-beam devices in subterranean environments enable
+
+rapid corridor coverage and are compatible with Simultaneous Localization and
+Mapping (SLAM)-based localization. Nonetheless, performance is determined by
+return signal intensity, incidence angle, and ambient particles such as dust. Although
+
+these sensors are not as exact as tripod-mounted terrestrial scanners, their mobility
+allows for repeated re-surveys of huge drifts, which is crucial for tracking gradual
+deformation trends rather than isolated absolute readings.
+
+
+
+
+                                         19
+2.3.2     Trimble X-Series
+
+The Trimble X-Series is high-precision terrestrial laser scanning equipment intended
+for static survey applications and depicted in Figure 2.3 [29]. These sensors pro-
+duce dense, high-precision point clouds by combining phase-based or time-of-flight
+
+ranging with high-angular-resolution scanning techniques.
+   Unlike mobile rotating devices, terrestrial scanners in this category are tripod-
+mounted and collect data from fixed locations. They are widely utilized in construc-
+
+tion documentation, industrial metrology, and geographic survey applications that
+require millimeter-to-centimeter accuracy within predefined scan volumes. Instead
+of continuously rotating the sensor body, internal mirrors or scanning assemblies
+
+revolve to offer full 360-degree coverage.
+
+
+
+
+                                             20
+                           Figure 2.3: Trimble X7 LIDAR.
+
+
+   Terrestrial scanners provide detailed baseline geometry for subterranean mon-
+
+itoring and act as reference datasets for testing mobile mapping systems. Their
+constraints stem from operational overhead. Several scanning configurations are re-
+quired for lengthy drifts, and repositioning lengthens survey duration and personnel
+
+requirements. In places like WIPP, where access windows are limited and ground
+conditions change often, repeating full-tripod campaigns may not be operationally
+efficient for regular monitoring cycles.
+
+
+
+
+                                           21
+2.3.3     Ouster OS-Series
+
+The Ouster OS-Series, as shown in Figure 2.4, is a series of digital LIDAR sensors
+designed with solid-state beam-producing and digital signal processing frameworks
+[30]. These sensors provide multi-beam vertical resolution and large 360-degree hor-
+
+izontal coverage through rotating scanning, comparable to classic spinning sensors,
+but with a fully digital design that facilitates synchronization, configurability, and
+integration flexibility.
+
+
+
+
+                           Figure 2.4: Ouster OS1 LIDAR.
+
+
+   One distinguishing feature of digital LIDAR systems is their ability to com-
+
+municate correctly timestamped point clouds and other data streams via Ethernet
+connection protocols. This enables integration with robotic middleware and mul-
+tisensor systems like camera arrays and inertial measurement units. Changeable
+
+angular resolution and programmable data rates enable spatial density optimiza-
+tion within bandwidth limits.
+
+
+
+
+                                         22
+   Digital spinning LIDAR systems provide a balance of mobility and geometric
+
+accuracy for subsurface applications. Their compatibility with robotic operating
+systems allows for SLAM-based localization in GPS-denied settings. When deployed
+in wearable or robotic forms, such systems can explore wide corridors on a constant
+
+basis, allowing enabling corridor-scale change detection over time while remaining
+within power and weight limits.
+
+
+
+2.3.4     Considerations for Underground Monitoring
+
+There are trade-offs within these system categories that directly impact their appli-
+cability for salt-closure monitoring:
+
+
+   • Precision versus mobility: Tripod-mounted terrestrial scanners have superior
+      geometric accuracy, but they require static configurations and extended ac-
+
+      quisition durations. Mobile spinning devices forgo absolute precision in order
+      to provide quick spatial coverage.
+
+   • Data density versus operational burden: High-density static scans produce
+      detailed surface models, but they may not be suitable for frequent full-drift
+      repetition. Mobile systems offer regular mapping at shorter intervals.
+
+   • Integration flexibility: Sensors developed for robotic integration can be linked
+      with cameras and inertial systems, allowing for continuous mapping in GPS-
+
+      denied situations.
+
+
+   The operational goal of WIPP-scale drift monitoring is to achieve high single-
+
+epoch precision while maintaining constant corridor-scale geometry under constrained
+access situations. As a result, the selection of a system is based on a combination
+of geometric precision, deployment efficacy, environmental resilience, and adherence
+
+
+
+
+                                           23
+to localization standards. These factors necessitate an assessment of mobile digital
+
+LIDAR designs in comparison to wearable and robotic mapping systems.
+
+
+
+2.4    Simultaneous Localization and Mapping
+
+When GPS is not available, SLAM computes the sensor trajectory and generates a
+coherent 3D map. The most typical failure mechanism in subterranean tunnels is the
+
+accumulation of drift caused by minute frame-to-frame changes. Loop closure and
+global optimization (shown in Figure 2.5) minimize drift when the platform encoun-
+ters previously mapped regions, which is crucial for repeat mapping for temporal
+
+change detection [31, 32].
+
+
+
+
+                      Figure 2.5: SLAM generation example.
+
+
+   In terms of corridor-scale deformation monitoring, SLAM should be considered
+
+a facilitating layer. It generates an estimated trajectory, a registered point cloud
+map, and intermediate states, which may be exported and compared between sur-
+veys. This allows for repeatable corridor-scale datasets, enhancing point-based in-
+
+strumentation with spatially continuous geometry for differencing and cross-section
+analysis [16].
+
+
+
+
+                                        24
+2.4.1    LIDAR-Centric SLAM and Scan Registration
+
+LIDAR-centric SLAM serves as the geometric foundation for this effort, as precise
+map-to-map comparison is based on scan registration and trajectory estimation
+accuracy. In SLAM, incremental motion is frequently studied using scan registration,
+
+which aligns each fresh point cloud with a local map or a previous scan. A widely
+used formulation shortens the distance metric between corresponding sets of points.
+In its fundamental version, Iterative Closest Point (ICP) addresses
+
+
+                                    X
+                             min        ∥Rpi + t − qi ∥2 ,                      (2.9)
+                              R,t
+                                    i
+
+   where pi and qi are matching points, and (R, t) is the rigid transformation
+between scans. Variants increase robustness by employing voxel downsampling,
+keyframing, normal-based matching, and alignment with a continuously updated
+
+local submap rather than a single frame.
+   Local registration may maintain numerical stability in lengthy, visually repeated
+tunnels like those at WIPP, as minor alignment errors accumulate over time. This
+
+accumulation results in global drift, which means that the reconstructed geometry
+eventually deviates from its exact configuration, despite steady local scan-to-scan
+alignment. This drift is crucial for deformation monitoring. If left unchecked, drift
+
+can obscure genuine geometric changes or erroneously suggest deformation when
+none exists.
+   Loop closure and posture graph modification are utilized to mitigate the effects
+
+of trajectory overlap [31, 32]. In pose graph formulation, each estimated sensor pose
+is represented as a node, with constraints representing the relative transformations
+
+between poses. When returning to a previously mapped place, the platform adds a
+
+
+
+
+                                           25
+new constraint and globally optimizes the entire path. This distributes accumulated
+
+inaccuracy over the map, reducing substantial distortion.
+   The purpose of this thesis is not only to make visually consistent maps but also
+to allow for quantitative comparisons of two surveys conducted on different dates.
+
+Assume M1 and M2 are point cloud maps acquired at times t1 and t2 . Following
+registration, the deformation field is examined using geometric differencing:
+
+
+                                                   
+                            ∆(x) = d M1 (x), M2 (x) ,                           (2.10)
+
+   where d(·) represents a cloud-to-cloud or surface-to-surface distance metric. The
+reliability of ∆(x) depends directly on SLAM consistency within each individual
+survey and on accurate global alignment between surveys.
+
+   As a result, LIDAR-centric SLAM in this study performs three critical functions:
+(1) producing metrically consistent corridor-scale geometry for each survey, (2) re-
+ducing drift to maintain accurate spatial relationships over long distances, and (3)
+
+enabling repeatable coordinate frames for cross-epoch registration. In the absence
+of proper scan registration and drift control, computational artifacts would have a
+bigger impact on deformation estimations than actual physical salt closure. As a re-
+
+sult, SLAM is considered as a precision-enhancing element that adds to the primary
+purpose of detecting map-to-map changes rather than a visualization tool.
+
+
+
+2.4.2    Loop Closure and Pose Graph Optimization
+
+Pose graph optimization represents postures as nodes and restrictions as edges.
+Incorporating a loop closure edge results in a global limitation that corrects drift
+
+by optimizing the entire route and then updating the map. The Kitware process
+
+
+
+
+                                         26
+includes a pose graph that can be optimized with loop closure limitations [?], a
+
+widely used method in many systems.
+
+
+
+2.4.3    Relevant Open-Source SLAM Packages
+
+Several open-source packages are commonly used for LIDAR-based mapping:
+
+Cartographer: A widely popular system that integrates local SLAM, global opti-
+mization, and loop closure. It was first utilized in 2D but has now been extended
+to 3D processes [31].
+
+LOAM family: Comprises feature-based LIDAR odometry and mapping (LOAM),
+which has a significant impact on future pipelines. Its versions aim for real-time
+performance and support different terrain assumptions [33, 34].
+
+LIDAR-inertial methods: LIDAR-inertial approaches are systems that integrate In-
+ertial Measurement Units (IMUs) and LIDAR to improve motion predictions in
+the face of difficult dynamics or geometric constraints. Some notable examples are
+
+smoothing and filtering techniques [35, 36].
+ICP-centric odometry: Recent work highlights the importance of simplicity and
+robustness in ICP-centric odometry, utilizing contemporary ICP-style registration,
+
+rigorous preprocessing, and motion management [37].
+   Package selection is based on mission-relevant restrictions. WIPP-style corridors
+include the following characteristics: consistency across extended distances, robust-
+
+ness to uniform geometry, and the ability to export intermediate states for future
+investigation and comparison.
+
+
+
+
+                                         27
+2.4.4     Kitware LidarSLAM
+
+This study employs Kitware’s LidarSLAM tool (Figure 2.6), which enables practi-
+cal mapping operations that are compatible with corridor-scale capture and post-
+processing. Kitware offers a ROS2 wrapper and a LidarView-integrated workflow
+
+for performing SLAM, adjusting settings, and exporting findings for further analysis
+[38, 39, 40]. Kitware optimizes graphs and closes loops in the LidarView toolchain
+to minimize drift during revisits or overlaps [32].
+
+
+
+
+        Figure 2.6: Kitware’s LidarSLAM algorithm used to create 3D maps.
+
+
+   This thesis employs SLAM as the primary framework for trajectory and registra-
+tion, yielding metrically consistent point clouds suited for change detection. Instead
+
+of a single display model, the goal is to develop repeatable 3D geometry that enables
+deformation pattern comparison across surveys.
+
+
+
+2.5     LIDAR-Camera Sensor Fusion
+
+LIDAR and camera systems offer complementary sensing capabilities. LIDAR uses
+active ranging to directly measure metric depth, resulting in three-dimensional point
+
+
+
+                                          28
+clouds that are geometrically correct. Cameras gather passive radiometric data,
+
+which gives detailed color and texture information but lacks intrinsic depth with-
+out multi-view reconstruction. Sensor fusion integrates many modalities to create
+spatially coherent geometry enhanced with visual information.
+
+   This fusion is especially effective in subterranean environments. LIDAR main-
+tains geometric coherence in GPS-denied areas, whereas cameras improve inter-
+pretability by identifying material limits, structural features, and surface conditions
+
+that geometry alone cannot reveal. The integrated system makes it easier to track
+quantitative deformation and do qualitative inspections.
+
+
+
+2.5.1     Geometric Foundations of Fusion
+
+The integration of LIDAR and cameras is based on recognized geometric correlations
+between sensor coordinate systems. Consider a three-dimensional point represented
+by the LIDAR coordinate system:
+
+                                          
+                                         xL 
+                                          
+                                    pL = 
+                                          yL  .
+                                                                               (2.11)
+                                          
+                                           zL
+   To relate this point to the image pixels, it must first be translated to the camera
+coordinate frame using extrinsic calibration parameters:
+
+
+
+                                pC = RCL pL + tCL ,                             (2.12)
+
+   where RCL is the rotation matrix and tCL is the translation vector between the
+LIDAR and camera frames. The transformed point is then projected into the image
+
+plane using the pinhole camera model:
+
+
+
+
+                                          29
+                                                
+                                  u      xC /zC 
+                                                
+                                  v  = K  y /z  ,                         (2.13)
+                                          C C
+                                                
+                                   1           1
+   where K is the intrinsic camera matrix, and (u, v) are the image’s pixel coor-
+
+dinates. This projection model offers the mathematical foundation for colorizing
+point clouds, as each 3D point may be assigned RGB values derived from the cor-
+responding image pixel. Accurate fusion requires three calibrated components:
+
+
+   • Intrinsic camera parameters,
+
+   • Extrinsic transformation between sensors,
+
+   • Temporal synchronization between data streams.
+
+
+   Any of these errors immediately result in color misalignment or ghosting artifacts
+
+in the fused point cloud.
+
+
+
+2.5.2    Calibration Approaches
+
+Extrinsic calibration between LIDAR and cameras can be done with calibration tar-
+
+gets visible in both modalities or using structure-based alignment methods. Target-
+based techniques frequently employ checkerboard or planar patterns to assess rela-
+
+tive posture while minimizing reprojection error. Structure-based approaches make
+use of natural scene geometry to optimize the stiff transformation that aligns LI-
+DAR and image features. The calibration issue is typically described as a nonlinear
+
+optimization problem:
+
+
+                                  X
+                            min        ∥ui − π(RpLi + t)∥2 ,                  (2.14)
+                            R,t
+                                   i
+
+
+
+
+                                            30
+   where π(·) represents the projection function and ui are observed pixel coor-
+dinates. Reducing reprojection error guarantees geometric homogeneity across all
+
+modalities.
+
+
+
+2.5.3    Colorization and Dense Visual Mapping
+
+Colorization is the most simple and straightforward method of merging LIDAR and
+cameras. Following projection, each 3D point receives an RGB value derived from
+the image. When run across numerous frames, this results in a colorized point cloud
+
+that blends metric geometry and radiometric texture and is depicted in Figure 2.7.
+
+
+
+
+                  Figure 2.7: Point cloud colorization example.
+
+
+   Advanced fusion approaches build on this concept by incorporating depth and
+color throughout the mapping process. Certain SLAM methods conserve voxel grids
+
+or surfel maps, which maximize both geometry and color concurrently. Others
+include LIDAR and camera characteristics into tightly integrated state prediction
+
+systems. These techniques increase localization robustness and map integrity, but
+they require greater processing power and strict synchronization.
+   The fundamental goal of subsurface monitoring is not real-time dense visual
+
+SLAM, but rather the acquisition of repeatable, metrically consistent geometry rich
+in interpretable color. A projection-based colorization pipeline is appropriate and
+
+
+
+
+                                        31
+advantageous because of its versatility. LIDAR SLAM technology creates a stable
+
+geometric framework, and camera imagery improves the map during post-processing.
+
+
+
+2.5.4     Benefits and Limitations in Underground Environments
+
+LIDAR-camera fusion has a variety of applications in WIPP-like corridors. It pro-
+
+motes the visual study of geological features and material demarcations, improves
+flaw detection in walls, ceilings, and support structures, and enables more intuitive
+comparisons between successive surveys. Fusion, which adds color data to geo-
+
+metrically coherent point clouds, facilitates quantitative deformation analysis and
+qualitative inspection in massive subterranean tunnels.
+   Nonetheless, limitations exist. Uniform salt surfaces typically have poor visual
+
+texture, limiting the efficiency of image-based analysis. Artificial illumination causes
+varied exposure and shadowing effects, which may impact color consistency among
+surveys. Dust and particulate matter reduce optical performance, lowering return
+
+strength and image quality. Furthermore, temporal misalignment of sensors may
+result in spatial aberrations in the integrated point cloud. These restrictions em-
+phasize the significance of solid extrinsic calibration, dependable synchronization,
+
+and regular data-gathering processes for reproducible and interpretable outcomes.
+
+
+
+2.5.5     Role in Salt Closure Monitoring
+
+In deformation monitoring, geometry is the fundamental measurement variable.
+Color does not directly improve range precision, but it does help with interpretability
+and validation. Colorized geometry enables faster visual verification of convergence
+
+zones, localized spalling, and surface changes while calculating cross-sectional dif-
+ferences between temporally separated scans.
+
+
+
+
+                                          32
+   As a result, this work employs LIDAR-camera fusion as an interpretability layer,
+
+together with a geometrically coherent SLAM-derived map. The fusion technique
+maintains metric precision while boosting situational awareness and facilitating the
+visualization of long corridor segments.
+
+
+
+
+                                           33
+                                   CHAPTER 3
+
+                              SYSTEM DESIGN
+
+
+   This chapter describes the hardware and software components of a wearable LI-
+
+DAR mapping backpack intended for corridor-scale subsurface data collecting. The
+system was designed to address the following requirements: portability, mechanical
+rigidity, repeatable geometry acquisition, interoperability with SLAM workflows,
+
+and reliable operation in GPS-denied environments. The next sections describe the
+components used, such as custom mounts, system assembly, validation testing, and
+communication with the Robot Operating System (ROS2) framework.
+
+
+3.1     Components Used
+
+The backpack includes four key hardware components: a digital LIDAR sensor, four
+RGB cameras, an onboard computer for data collection and processing, and a bat-
+
+tery pack. Each component was chosen to strike the right balance between geometric
+integrity, integration flexibility, power consumption, and mechanical robustness.
+
+
+
+3.1.1    LIDAR Sensor
+
+The primary geometric sensing component is a Ouster OS1-64 digital spinning LI-
+DAR. The sensor’s rotational scanning architecture provides full 360-degree hori-
+
+zontal coverage and multi-beam vertical resolution. It generates accurately times-
+tamped point clouds over Ethernet, facilitating synchronization and integration in-
+side ROS2.
+
+   The sensor was configured to operate at 20 Hz, with 64 vertical channels and
+45° horizontal resolution. These values were intended to offer sufficient point den-
+
+
+
+
+                                        34
+sity for corridor cross-section reconstruction while reducing bandwidth and storage
+
+requirements during long traversals.
+   The sensor’s digital architecture enables deterministic timing and configurable
+data output. To ensure correct registration, SLAM-based mapping requires consis-
+
+tent timestamping and a steady scan frequency.
+
+
+
+3.1.2    Cameras
+
+The camera subsystem consists of four ELP-USB500W02M-L21 USB cameras (Fig-
+
+ure 3.1) that are rigidly mounted to the LIDAR frame. Each camera operates at
+640x480 resolution and 10 frames per second. The cameras offer radiometric con-
+text, allowing the point cloud to be colored and subsurface surfaces to be more easily
+
+understood.
+
+
+
+
+                                         35
+                   Figure 3.1: One of four ELP USB cameras.
+
+
+   The camera arrangement was designed to optimize overlap between tunnel ribs
+
+and roof regions. To work, projection-based fusion requires at least one camera’s
+field of view to contain 3D points. To reduce blind spots and ensure continuous
+coverage, an angular direction and spacing were used.
+
+
+
+3.1.3    Computer for Pointcloud Processing
+
+All sensing data is acquired and logged using an onboard computer, specifically the
+Jetson Orin Nano shown in Figure 3.2. The machine is running Ubuntu 22.04 with
+
+
+
+
+                                        36
+ROS2 Humble, which contains the LIDAR driver, camera nodes, SLAM pipeline,
+
+and rosbag2 recorder.
+   The key specifications include a 6-core Arm Cortex-A78AE v8.2 64-bit CPU,
+NVIDIA Ampere architecture, 8GB of RAM, and support for external NVMe stor-
+
+age. The PC was chosen to provide high-throughput Ethernet communication from
+the LIDAR while also recording several camera streams with no frame drops.
+
+
+
+
+    Figure 3.2: Jetson Orin Nano computer used for LIDAR backpack system.
+
+
+
+3.1.4    Battery
+
+The system is fueled by a 100-watt Mophie Powerstation Pro power bank (Fig-
+ure 3.3). The pack powers the LIDAR, cameras, and onboard computer. The
+
+design goal was to maintain uninterrupted corridor coverage for approximately 2
+hours each deployment.
+
+
+
+
+                                      37
+   Battery location was regarded as a structural variable because it influences the
+
+total center of mass and operator comfort. Keeping mass near to the body lowers
+oscillatory motion when walking, which improves SLAM stability and scan registra-
+tion accuracy.
+
+
+
+
+                 Figure 3.3: Morphie Powerstation Pro battery pack.
+
+
+
+3.2    Generative Designed Mounts
+
+Custom mounts were designed using Fusion 360’s generative design techniques to
+
+assure mechanical stiffness and reduce sensor misalignment. The goal was to de-
+
+
+
+
+                                        38
+sign lightweight, robust components that could tolerate vibrations and loads during
+
+underground deployments.
+
+
+
+3.2.1     Sensor Package Mount
+
+The sensor package mount keeps the LIDAR and cameras in place while pointing
+
+the sensing assembly 45 degrees downward from horizontal. This angular position
+was chosen to ensure maximum coverage of the tunnel ceiling, ribs, and floor during
+forward traversal. At 45 degrees, the LIDAR scan plane makes contact with the
+
+drift cross-section, capturing both vertical convergence and lateral deformation in a
+single pass, reducing blind spots that would otherwise occur with strictly horizontal
+or vertical alignment. To avoid overlap between geometric and radiometric fields of
+
+view, the camera array remains in the same orientation.
+   The generative design technique optimized material distribution based on load
+scenarios that simulated walking-induced vibration (1.8-2.0 Hz) and incidental im-
+
+pacts. The resulting shape, as illustrated in Figure 3.4, maximizes stiffness-to-weight
+ratio while staying 3D printable using existing methods. The sensor package mount
+improves spatial coverage for corridor-scale deformation monitoring by combining
+
+angular optimization and structural rigidity.
+
+
+
+
+                                          39
+     Figure 3.4: CAD model of generatively designed sensor package mount.
+
+
+   The rigid fixation of the sensor package ensures the validity of CAD-derived
+
+extrinsic transformations and prevents drift in relative pose between LIDAR and
+cameras.
+
+
+
+
+                                      40
+3.2.2    Tube Clamp
+
+The tube clamp connects the sensor package to the backpack frame (Figure 3.5). It
+was designed to withstand rotational slide while being simple to install and remove.
+The clamp form was modified to effectively distribute clamping pressures along
+
+the tube while minimizing stress concentrations that could cause cracking under
+repeated loading.
+
+
+
+
+Figure 3.5: Custom tube clamp connecting the sensor mount to the structural frame.
+
+
+
+3.2.3    Computer Mount
+
+The computer mount secures the onboard CPU unit inside the backpack container.
+The mount was designed to isolate high-frequency vibration while maintaining solid
+
+
+
+
+                                        41
+positional stability. The design included enough airflow space to reduce thermal
+
+throttling during long recording sessions as depicted in Figure 3.6.
+
+
+
+
+          Figure 3.6: Generatively designed computer mounting bracket.
+
+
+
+3.2.4    Battery Mount
+
+The battery mount secures the power unit near the operator’s center of mass at the
+
+bottom of the frame (Figure 3.7). The structural analysis took into account both
+static load and dynamic movement conditions. The battery attachment bracket is
+built into the backpack frame for convenient charging and secure retention during
+
+underground travel
+
+
+
+
+                                         42
+      Figure 3.7: Battery mounting bracket integrated into the backpack frame.
+
+
+
+3.3     System Assembly
+
+The system was built utilizing a modular approach. The structure was assembled
+first, followed by the battery and compute enclosure. The sensor package mount
+
+was then secured to the frame using the tube clamp, and the LIDAR and cameras
+were attached to the mount. Ethernet and power cables were routed along shielded
+pathways to prevent interference with the scan plane and limit the likelihood of
+
+snags. The final assembly is shown in Figure 3.8.
+
+
+
+
+                                        43
+Figure 3.8: Full CAD model of the LIDAR backpack.
+
+
+
+
+                       44
+   Final verification included torque checks on mounting hardware, confirmation of
+
+sensor alignment with respect to the CAD reference frame, and validation of secure
+cable connections. The repeated building process ensures that each deployment
+starts from the same mechanical baseline.
+
+
+
+3.4     Sensor Testing
+
+Before underground demonstration, controlled testing was carried out to guarantee
+sensor performance and communication stability.
+
+
+
+3.4.1    LIDAR IP Configuration
+
+The Ouster LIDAR connects via Ethernet and requires a static IP address to con-
+nect to the onboard computer. The computer’s network interface was configured
+
+using Netplan to match the LIDAR’s subnet. Ping tests were performed to ensure
+connectivity and metadata reception from the Ouster driver within ROS2. Proper
+IP configuration is essential because packet loss or bad network configuration can
+
+disrupt data collecting and corrupt rosbag recordings.
+
+
+
+3.4.2    Bandwidth Restraints with Cameras
+
+The simultaneous streaming of multiple USB cameras imposed bandwidth limita-
+
+tions on the onboard computer. Testing was conducted to determine the best stable
+configuration with no dropped frames. Changes included reduced resolution and
+
+frame rate, as well as, where available, camera dispersal across multiple USB con-
+trollers. These tests ensured that the combined data flow from the LIDAR and
+
+
+
+
+                                        45
+camera array remained within hardware constraints while retaining adequate image
+
+quality for projection-based colorization.
+
+
+
+3.5     ROS2 Integration
+
+ROS2 offers a middleware architecture for sensing, logging, and mapping com-
+ponents. ROS2 enables modular communication between nodes through publish-
+
+subscribe messaging, resulting in time-synchronized data streams. An example of
+these data streams is illustrated in Figure 3.9.
+
+
+
+
+                       Figure 3.9: Workflow of a ROS2 node.
+
+
+   The backpack system uses ROS2 to control sensor drivers, static transforms, ros-
+
+bag recording, and SLAM execution. ROS2 supports reproducible launch configura-
+tions and identical topic naming across deployments, allowing for offline processing
+and cross-epoch comparisons.
+
+
+
+3.5.1     Ouster Package
+
+The Ouster ROS2 driver generates point clouds, IMU data, and LIDAR meta-
+data. The driver configuration file specifies sensor IP addresses, UDP ports, scan
+
+
+
+
+                                         46
+rates, and resolution parameters. The SLAM process relies heavily on the generated
+
+/ouster/points topic for geometric input.
+
+
+
+3.5.2    USB Camera Package
+
+A tailored or customized USB camera ROS2 package broadcasts image streams from
+
+all connected cameras. The parameters are device index, resolution, frame rate, and
+pixel format. The LidarSlam package stores camera subjects, LIDAR data, and
+static transforms for eventual colorization.
+
+
+
+3.5.3    LidarSlam Package
+
+The Kitware LidarSLAM application generates registered maps and estimated tra-
+
+jectories from recorded datasets [41]. The software manages scan registration, drift
+prevention, and optional loop closure. The generated point clouds and trajectories
+are exported and compared across survey epochs. In this architecture, SLAM acts
+
+as the geometric backbone, transforming raw range data into metrically consistent
+maps suitable for deformation monitoring. The modular ROS2 integration ensures
+that sensor drivers, SLAM processing, and fusion components can be interchanged
+
+and extended for future system upgrades.
+
+
+
+
+                                         47
+                                    CHAPTER 4
+
+                 SENSOR FUSION AND COLORIZATION
+
+   The sensor fusion architecture intends to augment the reconstructed geometry
+with radiometric data from RGB cameras while keeping the metrics of LIDAR-based
+
+SLAM intact. The fusion technique is deliberately modular. A projection-based aug-
+mentation layer adds color, while LIDAR-centric SLAM guarantees that the shapes
+remain consistent. This disaggregation ensures that deformation measurements are
+
+never based on anything except active ranging data. On the other hand, visual
+information makes it easier to examine and comprehend.
+   The fusion pipeline is built on the ROS2 middleware framework and consists of
+
+four concurrent processes: the Ouster driver, which sends point clouds; the USB
+camera nodes, which send synchronized image streams; the static transform broad-
+caster, which defines the rigid transform tree; and the custom colorization node,
+
+which converts three-dimensional LIDAR points into image dimensions. The tech-
+nique’s modular design enables live and offline rosbag playback. Data from sub-
+surface demonstrations at WIPP is frequently recorded first and then processed to
+
+reduce processing time during collection.
+
+4.1    Transform Architecture and Coordinate Frames
+
+To achieve reliable sensor fusion, coordinate frame definitions must be close together.
+
+Misaligning frames, even in a multi-sensor arrangement, can result in projection er-
+rors, color misregistration, and spatial distortion in the aggregated data. These
+flaws, if not managed effectively, can inhibit map comparisons in deformation mon-
+
+itoring applications such as the WIPP salt closure assessment.
+   The mechanical backbone of the assembly is securely linked to a foundation
+
+structure that unites all of the backpack’s components. This frame, designated
+
+
+
+                                          48
+base link, serves as the fundamental reference point for the entire transform tree.
+
+Figure 4.1 shows how the LIDAR sensor frame and each camera optical frame are
+coupled to the base frame using fixed rigid-body transformations generated from the
+sensor package’s CAD model. These adjustments expose parts’ precise translational
+
+offsets and rotational orientations.
+
+
+
+
+Figure 4.1: Side view of the LIDAR-camera sensor package with dimensions used
+for static transform calculations.
+
+
+   The ROS2 transform node static rig tf.py transmits static connections between
+
+frames. When this node is started, it sends a sequence of geometry msgs/ Trans-
+formStamped messages and establishes a Static Transform Broadcaster. Because
+
+
+
+
+                                        49
+these transformations are static, the TF2 buffer system makes them available at
+
+runtime. Consider a location pL evaluated within the LIDAR frame:
+
+                                          
+                                         xL 
+                                          
+                                    pL = 
+                                          yL  ,
+                                                                             (4.1)
+                                          
+                                           zL
+   A rigid-body transform of rotation RBL and translation tBL determines the
+transformation to the base frame.
+
+
+
+                               pB = RBL pL + tBL .                            (4.2)
+
+   The translation vector is directly proportional to the CAD-measured offsets be-
+tween the LIDAR and base frame origins, but the rotation matrix is generated using
+
+quaternion values set in the static transform node. Next, the transformation into
+the camera’s coordinate frame Ci is provided by
+
+
+
+                              pCi = RCi B pB + tCi B .                        (4.3)
+
+   Because the static transform node aligns all of the cameras with the same be-
+ginning frame, the entire transform chain is transformed to
+
+
+
+                       pCi = RCi B RBL pL + tBL + tCi B .
+                                               
+                                                                              (4.4)
+
+   When a colorization node queries TF2, the transformations are immediately
+merged. When the point cloud message is received, the node wants to know how
+
+to transition from the LIDAR frame to an optical frame specific to the camera.
+TF2 fetches static transforms from its internal buffer by performing correct matrix
+multiplication and quaternion composition.
+
+
+
+
+                                         50
+   Static transforms offer two significant advantages. To begin, it ensures that, as
+
+long as the mechanical assembly remains unchanged, the geometry is reproducible
+between deployments. Additionally, sensors do not alter with time because there is
+no online extrinsic estimation. The stiffness of the resulting mount adds to geometric
+
+consistency.
+   The necessity to preserve rigidity stems from structural and mathematical fac-
+tors. Random mechanical shifts δt and tiny rotational disturbances δθ alter the
+
+effective extrinsic transform. At a certain distance from the sensor, even minor
+angular misalignment yields an approximation of the positional error at point R.
+
+
+
+                                    ∆x ≈ R δθ,                                   (4.5)
+
+   As the range rises, so does this in a straight line. Even little variations in an-
+gle can cause centimeter-level projection inaccuracies in deep subterranean tunnels
+when the surface is several meters away from the sensor. This level of sensitivity
+
+enables the extraction of extrinsics from CAD geometry while isolating the mount
+from walking-induced vibrations.
+   Figure 4.2 illustrates ROS2’s transform hierarchy. The core connecting frame
+
+ensures the system’s stability. This layer was the foundation for the LIDAR frame
+as well as the optical frames of all cameras. As a result, a star-shaped topology
+emerged, simplifying chaining and making it easier to find transforms.
+
+
+
+
+                                         51
+                                                                                         view_frames Result
+
+                                                                                 Recorded at time: 1767907115.511659
+
+
+
+
+                                                                                              base_link
+
+
+                                 Broadcaster: default_authority    Broadcaster: default_authority Broadcaster: default_authority   Broadcaster: default_authority   Broadcaster: default_authority
+                                    Average rate: 10000.0             Average rate: 10000.0          Average rate: 10000.0            Average rate: 10000.0            Average rate: 10000.0
+                                       Buffer length: 0.0                Buffer length: 0.0             Buffer length: 0.0               Buffer length: 0.0               Buffer length: 0.0
+                                  Most recent transform: 0.0        Most recent transform: 0.0     Most recent transform: 0.0       Most recent transform: 0.0       Most recent transform: 0.0
+                                     Oldest transform: 0.0             Oldest transform: 0.0          Oldest transform: 0.0            Oldest transform: 0.0            Oldest transform: 0.0
+
+
+                          os_sensor                         camera                            camera2                          camera3                          camera4
+
+
+               Broadcaster: default_authority   Broadcaster: default_authority
+                  Average rate: 10000.0            Average rate: 10000.0
+                     Buffer length: 0.0               Buffer length: 0.0
+                Most recent transform: 0.0       Most recent transform: 0.0
+                   Oldest transform: 0.0            Oldest transform: 0.0
+
+
+           os_lidar                         os_imu
+
+
+
+
+Figure 4.2: Transform (TF) tree of the LIDAR-camera nodal network running on
+ROS2.
+
+
+   This approach ensures that all subsequent operations, including color assign-
+ment, SLAM integration, and projection, use a common and universally determined
+
+coordinate system. Because deformation monitoring is based on comparing maps,
+transform consistency is critical. If there is a persistent error in the static transform
+
+requirements, the fused datasets will be distorted, obscuring true physical closure
+signals.
+   By identifying extrinsic elements from observed CAD geometry, passing them
+
+via ROS2 static transforms, and retaining mechanical stiffness during deployment,
+the system builds a predictable geometric backbone for all subsequent mapping and
+fusing processes.
+
+
+
+4.2    Intrinsic Calibration and Camera Model
+
+This design regards intrinsic calibration as bypassing the abstract camera model
+and proceeding directly to the colorization node. Every camera delivers a sen-
+sor msgs/CameraInfo message including the intrinsic matrix K, distortion coeffi-
+
+cients D, and image resolution parameters. The colorization node monitors the
+calibration settings for each camera individually by listening for these signals.
+
+
+
+
+                                                                                                   52
+   The projection model is constructed using the CameraInfo data structure, in-
+
+stead of hardcoding intrinsic values, which the node acquires dynamically. This
+ensures that the projection parameters match those in the actual calibration files
+used by the USB camera drivers.
+
+   For each camera Ci , the intrinsic matrix is extracted as
+
+                                                 
+                                    fx,i 0 cx,i 
+                                                 
+                               Ki = 
+                                     0 fy,i cy,i  ,
+                                                                                   (4.6)
+                                                 
+                                      0   0   1
+   where fx,i and fy,i are focal lengths expressed in pixel units, and (cx,i , cy,i ) rep-
+
+resents the principal point. In the implementation, these parameters are accessed
+directly from the flattened 3x3 matrix contained in the ROS2 message:
+
+
+fx = camera_info.k[0]
+fy = camera_info.k[4]
+cx = camera_info.k[2]
+
+cy = camera_info.k[5]
+
+
+   By directly indexing, we can ensure that the projection model matches the cam-
+
+era calibration. After LIDAR points are converted into camera coordinate frames,
+projections use perspective division. To acquire normalized image coordinates of a
+point pC = (xC , yC , zC ), follow the procedures below:
+
+
+                                        xC                 yC
+                                 xn =      ,        yn =      .                     (4.7)
+                                        zC                 zC
+   Pixel coordinates are then calculated explicitly within the node using
+
+
+
+                           u = fx xn + cx ,         v = f y yn + c y .              (4.8)
+
+
+
+
+                                               53
+   In code form, this appears as:
+
+u = int((fx * x_cam / z_cam) + cx)
+v = int((fy * y_cam / z_cam) + cy)
+
+   Before projecting pixels, the node ensures that they are within valid picture co-
+ordinates by exhaustively inspecting their borders. Points with zC ≤ 0 are instantly
+eliminated to prevent them from being projected outside the camera plane. Prior
+
+to RGB sampling, the image’s width and height are additionally validated against
+the pixel indices.
+   The CameraInfo message also offers information on the lens’s picture distortion.
+
+The current methodology corrects distortion in input images before projection uti-
+lizing OpenCV-based rectification methods. The intrinsic matrix will be perfectly
+aligned with the undistorted coordinate system, and the projection model will work
+
+with rectified image frames.
+
+dist_coeffs = camera_info.d
+
+   Color alignment accuracy is directly proportional to intrinsic calibration preci-
+sion, as each camera performs its own projection. The projected pixels change in
+
+a regular manner due to tiny mistakes in focal length or main point, causing the
+colorized cloud’s edges to misalign. Differentiating the projection equations with
+regard to fx and cx allows you to identify the extent to which the projection is
+
+affected by intrinsic error. From this, we can conclude that the pixel error rises with
+depth and radial distance from the focus point.
+   The technique combines runtime fusion and calibration data by utilizing explicit
+
+projection equations within the node and dynamically collecting intrinsic parameters
+from ROS2 camera topics. This method ensures that colorization is constant across
+all deployments by matching calibration files and projection logic.
+
+
+
+                                          54
+4.3    Projection-Based Colorization Algorithm
+
+The study foregoes the tightly coupled visual-LIDAR SLAM strategy in favor of a
+
+projection-based fusion method. The speed with which projection-based colorization
+is completed has little effect on the accuracy of geometric forecasts. Large-scale
+mapping procedures, where geometry is crucial and color assists comprehension,
+
+commonly utilize equivalent methods [42, 43].
+   The custom ROS2 node is updated by the picture topic for each camera and the
+LIDAR point cloud subject. In response to a point cloud message, the node fetches
+
+the relevant static transform from TF2, converts each point into a potential camera
+frame, projects the point using the intrinsic model, and samples the related RGB
+value. The result is delivered as a PointCloud2 message with colors.
+
+   The projection loop is depicted here in simplified pseudocode.
+
+for point in pointcloud:
+
+      p_base = transform_lidar_to_base(point)
+      for cam in cameras:
+          p_cam = transform_base_to_camera(p_base, cam)
+
+          if p_cam.z > 0:
+                u, v = project_to_image(p_cam, cam.K)
+                if pixel_in_bounds(u, v):
+
+                   rgb = image[v, u]
+                   assign_color(point, rgb)
+                   break
+
+   To guarantee the geometric backbone remains stable prior to radiometric as-
+signment, this modular method allows for colorization based on replay after SLAM
+optimization.
+
+
+
+                                        55
+4.4    Integration with SLAM and Map Consistency
+
+LidarSLAM is based on Kitware’s framework [38]. It provides optimal trajectories
+
+and registered point clouds. SLAM establishes a stable global reference frame by
+utilizing scan registration and posture graph optimization to correct drift [44, 31].
+   Colorization is used once the geometric uniformity has been established. De-
+
+formation measurements produced by comparing maps are thus assured to be in-
+dependent of camera projection errors. We consider two mappings, M1 and M2 ,
+separated by time. Deformation is judged in this manner:
+
+
+                                                    
+                             ∆(x) = d M1 (x), M2 (x) ,                           (4.9)
+
+   d(·) represents the distance between two surfaces or clouds. In closure analysis,
+radiometric fusion is more concerned with understanding than measuring because
+color is not a component of the measure.
+
+
+
+4.5    Validation Assessment and Interpretive Impact
+
+The Applied Research Center (ARC) Robotics Laboratory provided a controlled
+
+indoor environment for testing the projection-based colorization technology before it
+was used underground. The goal of this testing phase was not to detect reprojection
+faults down to the millimeter scale, but rather to ensure geometric consistency,
+
+create suitable transform chaining, and see if radiometric augmentation improved
+interpretation.
+   Some of the components evaluated were the Ouster driver, camera nodes, static
+
+transform broadcaster, and custom colorization node. Rosbag recordings were played
+back to test and troubleshoot them in a controlled environment. Manual inspection
+of the fused output confirmed, from various angles, that the projected color was
+
+
+
+                                         56
+consistent with geometric edges and surface boundaries. The projection’s accuracy
+
+was tested utilizing visual aids such as structural beams, high-contrast objects like
+lab furniture edges, and wall-floor interfaces. The final colorized map is shown in
+Figure 4.3.
+
+
+
+
+Figure 4.3: Colorized point cloud generated in FIU’s Applied Research Center
+Robotics Laboratory.
+
+
+   The colorful point cloud helps you better understand the surface. While the
+SLAM-generated map maintains its fundamental geometry, the addition of RGB
+
+information allows for faster distinction of materials, structural components, and
+surface discontinuities. This enrichment significantly simplifies things for the general
+public while maintaining the metric quality used in deformation analysis.
+
+   When moving slowly, the projection was consistent with very few ghosting arti-
+facts. The previously established relationship between time and distance, ∆x ≈ v∆t,
+was validated by the slight misalignment seen at greater speeds. Due to the use of
+
+timestamped LIDAR and picture streams in projection, any remaining synchroniza-
+tion latency appears as slight color shifts in fast-changing sceneries. Slowing down
+causes these artifacts to shrink, but they keep their original shape.
+
+
+
+                                          57
+   In the colorization node’s current implementation, each point and camera can-
+
+didate is projected sequentially. For dense point clouds, this indicates it’s slow.
+Despite the fact that it was not built for real-time throughput, the node performs
+well and has geometric consistency. At this stage, the goal was to prove the con-
+
+cept rather than to improve the calculations. The laboratory results demonstrating
+successful hand colorization justify the mathematical projection model, transform
+architecture, and ROS2 integration.
+
+   The most important result of this testing phase for deformation monitoring is ev-
+idence that radiometric augmentation does not disrupt the geometric backbone that
+SLAM develops. The primary purpose for comparing maps remains LIDAR-derived
+
+spatial coordinates. Color adds a layer of interpretation that improves situational
+awareness, accelerates the process of identifying convergence zones, and increases
+the value of exported maps for engineering evaluation.
+
+   The separation of geometry and radiometry is purposeful. By employing col-
+orization after SLAM optimization, the technique retains the metric consistency
+required for quantitative salt closure analysis. By design, this architecture removes
+
+the potential of sensor fusion bias as the cause of any observed displacement between
+surveys undertaken at different times.
+   Future enhancements could include implementing methods to speed up the pro-
+
+jection loop, utilizing the Jetson platform’s GPU capabilities to run multiple tasks
+at the same time, optimizing extrinsic parameters by minimizing reprojection error,
+and assigning colors based on occlusion to avoid camera conflicts. Surface char-
+
+acterization in subterranean areas with little color contrast may benefit from the
+addition of LIDAR intensity data.
+   Laboratory validation shows that the projection-based fusion method simplifies
+
+things while keeping geometric correctness. This capacity improves the wearable LI-
+
+
+
+
+                                         58
+DAR backpack system’s effectiveness for corridor-scale monitoring at WIPP, where
+
+both quantitative deformation measurement and qualitative inspection are used in
+practice.
+
+
+
+
+                                      59
+                                    CHAPTER 5
+
+                  POINT CLOUD CHANGE DETECTION
+
+
+   The primary purpose of this thesis is to demonstrate how repeatable 3D mapping
+
+can detect spatial changes in underground tunnels. Salt creep, which manifests as
+the gradual but persistent convergence of drift floors, ribs, and roofs over time, is a
+physical phenomenon of interest at WIPP. Instead of inferring closure from sparse
+
+instrumentation, repeated 3D maps can be aligned into a stable reference frame
+and compared using surface-to-surface distance measurements. This will enable the
+spatial quantification of closure. This chapter presents controlled validation studies
+
+that corroborate the sensitivity of the post-processing strategy and lays out the
+methodical road from raw point clouds to quantified deformation fields.
+
+
+5.1    Point Cloud Post-Processing
+
+Point cloud post-processing transforms raw scan data into metrically consistent
+datasets that can be compared across epochs. The method starts with cleaning and
+exporting raw scans in a common coordinate frame to remove noise and outliers.
+
+After filtering, datasets undergo rigid registration and geometric differencing. All
+deformation analysis was performed using CloudCompare, an open-source software
+
+platform. It is specifically designed for 3D metrology and surface comparison.
+   Change detection in CloudCompare is typically performed using cloud-to-cloud
+(C2C) or cloud-to-mesh (C2M) distance metrics. For two point clouds M1 and
+
+M2 , the C2C method computes, for each point pi ∈ M1 , the minimum Euclidean
+distance to the nearest neighbor qj ∈ M2 :
+
+
+
+                                di = min ∥pi − qj ∥ .                             (5.1)
+                                     qj ∈M2
+
+
+
+
+                                          60
+   The resulting scalar field {di } shows a color map over the surface, indicating the
+size of spatial displacement. Doing this calculation for each site yields a continu-
+
+ous deformation field rather than a solitary convergence value. Within the WIPP
+framework, this allows for a full cross-sectional examination of drift geometry, as
+
+well as the simultaneous evaluation of roof, rib, and floor behavior.
+   To test the sensitivity of this approach, a controlled experiment was conducted
+in an Applied Research Center corridor with a Trimble X7 terrestrial laser scanner.
+
+These studies were designed to isolate the capabilities of the post-processing soft-
+ware under high-precision scanning conditions, rather than employing the wearable
+LIDAR backpack. Sheets of standard printer paper were placed in 2 millimeter
+
+increments ranging from 0 to 10 millimeters. Figure 5.1 shows the setup used for
+controlled millimeter-scale validation. Each increment was scanned separately, with
+the same acquisition settings.
+
+
+
+
+Figure 5.1: Trimble X7 scanning setup used for controlled millimeter-scale valida-
+tion.
+
+
+   The baseline scan M0 , which did not include a paper stack, served as a refer-
+ence. We utilized an ICP-based registration technique in CloudCompare to reduce
+translation and rotation offsets from successive scans M2 , M4 , . . . , M10 and firmly
+
+
+
+                                          61
+aligned them to M0 . The next stage was to compute the distance between clouds
+following the alignment.
+
+   The quantity of interest in this verification was the relative normal displacement
+of the paper and desk surfaces in the vertical (Z) direction. In addition to the
+
+total Euclidean distance, CloudCompare also delivers signed distance components
+(∆X, ∆Y, ∆Z)”. The observed values match ∆Z, which reflects displacement nor-
+mal to the desk plane. The numbers are negative because the measurement was
+
+taken from the raised paper surface to the desk reference. As a result, the sign
+represents the direction rather than the magnitude of the mistake.
+   The measured vertical displacements were:
+
+
+   • 2 mm test: −0.002000 m
+
+   • 4 mm test: −0.004200 m
+
+   • 6 mm test: −0.005837 m
+
+   • 8 mm test: −0.008037 m
+
+   • 10 mm test: −0.010234 m
+
+
+   Figures 5.2 through 5.6 illustrate the deviation maps for each increment relative
+
+to baseline.
+
+
+
+
+                                         62
+Figure 5.2: Cloud-to-cloud distance map showing approximately 2 mm displacement
+relative to baseline.
+
+
+
+
+Figure 5.3: Cloud-to-cloud distance map showing approximately 4 mm displacement
+relative to baseline.
+
+
+
+
+                                      63
+Figure 5.4: Cloud-to-cloud distance map showing approximately 6 mm displacement
+relative to baseline.
+
+
+
+
+Figure 5.5: Cloud-to-cloud distance map showing approximately 8 mm displacement
+relative to baseline.
+
+
+
+
+                                      64
+Figure 5.6: Cloud-to-cloud distance map showing approximately 10 mm displace-
+ment relative to baseline.
+
+   The results reveal that the estimated geometric deviation and the forced physical
+displacement are strongly correlated. The 2mm test provided a precise reading
+of −0.002000 m. With a 0.2-millimeter difference from nominal, the 4-millimeter
+
+example yielded −0.004200 m. Cases measuring 6 millimeters, 8 millimeters, and
+10 millimeters produced results of -0.005837, -0.008037, and -0.010234 millimeters,
+respectively. Across all trials in the 10 mm test, the maximum absolute departure
+
+from the nominal thickness was approximately 0.234 mm.
+   Under controlled conditions, these findings reveal that the forced displacement
+and measured Z-direction deviation are within millimeters of one another. There is
+
+no nonlinear distortion injected into the post-processing workflow throughout the
+examined range, as evidenced by the near-linear scaling of the imposed height and
+measured displacement.
+
+   The typical stated rate of salt convergence at WIPP ranges from millimeters
+to centimeters each year. Steady-state roof-to-floor convergence rates in operating
+drifts can range from 50 to 150 mm/year, depending on excavation geometry, stress
+
+
+
+                                        65
+redistribution, and panel age [45]. As long as registration uncertainty and mea-
+
+surement noise are kept under control, the sub-millimeter detection capability can
+detect deformation magnitudes required to monitor the closure of repository-scale
+systems.
+
+
+
+5.2    Point Cloud Registration
+
+The ability to perform reliable change detection at WIPP depends fundamentally on
+consistent point cloud registration across both space and time. Registration serves
+two related purposes in this research. First, it enables the stitching of sequential
+
+scans into a single, spatially continuous corridor-scale map. Second, it allows time-
+separated surveys to be aligned within a common reference frame so that geometric
+differences represent physical deformation rather than pose error.
+
+   Rigid registration between two point clouds M1 and M2 seeks the transforma-
+tion (R, t) that minimizes
+
+
+                                    X
+                             min        ∥Rpi + t − qi ∥2 ,                      (5.2)
+                              R,t
+                                    i
+
+   where pi and qi are corresponding points in the two datasets. In the Trimble
+X7 validation experiment, rigid-body translation and rotation were removed using
+
+Iterative Closest Point (ICP) before differencing, and this alignment was performed
+directly in CloudCompare.
+   Continuous registration occurs during acquisition of the wearable LIDAR back-
+
+pack using LIDAR-centric SLAM. Scan matching and loop closure, when possible,
+refine the projected course as the operator walks down a corridor, with each scan
+aligned to a growing local map. Instead of obtaining scan fragments, our method
+
+recreates the entire traversed corridor using consistent metrics.
+
+
+
+
+                                           66
+   This stitching capacity is critical for WIPP-scale installations in which drifts
+
+might exceed hundreds of meters. This approach avoids the need for individual
+tripod surveys by combining many traversals into a single continuous geometric
+model, allowing geometry to be captured at the corridor size while in motion.
+
+   A field test was performed at the Port of Miami tunnel to determine the reliability
+of large-scale registration in a monotonous tube environment (Figure 5.7). The
+LIDAR backpack is secured to the sunroof of a car traveling at around fifteen miles
+
+per hour. With the addition of dynamic motion, this experiment aimed to recreate
+the visually repetitive geometry of a subterranean drift. This traversal covered
+around 171 meters of corridor.
+
+
+
+
+        Figure 5.7: Overview of the Port of Miami Tunnel in Miami, FL.
+
+
+   To demonstrate intermediate SLAM consistency over extended distance, Fig-
+
+ure 5.8 displays the reconstructed point cloud of the split tunnel segment before
+final alignment. After the section was registered and optimized, Figure 5.9 shows
+the complete 171 m segment fused into a continuous model.
+
+
+
+
+                                         67
+Figure 5.8: Port of Miami tunnel reconstruction shown in two registered halves prior
+to final stitching.
+
+
+
+
+Figure 5.9: Full 171 m section of the Port of Miami tunnel stitched into a single
+continuous point cloud using SLAM-based registration.
+
+
+   Extending tunnel-scale mapping in dynamic environments is doable without
+catastrophic drift buildup, as demonstrated by the reconstructed model. Confirming
+
+
+
+                                        68
+that scan registration and trajectory estimation are robust even in feature-repetitive
+
+circumstances, the geometry remains consistent throughout the collected length.
+This observation has significant significance for WIPP, as prolonged drifts exhibit
+similar geometric monotony.
+
+     The accuracy of change detection depends on both scanner precision and reg-
+istration quality. If σs represents measurement noise and σr represents residual
+registration uncertainty, the effective detection threshold σd can be approximated
+
+as
+
+
+                                          p
+                                   σd ≈       σs2 + σr2 .                        (5.3)
+
+     Maintaining σr below the expected magnitude of salt closure ensures that com-
+puted deviation fields reflect true physical deformation rather than accumulated
+
+trajectory error.
+     After obtaining corridor-scale maps, repeated surveys convert the system into
+a geometric time machine. Each iteration generates a spatial model M(t) that
+
+represents the drift geometry at time t. The deformation may be computed by
+comparing two surveys performed at times t1 and t2 , using the formula
+
+
+                                                            
+                           ∆(x, t1 , t2 ) = d M(t1 ), M(t2 ) ,                   (5.4)
+
+     where d(·) represents the distance between clouds or surfaces. The internal
+stitching of the surveys into a single continuous frame allows for differentiation
+across entire drift extents rather than just limited local locations.
+
+     This method allows you to generate a permanent master map from a series
+of WIPP scans. By comparing new surveys to this worldwide norm, we may de-
+termine whether there has been any change over time. Unlike fixed convergence
+
+devices, which measure displacement between discrete anchor points, this approach
+
+
+
+                                           69
+captures continuous geometric progression throughout entire drift cross-sections and
+
+longitudinal distances.
+   Adding color to these stitched corridor models makes them more understandable.
+Engineers can employ radiometric context to link convergence zones to structural
+
+elements, installed hardware, or geologic boundaries, whereas geometry is used to
+determine the extent of displacement. Without affecting the metric basis of analy-
+sis, deviation maps layered over colored geometry provide rapid spatial context for
+
+observed change.
+   The potential operational basis for a future WIPP demonstration may involve
+combining multi-epoch registration and SLAM-based corridor stitching. Rather
+
+than quantifying salt creep as separate sites, sequential scans can be incorporated
+into unified corridor models to directly compare repeated traversals.
+
+
+
+
+                                        70
+                                   CHAPTER 6
+
+                                 CONCLUSION
+
+
+
+6.1    Summary of Objectives and Contributions
+
+The primary aim of this thesis was to illustrate the viability of employing repeated
+three-dimensional mapping to identify deformation caused by salt creep in under-
+ground passageways at WIPP. The primary concept was that geometric differencing
+
+may identify quantifiable closure tendencies, contingent upon the generation of spa-
+tially consistent maps across many temporal epochs and their alignment within a
+stable coordinate framework.
+
+   This thesis presents a comprehensive end-to-end workflow, encompassing the col-
+lection of mobile LIDAR data and the identification of changes between point clouds.
+The pipeline incorporates hardware design, data acquisition using ROS2, SLAM
+
+with LIDAR, projection-based colorization, and subsequent analysis in CloudCom-
+pare. The objective of each design step was to maintain the metric’s validity and
+enable more spatial comparisons.
+
+   The LIDAR backpack is compliant with WIPP operational criteria. The created
+mounts maintain the close interactions of all the sensors. Simultaneous logging with
+both LIDAR and cameras in a GPS-denied environment is now feasible due to the
+
+Jetson-based computing architecture. The system may be effortlessly relocated,
+quickly configured, and utilized repeatedly for corridor surveys.
+   Rather than perceiving SLAM as a method to augment accuracy, individuals re-
+
+garded it as a tool to improve visibility. LIDAR-centric SLAM offers the necessary
+geometric framework for comparing findings across various time intervals by sustain-
+
+ing a consistent trajectory and reducing drift. The principal reason for alterations
+
+
+
+
+                                         71
+in deformation estimates, as opposed to physical changes, would be algorithmic
+
+aberrations due to the lack of continuous registration.
+   We employed a Trimble X7 terrestrial laser scanner to perform controlled millimeter-
+scale experiments for evaluating the change-detection toolchain. The findings of the
+
+paper-stack experiment indicated that displacements analogous to the documented
+rates of salt convergence can be identified using the post-processing pipeline. This
+illustrates that the analytical method can identify shape alterations that are crucial
+
+for repository-level monitoring.
+   Finally, metric independence is preserved by the modular LIDAR-camera fusion
+architecture, which incorporates radiometric context into geometry. While coloriza-
+
+tion improves reading and increases environmental awareness, it does not influence
+the deformation metric. This division asserts that active ranging data is the exclu-
+sive foundation for quantitative results.
+
+
+
+6.2    Implications for Salt Closure Monitoring at WIPP
+
+Currently, WIPP is meticulously monitoring geotechnical conditions with instru-
+mented, point-based measurements, including extensometers and convergence me-
+
+ters. Despite their ease of installation and maintenance, these systems have limited
+coverage and produce a significant amount of relevant data.
+   The solution presented in this thesis enhances existing technologies by ensur-
+
+ing spatial consistency over entire drifts. Dispersed deformation patterns are un-
+detectable with a limited number of measurements; nevertheless, mobile LIDAR
+mapping can identify them. By repeatedly creating these maps, one may witness
+
+convergence across the entire surface and track temporal changes. This methodology
+offers color-coded maps for enhanced visibility, quick deployment without permanent
+
+
+
+
+                                            72
+installation, consistent geometry for quantitative differentiation, and corridor-scale
+
+geographical coverage.
+
+
+   • Corridor-scale spatial coverage,
+
+   • Rapid deployment without permanent installation,
+
+   • Repeatable geometry suitable for quantitative differencing,
+
+   • Visual interpretability through colorized maps.
+
+
+   Transitioning from sparse point measurements to distributed surface fields en-
+hances the monitoring paradigm from discrete convergence readings to comprehen-
+sive surface deformation analysis. This facilitates improved ground control planning,
+
+prioritization of maintenance, and evaluation of repository engineering tasks.
+
+
+
+6.3    Limitations
+
+We must acknowledge specific constraints. Instead of employing the wearable back-
+pack, a terrestrial scanner was utilized for millimeter-scale validation. Nonetheless,
+this does not yet assess the field accuracy of the mobile system; it merely delineates
+
+the functionalities of the post-processing technique.
+   Furthermore, SLAM drift and registration quality continue to affect cross-epoch
+alignment. Estimates of deformation magnitude can be influenced by minor pose
+
+variations in extensive passages with limited characteristics. Verifying registrations
+and diligently resolving outstanding issues are essential.
+   Thirdly, the analysis of dense point clouds is protracted due to the sequential
+
+operation of the existing projection-based colorization node across points and cam-
+eras. While the implementation is functional, it requires optimization for large-scale
+application.
+
+
+
+                                         73
+   A fourth issue is that, although the technical architecture is presented in this
+
+thesis, longitudinal datasets collected directly at WIPP over prolonged durations
+are still absent. Ongoing surveys performed under actual repository settings are
+essential for comprehensive operational validation.
+
+
+
+6.4     Future Work
+
+Future study should concentrate on computational optimization, accurate charac-
+terization of wearable platforms, and subsurface demonstration at WIPP.
+
+
+
+6.4.1    Optimization of the Colorization Node
+
+The current implementation processes each point sequentially and performs per-
+point TF lookups, transformations, projections, and RGB packing operations [?].
+
+This architecture, while functional, results in increased processing time that es-
+calates linearly with the number of points and cameras. It is advisable to focus
+optimization in three principal domains.
+
+
+1. Elimination of Redundant Per-Point Operations For each prospective
+point and camera, the existing system performs TF lookups and rigid transforma-
+tions within the innermost loop. It is advisable to request transformations solely
+
+once for each camera and point cloud, thereafter converting them into homoge-
+neous matrices, as the extrinsic relationship between the LIDAR and each camera
+remains constant throughout a callback. The complete point cloud can be altered
+
+by replacing the per-point do transform point procedures with vectorized matrix
+multiplication. This change alone substantially decreases the overhead of loops at
+the Python level and access to TensorFlow buffers.
+
+
+
+
+                                           74
+2. Vectorization and GPU Acceleration Currently, each point sequentially
+
+receives RGB assignment and projection. NumPy arrays facilitate the execution of
+vectorized operations on point clouds, enabling tasks such as perspective division,
+pixel projection, and batch processing. The intrinsic parallelism of transformation
+
+and projection renders these processes advantageous for CUDA acceleration on the
+Jetson Orin Nano. Enhancing the speed of dense Ouster scans and approaching
+real-time performance can be accomplished by GPU-based matrix multiplication
+
+and filtering.
+
+
+3. Intelligent Camera Selection and Calibration Refinement The node
+now identifies the initial legitimate projection following the examination of each
+
+camera separately. Geometric pre-filtering based on the camera’s orientation is
+employed to minimize superfluous projection efforts. Choosing the camera with
+the minimal incidence angle, instead of the initial successful match, can enhance
+
+color constancy. The geometric framework employed for deformation analysis can
+be maintained, while the reduction of reprojection error facilitates enhanced edge
+alignment. This is because it can somewhat reduce the mechanical tolerances of
+
+extrinsic parameters.
+   By delineating geometry and color augmentation, these enhancements facilitate
+system scalability, enhance radiometric consistency, and diminish resource require-
+
+ments.
+   Algorithmic acceleration will enhance offline processing speed, potentially en-
+abling near real-time viewing during deployment. Maintaining the geometric preci-
+
+sion necessary for deformation monitoring is achievable without subsampling when
+handling denser point clouds, which is an additional advantage of minimizing per-
+formance overhead.
+
+
+
+
+                                        75
+   Enhancing extrinsic calibration to reduce reprojection error could improve color
+
+alignment accuracy, facilitating comprehension while preserving a clear distinction
+between geometry and radiometry. These improvements will transform the node
+from a proof-of-concept into a scalable fusion module appropriate for prolonged
+
+subterranean application.
+
+
+
+6.4.2    Demonstration at WIPP
+
+The primary objective of this research is to apply it within the WIPP underground
+
+environment. The subsequent elements must be incorporated into the demonstration
+procedure:
+
+
+   • Baseline corridor scanning,
+
+   • Repeat surveys over defined time intervals,
+
+   • Cross-epoch map alignment,
+
+   • Quantitative deformation field extraction,
+
+   • Comparison against existing convergence instrumentation.
+
+
+   Integrating LIDAR deformation fields with sensor observations yields corrobora-
+
+tion from many sources. The reliability of both types of monitoring would improve if
+discrete convergence meters and distributed surface measurements were consistent.
+
+
+
+6.5     Closing Remarks
+
+Creating reproducible three-dimensional maps facilitates the identification of alter-
+
+ations in subterranean conduits, as evidenced in this thesis. A unified framework for
+
+
+
+
+                                         76
+spatial salt closure monitoring has been established by the integration of LIDAR-
+
+centric SLAM, rigid mechanical design, ROS2-based integration, and cloud-to-cloud
+differencing.
+   Over time, each survey serves as a geometric record of the repository’s state.
+
+These recordings demonstrate deformation as measurable spatial fields instead of
+distinct point values when analyzed over time. Should the wearable LIDAR back-
+pack system undergo further refinement and field testing, it may augment our un-
+
+derstanding of salt creep mechanisms, facilitate operational monitoring at WIPP,
+and integrate with current geotechnical instruments.
+
+
+
+
+                                       77
+                                BIBLIOGRAPHY
+
+ [1] U.S. Department of Energy, Office of Environmental Management. Waste Iso-
+     lation Pilot Plant (WIPP). U.S. Department of Energy, 2024. Retrieved from
+     https://www.energy.gov/em/waste-isolation-pilot-plant-wipp.
+
+ [2] U.S. Department of Energy, Office of Environmental Management. Waste Iso-
+     lation Pilot Plant (WIPP). U.S. Department of Energy, 2024. Retrieved from
+     https://www.energy.gov/em/waste-isolation-pilot-plant-wipp.
+
+ [3] U.S. Department of Energy. History and Timeline of the Waste Isola-
+     tion Pilot Plant.    U.S. Department of Energy, 2024. Retrieved from
+     https://wipp.energy.gov/historytimeline.asp.
+
+ [4] Nuclear Active. Rapid seven-fold, never-been-observed-at-wipp increases in salt
+     convergence in panel 7 where waste is planned for disposal, 2021. Retrieved
+     from https://nuclearactive.org/rapid-seven-fold-never-been-observed-at-wipp-
+     increases-in-salt-convergence-in-panel-7-where-waste-is-planned-for-disposal/.
+
+ [5] William J. Broad.       Nuclear waste solution seen in desert salt beds.
+     The New York Times, February 2014.            Published February 9, 2014.
+     Retrieved from https://www.nytimes.com/2014/02/10/science/earth/nuclear-
+     waste-solution-seen-in-desert-salt-beds.html.
+
+ [6] U.S. Department of Energy. Waste Isolation Pilot Plant News Release. U.S.
+     Department of Energy, 2024. News release, January 24, 2024. Retrieved from
+     https://wipp.energy.gov/wippn ews2 0240124.asp.
+
+ [7] U.S. Department of Energy. Waste isolation pilot plant news release, October
+     2021.
+
+ [8] U.S. Department of Energy. Waste Isolation Pilot Plant Site Overview. U.S.
+     Department of Energy, 2024. Retrieved from https://wipp.energy.gov/wipp-
+     site.asp.
+
+ [9] U.S. Department of Energy. Geology and Repository Design of the Waste
+     Isolation Pilot Plant. U.S. Department of Energy, 2024. Retrieved from
+     https://wipp.energy.gov/geology.asp.
+
+[10] U.S. Environmental Protection Agency. EPA’s Role at the Waste Isolation
+     Pilot Plant. U.S. Environmental Protection Agency, 2023. Retrieved from
+     https://www.epa.gov/radiation/epas-role-waste-isolation-pilot-plant-wipp.
+
+
+
+                                        78
+[11] National Research Council. Creep behavior of wipp salt. In The Waste Isolation
+     Pilot Plant: A Potential Solution for the Disposal of Transuranic Waste, pages
+     123–141. The National Academies Press, 1996. doi:10.17226/5269.
+
+[12] National Research Council. Underground operations at the waste isolation pi-
+     lot plant. In Safety in the Underground Construction and Operation of the Ex-
+     ploratory Studies Facility, pages 90–100. The National Academies Press, 1995.
+     Ground control and deformation monitoring.
+
+[13] Sandia National Laboratories. Isolation in salt: Repository performance at
+     wipp, 2025. Technical overview of salt creep and repository closure.
+
+[14] D.E. Munson and P.R. Dawson. Salt creep, closure, and performance assess-
+     ment at the waste isolation pilot plant. International Journal of Rock Mechanics
+     and Mining Sciences, 21(4):217–228, 1984.
+
+[15] Martin Štroner et al.         Scanning the underground:          Compari-
+     son of the accuracies of slam and static laser scanners in a
+     mine tunnel.       Measurement, 2025.          ScienceDirect article page:
+     https://www.sciencedirect.com/science/article/pii/S0263224124017603.
+
+[16] J. Kang et al. A coal mine tunnel deformation detection method us-
+     ing point cloud data. Sensors, 2024. Open-access via PubMed Central:
+     https://pmc.ncbi.nlm.nih.gov/articles/PMC11013994/.
+
+[17] Mateusz Janiszewski, Masoud Torkan, Lauri Uotinen, and Mikael Rinne. Rapid
+     photogrammetry with a 360-degree camera for tunnel mapping. Remote Sens-
+     ing, 14(21):5494, 2022. https://www.mdpi.com/2072-4292/14/21/5494.
+
+[18] Nuclear Waste Partnership LLC. WIPP Geotechnical Engineering Program
+     Plan, 2017. Effective Date: 04/12/2017.
+
+[19] U.S. Department of Energy.        Title 40 CFR Part 191 Subparts B
+     and C Compliance Recertification Application 2019:   Appendix MON
+     (Monitoring Programs), 2019.         March 26, 2019. Retrieved from
+     https://wipp.energy.gov/library/CRA/CRA
+
+[20] Waste Isolation Pilot Plant (U.S. Department of Energy). Underground aerial
+     survey conducted at wipp, June 2024. Published June 5, 2024. Retrieved from
+     https://wipp.energy.gov/wippn ews2 0240605.asp.
+
+
+
+
+                                         79
+[21] NOAA Office for Coastal Management.                An Introduction to Li-
+     dar Technology, Data, and Applications, 2012.               Retrieved from
+     https://coast.noaa.gov/data/digitalcoast/pdf/lidar-101.pdf.
+
+[22] Erika Podest.        The Fundamentals of LiDAR.               NASA Ap-
+     plied Remote Sensing Training Program,              2021.         Retrieved
+     from              https://appliedsciences.nasa.gov/sites/default/files/2021-
+     03/SIFL IDARP odestF inal.pdf.
+
+[23] Texas Instruments. LIDAR Pulsed Time of Flight Reference Design, 2018.
+     Retrieved from https://www.ti.com/lit/pdf/tiducm1.
+
+[24] Thomas Skoog et al.           Fmcw lidar:    Scaling to the chip-level
+     and improving phase noise with coherent detection.       Technical re-
+     port, University of California, Berkeley, EECS, 2019.   Retrieved from
+     https://www2.eecs.berkeley.edu/Pubs/TechRpts/2019/EECS-2019-148.pdf.
+
+[25] Hamamatsu Photonics. Measuring Distance with Light, 2021. Retrieved from
+     https://hub.hamamatsu.com/us/en/application-notes/automotive/measuring-
+     distance-with-light.html.
+
+[26] SPIE.           Lidar Range Equation,         n.d.         Retrieved    from
+     https://spie.org/samples/FG36.pdf.
+
+[27] Ocean Optics Web Book.        The lidar equation, 2021.          Retrieved
+     from https://www.oceanopticsbook.info/view/radiative-transfer-theory/level-
+     2/the-lidar-equation.
+
+[28] Velodyne Lidar, Inc. VLP-16 User Manual and Datasheet, 2020. Technical
+     specifications and system architecture overview.
+
+[29] Trimble Inc. Trimble X-Series 3D Laser Scanners Technical Specifications,
+     2023. Product technical documentation.
+
+[30] Ouster, Inc. OS-Series Digital Lidar Sensor Specifications, 2023. Product
+     datasheet and integration documentation.
+
+[31] Wolfgang Hess, Damon Kohler, Holger Rapp, and Daniel Andor. Real-time loop
+     closure in 2d lidar slam. In Proceedings of the IEEE International Conference
+     on Robotics and Automation (ICRA), pages 1271–1278, 2016.
+
+
+
+
+                                       80
+[32] Kitware, Inc. Loop closure is ready to use in lidarview!, January 2023. Kitware
+     blog post.
+
+[33] Ji Zhang and Sanjiv Singh. Loam: Lidar odometry and mapping in real-time.
+     Robotics: Science and Systems (RSS), 2014. Often cited as the original LOAM
+     work.
+
+[34] Tixiao Shan and Brendan Englot. Lego-loam: Lightweight and ground-
+     optimized lidar odometry and mapping on variable terrain. IEEE/RSJ In-
+     ternational Conference on Intelligent Robots and Systems (IROS), 2018.
+
+[35] Tixiao Shan, Brendan Englot, Carlo Ratti, and Daniela Rus. Lio-sam: Tightly-
+     coupled lidar inertial odometry via smoothing and mapping. In Proceedings
+     of the IEEE/RSJ International Conference on Intelligent Robots and Systems
+     (IROS), 2020.
+
+[36] Wei Xu and Fu Zhang. Fast-lio2: Fast direct lidar-inertial odometry. arXiv,
+     2022.
+
+[37] Stéphane Vajna et al. Kiss-icp: In defense of point-to-point icp for lidar odom-
+     etry. arXiv, 2023.
+
+[38] Kitware, Inc. Slam (kitware lidar slam), 2019. GitLab repository.
+
+[39] Kitware, Inc. lidar slam (ros2 wrapping) readme, 2025. Project documentation.
+
+[40] Kitware, Inc. How to slam with lidarview, 2025. Project documentation.
+
+[41] Kitware, Inc. Lidarslam, 2024. Open-source SLAM package for LiDAR-based
+     mapping. Accessed February 2026.
+
+[42] Brian Curless and Marc Levoy. A volumetric method for building complex
+     models from range images. Proceedings of SIGGRAPH, 1996.
+
+[43] Qian-Yi Zhou, Jaesik Park, and Vladlen Koltun. Open3d: A modern library
+     for 3d data processing. arXiv preprint arXiv:1801.09847, 2018.
+
+[44] Giorgio Grisetti, Rainer Kümmerle, Cyrill Stachniss, and Wolfram Burgard. A
+     tutorial on graph-based slam. IEEE Intelligent Transportation Systems Maga-
+     zine, 2010.
+
+
+
+
+                                         81
+[45] U.S.-German Workshop on Salt Repository Research, Design, and Operation.
+     Proceedings of the 10th u.s.-german workshop on salt repository research, de-
+     sign, and operation. In Proceedings of the 10th U.S.-German Workshop on
+     Salt Repository Research, Design, and Operation. Sandia National Laborato-
+     ries, 2019. Reports steady-state roof-to-floor convergence rates at WIPP of
+     approximately 50–150 mm/year.
+
+
+
+
+                                       82
+

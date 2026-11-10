@@ -1,0 +1,136 @@
+% !TeX root = ../main.tex
+\chapter{Literature Review}
+\label{chap:literature}
+
+% Chapter 2 reviews published work and candidate technologies.
+% Chapter 3 documents this project's selected design and implementation.
+% Replace each drafting note with sourced prose as the review develops.
+
+\section{Related Work}
+\label{sec:related-work}
+\begingroup
+\setlength{\emergencystretch}{2em}
+
+\subsection{FIU 2024: Pedro Chaviano's Vacuum Crawler}
+\label{sec:previous-fiu-crawlers}
+\label{sec:fiu-2024-crawler}
+Pedro Chaviano's 2024 internship work investigated a remotely operated vacuum crawler for cleaning the DST annulus. The prototype combined a mobile platform, pneumatic debris collection, and camera feedback, establishing a starting point for subsequent FIU development \citep{chaviano2025Crawler}. Figure~\ref{fig:pedro-crawler} shows this prototype.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.65\textwidth,height=1.7in,keepaspectratio]{Vacuum_Pedro.png}
+\caption[FIU 2024 vacuum crawler: Pedro Chaviano]{FIU 2024 vacuum crawler developed by Pedro Chaviano. Project image supplied by the author.}
+\label{fig:pedro-crawler}
+\end{figure}
+
+Chaviano's prototype used a three-dimensionally printed plastic chassis, four-wheel differential drive, and two EXAIR Line Vac modules arranged in series. One module was mounted on the crawler and the other along the umbilical, with a separate debris collector. Analog controls and onboard cameras supported remote operation. The report records debris-removal results ranging from 22\% to 95\% across the tested configurations \citep{chaviano2025Crawler}. These results demonstrate collection capability but also show that the best result cannot represent every hose arrangement. Remaining work included a metal chassis, further mobility testing with its added mass, and additional cleaning and sensing functions.
+
+This version established the feasibility of combining remote mobility with pneumatic cleaning. Its prototype construction and configuration-dependent results motivated continued development of the chassis, collection arrangement, and operating controls. These earlier contributions form part of the project's inherited foundation.
+
+\subsection{FIU 2025: Ronald Verde's Vacuum Crawler}
+\label{sec:fiu-2025-crawler}
+Ronald Verde continued the crawler's development during 2025. His version used an aluminum chassis, treaded aluminum wheels, and an onboard collection bag, with both pneumatic modules located on the crawler \citep{verde2025Crawler}. These changes provided a metal platform with the collection components integrated onto the vehicle, shown in Figure~\ref{fig:ronald-crawler}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.65\textwidth,height=1.7in,keepaspectratio]{Vacuum_Ronald.png}
+\caption[FIU 2025 vacuum crawler: Ronald Verde]{FIU 2025 vacuum crawler developed by Ronald Verde. Project image supplied by the author.}
+\label{fig:ronald-crawler}
+\end{figure}
+
+The inherited crawler's limitations, as identified by the author, were inadequate vacuum pickup, inability to turn within the annulus, and inability to traverse the required obstacles. The aluminum construction therefore did not resolve the practical cleaning and mobility requirements of the project. These limitations motivate the present work on debris collection, maneuverability, and obstacle traversal with the complete crawler and its attached hose.
+
+
+% Attribution confirmed by the author on October 11, 2026: despite the
+% 2025 report's ROS 2 claims, the inherited crawler did not implement ROS 2.
+% Do not cite that report as evidence of an earlier ROS 2 implementation.
+
+\subsection{Rolls-Royce Annulus Cleaning System}
+\label{sec:rolls-royce-cleaner}
+Rolls-Royce developed a robotic cleaning system for debris that obstructed inspection and level monitoring in the Hanford tank annulus. The technology roadmap describes mechanically relocating debris or removing it through containers. Following factory testing, the system was demonstrated to Hanford personnel in Richland in 2019, and operators received training \citep{hanford2022AnnulusCleaner}. Figure~\ref{fig:rolls-royce-cleaner} shows the reported mockup.
+
+\begin{figure}[H]
+\centering
+% Crop only the cleaner photograph from the supplied roadmap screenshot.
+% Original: 613 x 821 pixels at approximately 120 dpi; retain original file.
+\includegraphics[height=1.35in,trim=111.6bp 80.4bp 103.8bp 312.6bp,clip]{references/Rolls Royce Cleaner.png}
+\caption[Rolls-Royce annulus floor cleaner mockup]{Annulus floor cleaner mockup reported for the Rolls-Royce system \citep{hanford2022AnnulusCleaner}.}
+\label{fig:rolls-royce-cleaner}
+\end{figure}
+
+The roadmap records successful factory acceptance testing and lists the cleaning activity as complete and retired \citep{hanford2022AnnulusCleaner}. According to the project history provided for this thesis, however, the cleaner could not cross conduits on the annulus floor. This restricted its ability to reach and clean areas beyond those obstructions.
+
+The system demonstrates the value of remote annulus cleaning, while the conduit limitation identifies an access requirement that cleaning performance alone does not satisfy. With that development activity retired, the present project addresses the continuing requirement for a reliable Hanford annulus crawler that can collect debris and traverse the required obstacles to reach additional cleaning areas. The roadmap does not establish the reason for retirement; the need addressed here follows from the project's cleaning and mobility requirements.
+
+\subsection{Other Relevant Cleaning and Inspection Robots}
+\label{sec:other-cleaning-robots}
+The iRobot Roomba Combo j9+ provides a commercial example of an integrated mobile vacuum cleaner. Intended for household floors, it combines suction with rubber cleaning brushes, an edge-sweeping brush, and a retractable mop. Its navigation system recognizes common household obstacles and uses room maps to organize cleaning. The robot also returns to a dock for charging, debris emptying, and water replenishment \citep{irobot2023ComboJ9Facts}. These functions illustrate how mobility, debris pickup, sensing, and collection can be coordinated within one cleaning system.
+
+For this project, its most relevant ideas are controlled coverage, obstacle awareness, and coordinated servicing of the collection system. Such functions could inform future operator assistance or cleaning-route planning. They would still need to be adapted to the annulus geometry and validated with the target debris; household cleaning performance does not demonstrate performance on corrosion products or cold-spray residue.
+
+The physical configuration also limits direct use. The manufacturer lists a robot footprint of 13.7 by 13.7 inches, exceeding the project's nominal 12-inch riser diameter \citep{irobotComboJ9Specifications}. Its dependence on a reachable dock for routine servicing would require a different deployment and recovery arrangement in the tank. Furthermore, the manufacturer's obstacle-avoidance description does not establish the ability to cross the specified protective pipes. The reviewed product documentation provides no qualification for radiation exposure or contaminated-debris collection \citep{irobot2023ComboJ9Facts,irobotComboJ9Specifications}.
+
+The Roomba is therefore a useful reference for integrating cleaning and navigation, but its documented configuration is unsuitable for direct adoption as this annulus crawler. The thesis system must prioritize restricted access, hose management, controlled retrieval, and verified debris recovery while retaining operator visibility throughout the task.
+\par
+\endgroup
+% End Section 2.1 with a comparison table once sources are verified.
+% Suggested columns: system, deployment, mobility, cleaning method,
+% demonstrated capability, limitation, and source.
+
+\section[Vacuum Generation and Debris Collection Technologies]{Vacuum Generation and Debris\\Collection Technologies}
+\label{sec:vacuum-technologies}
+
+\subsection{Compressed-Air Venturi Vacuum Systems}
+\label{sec:venturi-vacuums}
+\draftnote{Explain the operating principle, compressed-air requirements, and performance characteristics. Review debris-handling configurations and distinguish conveying applications from vacuum gripping.}
+
+\subsection{Electric Motor-Driven Vacuum Systems}
+\label{sec:electric-vacuums}
+\draftnote{Review motor-driven vacuum units, including bypass-motor designs. Compare airflow, suction pressure, power demand, duty cycle, filtration, and service needs.}
+
+\subsection{Regenerative or Side-Channel Blower Systems}
+\label{sec:side-channel-blowers}
+\draftnote{Explain this blower architecture and its use in vacuum collection. Review performance curves, operating limits, and separation of debris from the blower.}
+% This subsection treats a specific electrically driven architecture;
+% avoid presenting it as a different energy source from Section 2.2.2.
+
+\subsection{Suitability for Annulus Debris Removal}
+\label{sec:vacuum-annulus-suitability}
+\draftnote{Compare the options against hose losses, debris properties, filtration, available utilities, and maintenance. Consider locating the vacuum source onboard or outside the tank.}
+% Summarize promising options here; justify the final selection in Chapter 3.
+
+\section[Crawler Mechanical Configurations and Mobility]{Crawler Mechanical Configurations\\and Mobility}
+\label{sec:crawler-mechanical-configurations}
+
+\subsection{Chassis Configurations}
+\label{sec:chassis-configurations}
+\draftnote{Review rigid, articulated, and reconfigurable frames. Compare deployment envelope, turning clearance, structural support, component packaging, and maintenance access.}
+
+\subsection{Wheeled and Tracked Locomotion}
+\label{sec:wheeled-tracked-locomotion}
+\draftnote{Compare wheels and tracks, including wheel diameter, tread, compliance, and steering arrangements. Relate published findings to the project's surfaces and obstacles.}
+
+\subsection{Obstacle Traversal and Stability}
+\label{sec:obstacle-traversal-review}
+\draftnote{Review ground clearance, wheel contact, mass distribution, and hose loading during obstacle crossing. Identify principles relevant to traversing the thermocouple protective pipes.}
+
+\section{Remote Control, Electronics, and Sensing}
+\label{sec:remote-control-review}
+
+\subsection{Control Architectures and ROS 2}
+\label{sec:control-architectures-review}
+\draftnote{Review onboard computers, microcontrollers, motor controllers, and communication links. Explain relevant ROS 2 concepts using verified documentation; reserve the implemented architecture for Chapter 3.}
+
+\subsection{Video Feedback and Operator Interfaces}
+\label{sec:video-feedback-review}
+\draftnote{Compare camera interfaces, video transmission, lighting, and operator displays. Discuss viewing coverage, latency, bandwidth, and behavior when video is lost.}
+
+\subsection{Instrumentation and Fault Monitoring}
+\label{sec:instrumentation-review}
+\draftnote{Review pressure, airflow, motor-current, temperature, and collection monitoring. Establish what each measurement can detect and how alarms would be validated.}
+% Investigate bag-fill detection separately from filter loading or blockage.
+% Do not assume that one pressure measurement uniquely identifies a full bag.
+
+\section{Research Gap and Implications for This Project}
+\label{sec:research-gap}
+\draftnote{Synthesize the verified findings, identify unresolved questions, and connect them to the design in Chapter~\ref{chap:design} and experiments in Chapter~\ref{chap:methods}.}

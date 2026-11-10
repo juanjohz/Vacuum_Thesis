@@ -1,0 +1,941 @@
+           FLORIDA INTERNATIONAL UNIVERSITY
+                           Miami, Florida
+
+
+
+
+  DEVELOPMENT AND OPTIMIZATION OF A ROS 2-BASED ROBOTIC
+VACUUM CRAWLER FOR DEBRIS REMOVAL AND INSPECTION SUPPORT
+IN DOUBLE-SHELL TANK ANNULUS ENVIRONMENTS AT THE HANFORD
+                                SITE
+
+
+
+
+           A thesis submitted in partial fulfillment of the
+                   requirements for the degree of
+                      MASTER OF SCIENCE
+                                  in
+                 MECHANICAL ENGINEERING
+                                 by
+                         Juan J. Hernandez
+
+
+
+
+                                2027
+             COPYRIGHT
+
+
+
+
+Copyright   © 2027 by Juan J. Hernandez
+            All rights reserved.
+
+
+
+
+                     ii
+                           ACKNOWLEDGMENTS
+
+
+
+
+Drafting note: Write personal and institutional acknowledgments after confirming
+names, affiliations, and any required funding language.
+
+
+
+
+                                         iii
+                        ABSTRACT OF THE THESIS
+
+
+
+
+   DEVELOPMENT AND OPTIMIZATION OF A ROS 2-BASED ROBOTIC
+VACUUM CRAWLER FOR DEBRIS REMOVAL AND INSPECTION SUPPORT
+IN DOUBLE-SHELL TANK ANNULUS ENVIRONMENTS AT THE HANFORD
+                           SITE
+
+                                         by
+                                 Juan J. Hernandez
+                       Florida International University, 2027
+                                  Miami, Florida
+
+
+Drafting note: Confirm the major professor and write the final abstract after the
+results are analyzed. State the problem, method, principal quantitative findings, and
+contribution.
+
+
+
+
+                                         iv
+                            TABLE OF CONTENTS
+
+
+
+LIST OF FIGURES                                                                      vii
+
+LIST OF TABLES                                                                       viii
+
+LIST OF ABBREVIATIONS                                                                 ix
+
+1 Introduction                                                                         1
+  1.1 Background . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .       1
+  1.2 Operational Context and Motivation . . . . . . . . . . . . . . . . . .           5
+  1.3 Double-Shell Tank Annulus Constraints and Requirements . . . . . .               8
+  1.4 Planned Validation at the Cold Test Facility . . . . . . . . . . . . . .        10
+
+2 Literature Review                                                                   12
+  2.1 Related Work . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .      12
+       2.1.1 FIU 2024: Pedro Chaviano’s Vacuum Crawler . . . . . . . . .              12
+       2.1.2 FIU 2025: Ronald Verde’s Vacuum Crawler . . . . . . . . . .              13
+       2.1.3 Rolls-Royce Annulus Cleaning System . . . . . . . . . . . . .            13
+       2.1.4 Other Relevant Cleaning and Inspection Robots . . . . . . . .            14
+  2.2 Vacuum Generation and Debris Collection Technologies . . . . . . . .            15
+       2.2.1 Compressed-Air Venturi Vacuum Systems . . . . . . . . . . .              15
+       2.2.2 Electric Motor-Driven Vacuum Systems . . . . . . . . . . . . .           16
+       2.2.3 Regenerative or Side-Channel Blower Systems . . . . . . . . .            16
+       2.2.4 Suitability for Annulus Debris Removal . . . . . . . . . . . . .         16
+  2.3 Crawler Mechanical Configurations and Mobility . . . . . . . . . . . .          16
+       2.3.1 Chassis Configurations . . . . . . . . . . . . . . . . . . . . . .       16
+       2.3.2 Wheeled and Tracked Locomotion . . . . . . . . . . . . . . . .           16
+       2.3.3 Obstacle Traversal and Stability . . . . . . . . . . . . . . . . .       17
+  2.4 Remote Control, Electronics, and Sensing . . . . . . . . . . . . . . . .        17
+       2.4.1 Control Architectures and ROS 2 . . . . . . . . . . . . . . . .          17
+       2.4.2 Video Feedback and Operator Interfaces . . . . . . . . . . . .           17
+       2.4.3 Instrumentation and Fault Monitoring . . . . . . . . . . . . .           17
+  2.5 Research Gap and Implications for This Project . . . . . . . . . . . .          18
+
+3 System Design                                                                       19
+  3.1 Requirements and design constraints . . . . . . . . . . . . . . . . . .         19
+  3.2 Overall architecture and deployment . . . . . . . . . . . . . . . . . .         19
+  3.3 Chassis, drivetrain, and traction . . . . . . . . . . . . . . . . . . . . .     19
+  3.4 Vacuum subsystem . . . . . . . . . . . . . . . . . . . . . . . . . . . .        20
+  3.5 Electronics and ROS 2 control . . . . . . . . . . . . . . . . . . . . . .       20
+  3.6 Design tradeoffs . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .    20
+
+
+                                           v
+4 Experimental Methods                                                              21
+  4.1 Test environments and apparatus . . . . . . . . . . . . . . . . . . . .       21
+  4.2 Configurations and experimental matrix . . . . . . . . . . . . . . . .        21
+  4.3 Deployment and mobility tests . . . . . . . . . . . . . . . . . . . . . .     21
+  4.4 Debris recovery tests . . . . . . . . . . . . . . . . . . . . . . . . . . .   22
+  4.5 ROS 2 and operator-control tests . . . . . . . . . . . . . . . . . . . .      22
+  4.6 Data reduction and statistical analysis . . . . . . . . . . . . . . . . .     22
+
+5 Results and Discussion                                                            23
+  5.1 Deployment and mobility . . . . . . . . . . . . . . . . . . . . . . . . .     23
+  5.2 Vacuum and debris recovery . . . . . . . . . . . . . . . . . . . . . . .      23
+  5.3 ROS 2 and operator control . . . . . . . . . . . . . . . . . . . . . . .      23
+  5.4 Integrated-system tradeoffs . . . . . . . . . . . . . . . . . . . . . . . .   23
+
+6 Conclusions and Future Work                                                       24
+  6.1 Answers to the research questions . . . . . . . . . . . . . . . . . . . .     24
+  6.2 Contributions and limitations . . . . . . . . . . . . . . . . . . . . . .     24
+  6.3 Future work . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   24
+
+BIBLIOGRAPHY                                                                        25
+
+
+
+
+                                          vi
+                             LIST OF FIGURES
+
+
+
+1.1   Aerial view of the Hanford Site . . . . . . . . . . . . . . . . . . . . .     1
+1.2   Construction of underground tanks in Handford . . . . . . . . . . . .         3
+1.3   Ilustration of a Double Shell Tank . . . . . . . . . . . . . . . . . . . .    4
+1.4   Ultrasonic Testing Crawler . . . . . . . . . . . . . . . . . . . . . . . .    5
+1.5   Debri Inside of the Annulus . . . . . . . . . . . . . . . . . . . . . . .     7
+1.6   Reference tank layout (placeholder: tank 241-A-101). . . . . . . . . .        9
+1.7   Annulus floor, curved tank surfaces, and installed piping. . . . . . . .     10
+1.8   Cold Test Facility in Richland, Washington. . . . . . . . . . . . . . .      11
+
+2.1   Annulus floor cleaner mockup reported for the Rolls-Royce system [1].        14
+
+
+
+
+                                        vii
+LIST OF TABLES
+
+
+
+
+     viii
+                   LIST OF ABBREVIATIONS
+
+
+
+
+Abbreviation   Meaning
+
+CAD            Computer-aided design
+CTF            Cold Test Facility
+DOE            U.S. Department of Energy
+DST            Double-shell tank
+FIU            Florida International University
+ROS 2          Robot Operating System 2
+SST            Single-shell tank
+UT             Ultrasonic testing
+
+
+
+
+                                    ix
+                                    CHAPTER 1
+                                INTRODUCTION
+
+
+1.1     Background
+The Hanford Site was established in 1943 in southeastern Washington State as part
+of the Manhattan Project, the United States’ wartime program to develop atomic
+weapons. Its primary purpose was the large-scale production of plutonium through
+the irradiation of uranium fuel and subsequent chemical separation. The location
+offered several advantages for this mission, including a large area isolated from major
+population centers, access to Columbia River water for reactor cooling, and an abundant
+supply of hydroelectric power. These conditions supported the rapid construction of
+nuclear reactors and processing facilities that became central to the nation’s nuclear
+weapons program [2].
+
+
+
+
+                     Figure 1.1: Aerial view of the Hanford Site
+
+
+       Plutonium produced at Hanford was used in the Trinity test and in the atomic
+bomb dropped on Nagasaki in 1945. Following World War II, production expanded
+to meet the demands of the Cold War, extending the site’s operations for several
+decades. Consequently, Hanford’s waste inventory developed from both its initial
+
+                                          1
+Manhattan Project activities and its subsequent defense production mission. In 1989,
+the site’s mission shifted toward environmental cleanup, requiring the management
+of the radioactive and chemical waste accumulated throughout its operating history
+[3, 4].
+          The recovery of plutonium from irradiated uranium fuel generated substantial
+quantities of radioactive waste. Chemical processing separated the desired plutonium
+from the fuel, leaving waste streams containing radioactive by-products and chemicals
+used during separation. Much of this waste was transferred to underground storage
+tanks arranged in groups known as tank farms within Hanford’s 200 Area. Over
+time, the stored material developed into a complex mixture of liquid supernatant,
+settled sludge, and saltcake. These forms differ in composition and physical behavior,
+complicating their storage, characterization, and eventual retrieval [5, 6].
+          The environmental consequences of this production legacy extend beyond
+the waste retained in the tanks. Historical waste disposal practices and losses of
+containment contributed to contamination of the surrounding soil and groundwater.
+Tank leakage presents an additional concern because contaminants released into the
+soil can migrate through the subsurface and potentially reach groundwater connected
+to the Columbia River.       The rate and extent of this movement depend on the
+properties of the contaminants and the surrounding geological conditions. Preventing
+further releases is therefore essential to protecting water resources, ecosystems, and
+nearby communities [6, 7].
+
+
+
+
+                                           2
+            Figure 1.2: Construction of underground tanks in Handford
+
+
+       Secure storage is a fundamental requirement for managing this waste while
+retrieval, treatment, and disposal activities proceed. Storage systems must maintain
+containment over extended periods while allowing operators to monitor their condition
+and identify deterioration. At Hanford, this requirement is particularly challenging
+because much of the original infrastructure has remained in service beyond its intended
+design life. Maintaining tank integrity therefore requires continued assessment of the
+storage structures and the development of reliable methods for detecting conditions
+that could compromise containment [8].
+       The earliest underground storage system consisted of single-shell tanks (SSTs),
+of which 149 were constructed between 1943 and 1964. These tanks incorporated a
+carbon-steel liner encased in concrete, with the steel providing the primary barrier
+between the waste and the surrounding structure. Their intended service life was
+approximately 20 years. However, the prolonged storage of waste and the deterioration
+
+
+                                          3
+of aging tanks exposed the limitations of this configuration. Because SSTs lack a
+separate secondary steel containment barrier, a failure of the liner can allow waste to
+escape into the surrounding environment [8].
+       To improve containment and support continued waste management, Hanford
+constructed 28 double-shell tanks (DSTs) between 1968 and 1986. Each DST consists
+of a primary carbon-steel tank positioned within a secondary carbon-steel liner and
+surrounded by a reinforced-concrete structure.      The secondary liner provides an
+additional barrier to retain waste if the primary tank leaks.       An approximately
+30-inch-wide space, known as the annulus, separates the primary tank wall from
+the secondary liner and provides access for monitoring and inspection. These tanks
+receive waste retrieved from SSTs and support the transfer of waste for treatment.
+Their continued operation depends on maintaining the integrity of both containment
+barriers, making inspection and maintenance within the annular space an important
+component of Hanford’s waste storage mission [9].
+
+
+
+
+                   Figure 1.3: Ilustration of a Double Shell Tank
+
+                                          4
+1.2     Operational Context and Motivation
+
+The continued use of Hanford’s double-shell tanks depends on periodic inspection
+to assess the condition of their steel containment barriers. As these structures age,
+corrosion and localized degradation can reduce the remaining metal thickness and
+compromise their ability to retain waste. Visual examinations and ultrasonic inspections
+provide complementary information for evaluating tank condition and planning maintenance.
+While visual inspections document accessible surface conditions, thickness measurements
+provide quantitative evidence of metal loss that may not be apparent from images
+alone. Maintaining access to the surfaces being inspected is therefore an essential
+part of the tank integrity program [9, 10].
+
+
+
+
+                       Figure 1.4: Ultrasonic Testing Crawler
+
+
+       Ultrasonic testing (UT) is a nondestructive inspection method used to evaluate
+
+                                          5
+material condition without removing a sample from the structure. In ultrasonic
+thickness measurements, a transducer introduces high-frequency sound into the steel,
+and the instrument determines thickness from the travel time of the returning echoes
+and the calibrated sound velocity in the material. These measurements allow engineers
+to assess remaining wall thickness and identify areas of thinning associated with
+corrosion [11]. At Hanford, remotely operated inspection systems have been used to
+examine DST walls, and specialized equipment has been developed to obtain thickness
+measurements beneath the primary tank through air channels in its supporting insulating
+pad. These applications demonstrate both the importance of UT and the access
+challenges involved in inspecting underground tank structures [10].
+       Debris accumulation within the annulus creates an additional obstacle to
+inspection. The cleaning application addressed in this thesis includes loose corrosion
+products and material released during mechanical surface preparation that can collect
+on the annulus floor. Such deposits can obstruct inspection routes and limit access to
+measurement locations. Where loose material remains between a contact transducer
+and the steel, it can also interfere with acoustic coupling [12]. These considerations
+make debris removal an important preparatory operation for inspecting affected areas.
+
+
+
+
+                                          6
+                        Figure 1.5: Debri Inside of the Annulus
+
+
+       Tank refurbishment activities introduce a further cleaning requirement. Cold
+spray technology deposits metal powder at supersonic speed to form a bonded layer on
+a target surface. Hanford has applied this approach remotely to create a metal patch
+on the floor between the primary and secondary tank walls as part of efforts to extend
+tank service life [13]. For the cleaning application considered in this thesis, fine powder
+residue associated with cold-spray operations is an additional target material. The
+cleaning system must therefore address both larger loose debris and fine particulate
+deposits in support of subsequent inspection and maintenance.
+       The effect of this material on UT extends beyond physical access. Contact
+ultrasonic measurements require effective acoustic coupling between the transducer
+and the steel surface. Loose rust, scale, and dirt can interfere with the transmission of
+sound into the material, while poor coupling can reduce the strength of the returning
+signal and compromise measurement reliability [12]. Where loose powder or debris
+
+
+
+                                            7
+covers a required measurement location, surface cleaning may therefore be necessary
+before a usable thickness reading can be obtained. Removing these deposits helps
+establish suitable conditions for inspection, although the adequacy of the prepared
+surface must still be assessed using the applicable UT procedure.
+       These conditions motivate the development of a remotely operated system
+for removing dust and debris from the DST annulus. The annulus provides limited
+access to the tank surfaces, and Hanford already uses remotely operated equipment
+for inspection and cold-spray application [9, 10, 13]. The cleaning approach considered
+here likewise uses remote operation to address the confined geometry and keep personnel
+outside the tank. A robotic vacuum crawler offers a means of moving an extraction
+inlet to affected areas while allowing an operator to guide the system from outside
+the tank. The objective is to collect loose material, clear inspection routes, and
+improve access to surfaces required for subsequent ultrasonic examinations. This
+operational need provides the motivation for the mechanical, vacuum, and control-
+system development investigated in this thesis.
+
+
+
+1.3     Double-Shell Tank Annulus Constraints and
+
+        Requirements
+
+The crawler must satisfy the access, mobility, and cleaning requirements of the
+complete deployed system, including its vacuum hose and control connections. The
+dimensions below are preliminary project inputs to be confirmed against the selected
+tank geometry.
+       The crawler must pass through a nominal 12-inch-diameter riser and transition
+onto the annulus floor.     The project access arrangement considers four risers
+approximately 90◦ apart, providing alternative entry points for cleaning areas that
+support subsequent inspection. The deployment envelope must include cameras,
+
+
+                                          8
+lights, and hose connections, with clearance for insertion and retrieval.
+
+
+
+
+         Figure 1.6: Reference tank layout (placeholder: tank 241-A-101).
+
+
+       Within the nominal 32-inch project annulus spacing, the crawler must travel,
+reverse, and turn while accounting for the reduced floor clearance near the curved
+tank bottom. Figure 1.7 illustrates the curvature and installed piping. Mobility must
+also include crossing a preliminary 0.75-inch obstacle height, representing protective
+pipes associated with thermocouple temperature instrumentation. The final obstacle
+profile requires confirmation of the pipe diameter and installed height. During these
+maneuvers, the crawler must remain stable with its hose attached and avoid damaging
+the tank or instrumentation.
+
+
+
+
+                                           9
+       Figure 1.7: Annulus floor, curved tank surfaces, and installed piping.
+
+
+       The vacuum system must collect loose debris and convey it into a collection
+system without persistent blockage. The required debris-size range is [minimum
+size] to [maximum size], [units], pending mentor confirmation. Recovery targets
+and the representative debris mixture will be defined before testing.
+       Continuous video feedback and onboard lighting must allow the operator to
+guide motion, observe the inlet, and monitor obstacles. Remote viewing is also
+identified in earlier Hanford inspection-system requirements [14]. A proposed control
+requirement is to stop the drive system upon loss of the command link and require
+deliberate restart. Recovery, service access, and environmental protection will be
+addressed when finalizing the deployment requirements.
+
+
+
+1.4     Planned Validation at the Cold Test Facility
+
+Full-system validation of the crawler is planned at Hanford’s Cold Test Facility
+(CTF), shown in Figure 1.8. The facility has supported mockup demonstrations
+of robotic deployment and navigation in a simulated DST annulus [15]. For this
+
+
+                                         10
+project, testing will evaluate riser deployment and retrieval, maneuverability, obstacle
+traversal, debris recovery, and operator feedback with the vacuum hose and control
+system connected. The test configuration and acceptance criteria will be established
+before the demonstration.      These tests will assess integrated operation under
+representative conditions; radiation tolerance and any specified splash-resistance
+rating require separate qualification.
+
+
+
+
+              Figure 1.8: Cold Test Facility in Richland, Washington.
+
+
+
+
+                                          11
+                                    CHAPTER 2
+
+                            LITERATURE REVIEW
+
+
+
+
+2.1      Related Work
+
+2.1.1     FIU 2024: Pedro Chaviano’s Vacuum Crawler
+
+Pedro Chaviano’s 2024 internship work investigated a remotely operated vacuum
+crawler for cleaning the DST annulus. The prototype combined a mobile platform,
+pneumatic debris collection, and camera feedback, establishing a starting point for
+subsequent FIU development [16].
+        Chaviano’s prototype used a three-dimensionally printed plastic chassis, four-
+wheel differential drive, and two EXAIR Line Vac modules arranged in series. One
+module was mounted on the crawler and the other along the umbilical, with a separate
+debris collector. Analog controls and onboard cameras supported remote operation.
+The report records debris-removal results ranging from 22% to 95% across the tested
+configurations [16]. These results demonstrate collection capability but also show that
+the best result cannot represent every hose arrangement. Remaining work included a
+metal chassis, further mobility testing with its added mass, and additional cleaning
+and sensing functions.
+        This version established the feasibility of combining remote mobility with
+pneumatic cleaning. Its prototype construction and configuration-dependent results
+motivated continued development of the chassis, collection arrangement, and
+operating controls. These earlier contributions form part of the project’s inherited
+foundation.
+
+
+                                          12
+2.1.2     FIU 2025: Ronald Verde’s Vacuum Crawler
+
+Ronald Verde continued the crawler’s development during 2025.              His version
+introduced an aluminum chassis, treaded aluminum wheels, and an onboard collection
+bag, with both pneumatic modules located on the crawler. The report also describes
+a redesigned intake, deployment through mockup risers, and turning within a 30-inch
+annulus representation [17]. These changes developed the mechanical platform and
+brought the collection components together on the vehicle.
+        Verde identified weight distribution, obstacle traversal, suction testing, and a
+fail-safe start/stop function as areas for further development. Radiation hardening
+and a final CTF validation were also listed as future work [17]. The report therefore
+leaves further work before the configuration can be treated as a qualified tank-cleaning
+system. In particular, the present project requires evaluation of the complete vehicle
+with its hose attached and with representative obstacles and debris.
+        The author implemented the Robot Operating System 2 (ROS 2) architecture
+used in the present crawler as part of this thesis. Verde’s mechanical and pneumatic
+work provides an inherited platform for that implementation and the subsequent
+system evaluation described in Chapter 3.
+
+
+2.1.3     Rolls-Royce Annulus Cleaning System
+
+Rolls-Royce developed a robotic cleaning system for debris that obstructed inspection
+and level monitoring in the Hanford tank annulus. The technology roadmap describes
+mechanically relocating debris or removing it through containers. Following factory
+testing, the system was demonstrated to Hanford personnel in Richland in 2019, and
+operators received training [1]. Figure 2.1 shows the reported mockup.
+
+
+
+
+                                           13
+ Figure 2.1: Annulus floor cleaner mockup reported for the Rolls-Royce system [1].
+
+
+        The roadmap marks the activity as complete and retired, and reports
+successful factory acceptance testing. It does not identify a failure or explain why
+the activity was retired. Consequently, retirement alone cannot support a claim that
+the cleaner failed [1].
+        Its relevance is the combination of remote mobility and debris handling
+for the same operating space. However, the supplied summary gives no recovery
+fraction, particle-size range, riser clearance, or obstacle-crossing results. It therefore
+cannot establish compliance with this project’s 12-inch access and 0.75-inch obstacle
+requirements.    For comparison, its principal limitation is the lack of published
+performance detail in the available source; the vacuum crawler developed here
+requires explicit tests of those functions.
+
+
+2.1.4     Other Relevant Cleaning and Inspection Robots
+
+The iRobot Roomba Combo j9+ provides a commercial example of an integrated
+mobile vacuum cleaner. Intended for household floors, it combines suction with rubber
+cleaning brushes, an edge-sweeping brush, and a retractable mop. Its navigation
+system recognizes common household obstacles and uses room maps to organize
+cleaning. The robot also returns to a dock for charging, debris emptying, and water
+replenishment [18]. These functions illustrate how mobility, debris pickup, sensing,
+and collection can be coordinated within one cleaning system.
+
+
+                                              14
+        For this project, its most relevant ideas are controlled coverage, obstacle
+awareness, and coordinated servicing of the collection system. Such functions could
+inform future operator assistance or cleaning-route planning. They would still need to
+be adapted to the annulus geometry and validated with the target debris; household
+cleaning performance does not demonstrate performance on corrosion products or
+cold-spray residue.
+        The physical configuration also limits direct use. The manufacturer lists a
+robot footprint of 13.7 by 13.7 inches, exceeding the project’s nominal 12-inch riser
+diameter [19]. Its dependence on a reachable dock for routine servicing would require
+a different deployment and recovery arrangement in the tank. Furthermore, the
+manufacturer’s obstacle-avoidance description does not establish the ability to cross
+the specified protective pipes. The reviewed product documentation provides no
+qualification for radiation exposure or contaminated-debris collection [18, 19].
+        The Roomba is therefore a useful reference for integrating cleaning and
+navigation, but its documented configuration is unsuitable for direct adoption as
+this annulus crawler.    The thesis system must prioritize restricted access, hose
+management, controlled retrieval, and verified debris recovery while retaining
+operator visibility throughout the task.
+
+
+
+2.2      Vacuum Generation and Debris Collection Technologies
+
+2.2.1     Compressed-Air Venturi Vacuum Systems
+
+Drafting note: Explain the operating principle, compressed-air requirements, and
+performance characteristics. Review debris-handling configurations and distinguish
+conveying applications from vacuum gripping.
+
+
+
+
+                                           15
+2.2.2     Electric Motor-Driven Vacuum Systems
+
+Drafting note: Review motor-driven vacuum units, including bypass-motor designs.
+Compare airflow, suction pressure, power demand, duty cycle, filtration, and service
+needs.
+
+
+2.2.3     Regenerative or Side-Channel Blower Systems
+
+Drafting note: Explain this blower architecture and its use in vacuum collection.
+Review performance curves, operating limits, and separation of debris from the
+blower.
+
+
+2.2.4     Suitability for Annulus Debris Removal
+
+Drafting note: Compare the options against hose losses, debris properties, filtration,
+available utilities, and maintenance. Consider locating the vacuum source onboard
+or outside the tank.
+
+
+
+2.3       Crawler Mechanical Configurations and Mobility
+
+2.3.1     Chassis Configurations
+
+Drafting note: Review rigid, articulated, and reconfigurable frames. Compare
+deployment envelope, turning clearance, structural support, component packaging,
+and maintenance access.
+
+
+2.3.2     Wheeled and Tracked Locomotion
+
+Drafting note: Compare wheels and tracks, including wheel diameter, tread, compliance,
+and steering arrangements. Relate published findings to the project’s surfaces and
+
+
+                                         16
+obstacles.
+
+
+2.3.3        Obstacle Traversal and Stability
+
+Drafting note: Review ground clearance, wheel contact, mass distribution, and
+hose loading during obstacle crossing. Identify principles relevant to traversing the
+thermocouple protective pipes.
+
+
+
+2.4      Remote Control, Electronics, and Sensing
+
+2.4.1        Control Architectures and ROS 2
+
+Drafting note: Review onboard computers, microcontrollers, motor controllers, and
+communication links. Explain relevant ROS 2 concepts using verified documentation;
+reserve the implemented architecture for Chapter 3.
+
+
+2.4.2        Video Feedback and Operator Interfaces
+
+Drafting note: Compare camera interfaces, video transmission, lighting, and operator
+displays. Discuss viewing coverage, latency, bandwidth, and behavior when video is
+lost.
+
+
+2.4.3        Instrumentation and Fault Monitoring
+
+Drafting note: Review pressure, airflow, motor-current, temperature, and collection
+monitoring. Establish what each measurement can detect and how alarms would be
+validated.
+
+
+
+
+                                         17
+2.5     Research Gap and Implications for This Project
+
+Drafting note: Synthesize the verified findings, identify unresolved questions, and
+connect them to the design in Chapter 3 and experiments in Chapter 4.
+
+
+
+
+                                        18
+                                    CHAPTER 3
+
+                                SYSTEM DESIGN
+
+
+
+
+3.1     Requirements and design constraints
+
+Drafting note: Create a traceable requirements table with requirement ID, source,
+target, verification method, and status. Confirm every dimension and environmental
+assumption against the latest project documents.
+
+
+
+3.2     Overall architecture and deployment
+
+Drafting note: Add a labeled system diagram and describe the riser entry sequence,
+tether and hose routing, operator station, and retrieval strategy.
+
+
+
+3.3     Chassis, drivetrain, and traction
+
+This chapter will document the crawler’s chassis, wheel geometry, modular assemblies,
+and traction features. The design discussion will explain the selection of the thesis
+configuration and distinguish the changes evaluated in this study from features inherited
+from earlier prototypes.
+Drafting note: Insert dimensioned CAD figures, component specifications, material
+choices, and mass properties. Identify the exact baseline version used for comparison.
+
+
+
+
+                                          19
+3.4      Vacuum subsystem
+
+Drafting note: Document the selected generator arrangement, air supply, hose path,
+intake geometry, collection path, and operating limits. Include a flow diagram and
+measured rather than assumed performance values.
+
+
+
+3.5      Electronics and ROS 2 control
+
+Drafting note: Include hardware block and ROS 2 node diagrams, topics, command
+path, video path, power distribution, and fault behavior. Record software versions
+and configuration files.
+
+
+
+3.6      Design tradeoffs
+
+Drafting note: Summarize deployment size, traction, suction, power, serviceability,
+and tether effects in a concise tradeoff table.
+
+
+
+
+                                           20
+                                   CHAPTER 4
+
+                        EXPERIMENTAL METHODS
+
+
+
+
+4.1     Test environments and apparatus
+
+Drafting note: Describe FIU test fixtures and any Hanford cold-test mockup actually
+used. Record geometry, surface material, obstacles, lighting, compressed air supply,
+and measurement instruments.
+
+
+
+4.2     Configurations and experimental matrix
+
+Drafting note: Define the baseline and test configurations before data collection.
+Specify sample count, repetition, run order, and controls for wheel, vacuum, and
+software comparisons.
+
+
+
+4.3     Deployment and mobility tests
+
+Drafting note: Define deployment clearance, traversal success, turning radius, slip,
+speed, tether drag, and obstacle-height measurements. Include pass/fail criteria and
+uncertainty.
+
+
+
+
+                                        21
+4.4     Debris recovery tests
+
+For a test with a known initial mass of deposited surrogate material, debris recovery
+can be reported as
+                                          mcollected
+                            ηrecovery =              × 100%.                    (4.1)
+                                          mdeposited
+
+Drafting note: Define where and how collected mass is measured, any residual
+material, surrogate properties, nozzle path, cleaning time, and scale uncertainty.
+Predefine how repeated runs will be summarized.
+
+
+
+4.5     ROS 2 and operator-control tests
+
+Drafting note: Define end-to-end command latency, telemetry continuity, video
+behavior, node restart behavior, and loss-of-communication response. Record the
+network setup and logging method.
+
+
+
+4.6     Data reduction and statistical analysis
+
+Drafting note: State the analysis plan before reporting results: units, error bars,
+treatment of failed runs, comparisons, and uncertainty propagation.
+
+
+
+
+                                            22
+                                    CHAPTER 5
+
+                        RESULTS AND DISCUSSION
+
+
+
+
+5.1     Deployment and mobility
+
+Drafting note: Insert measured results with sample sizes, uncertainty, figures, and
+comparison to the baseline. Distinguish observations from explanations.
+
+
+
+5.2     Vacuum and debris recovery
+
+Drafting note: Report recovery calculated with Equation 4.1, operating conditions,
+and the effect of nozzle and generator configuration.
+
+
+
+5.3     ROS 2 and operator control
+
+Drafting note: Report latency, reliability, fault recovery, and operator observations
+under the documented test conditions.
+
+
+
+5.4     Integrated-system tradeoffs
+
+Drafting note: Discuss whether improvements in one subsystem imposed costs
+elsewhere. Connect every conclusion to a result or a clearly identified limitation.
+
+
+
+
+                                          23
+                                   CHAPTER 6
+
+                  CONCLUSIONS AND FUTURE WORK
+
+
+
+
+6.1     Answers to the research questions
+
+Drafting note: Answer each question from Chapter 1 with the measured evidence
+and state the limits of the comparison.
+
+
+
+6.2     Contributions and limitations
+
+Drafting note: Summarize the verified engineering contributions and the conditions
+under which the findings apply.
+
+
+
+6.3     Future work
+
+Drafting note: Prioritize remaining design, testing, and field-validation tasks based
+on the demonstrated limitations.
+
+
+
+
+                                          24
+                               BIBLIOGRAPHY
+
+
+
+
+[1] Tank    Annulus       Floor    Cleaning—Complete      (MTW-82)—Retired.
+   Technology   roadmap     excerpt,   RPP-PLAN-43988,    Rev.   7,   p.   202,
+   2022.     URL      https://www.energy.gov/sites/default/files/2023-08/
+   Hanford-Tank-Farms-TD-Roadmap-Appendices.pdf.         Verified against the
+   author-supplied page image, stamped October 12, 2022 (page 216 of 243).
+   Accessed October 11, 2026.
+
+[2] National Park Service. Manhattan Project Site Selection, 2023. URL https:
+   //www.nps.gov/articles/000/manhattan-project-site-selection.htm.
+   Accessed October 4, 2026.
+
+[3] National Park Service. Hanford: T Plant Virtual Tour. URL https://www.nps.
+   gov/mapr/learn/photosmultimedia/hanford-t-plant-virtual-tour.htm.
+   Accessed October 4, 2026.
+
+[4] U.S. Department of Energy. Hanford Progress Shows Trump Administration’s
+   Commitment to Environmental Management.         Department of Energy news
+   release, 2020. Accessed October 4, 2026.
+
+[5] U.S. Department of Energy. Tank Farms. URL https://www.hanford.gov/
+   page.cfm/tankfarms. Accessed October 4, 2026.
+
+[6] U.S. Government Accountability Office. Nuclear Waste: DOE Lacks Critical
+   Information Needed to Assess Its Tank Management Strategy at Hanford.
+   Technical Report GAO-08-793, U.S. Government Accountability Office, 2008.
+   URL https://www.gao.gov/assets/a277692.html.
+
+
+                                       25
+ [7] Washington State Department of Ecology.         Hanford Leaking Tanks.   URL
+    https://ecology.wa.gov/waste-toxics/nuclear-waste/hanford-cleanup/
+    leaking-tanks. Accessed October 4, 2026.
+
+ [8] U.S. Department of Energy, Office of Inspector General.          Tank Waste
+    Management at the Hanford Site.       Technical Report DOE-OIG-20-57, U.S.
+    Department of Energy, 2020. URL https://www.energy.gov/ig/articles/
+    audit-report-doe-oig-20-57.
+
+ [9] U.S. Department of Energy. Hanford Double-Shell Tanks Fact Sheet. Technical
+    report, U.S. Department of Energy, January 2024. URL https://www.hanford.
+    gov/files.cfm/DST_Fact_Sheet_AP-106.pdf.
+
+[10] U.S. Department of Energy, Office of Environmental Management. Hanford
+    Uses Innovative Robotic System to Inspect Bottom of Waste Storage Tanks.
+    Department of Energy article, March 2020. March 10, 2020. Accessed October
+    4, 2026.
+
+[11] Evident Scientific. An Introduction to Ultrasonic Thickness Gauging. Technical
+    application guide, . Accessed October 4, 2026.
+
+[12] Evident Scientific. Precision Ultrasonic Gauging: Factors That Can Impact
+    Testing. Ultrasonic Thickness Gauge Tutorial, . Accessed October 4, 2026.
+
+[13] U.S. Department of Energy, Office of Environmental Management. Innovative
+    Metal Coating Strengthens Hanford’s Underground Waste Tanks. Department
+    of Energy article, December 2025. December 16, 2025. Accessed October 4, 2026.
+
+[14] Allan F. Pardini and Todd J. Samuel. Functions and Requirements for the DST
+    Knuckle Region Ultrasonic Scanning System. Technical Report PNNL-13436,
+    Pacific Northwest National Laboratory, January 2001. URL https://www.pnnl.
+
+
+                                        26
+    gov/main/publications/external/technical_reports/PNNL-13436.pdf.
+    January 29, 2001. Sections 2.1.1 and 2.3. Accessed October 11, 2026.
+
+[15] U.S. Department of Energy, Office of Environmental Management.          Tank
+    Refurbishment Technology Under Development at Hanford.          Department of
+    Energy article, June 2024. June 11, 2024. Accessed October 11, 2026.
+
+[16] Pedro Chaviano. Development of Double Shell Tank Annulus Vacuum Crawler
+    System. Technical report, Florida International University, DOE-FIU Science &
+    Technology Workforce Development Program, January 2025. Student summer
+    internship technical report for 2024 work. Inner title page submitted January
+    2025; supplied public-release copy TOC-PRES-24-6032, Rev. 0. Sections 2.2–4.
+
+[17] Ronald Verde. Development of Double Shell Tank Annulus Vacuum Crawler
+    System. Technical report, Florida International University, DOE-FIU Science &
+    Technology Workforce Development Program, October 2025. Student summer
+    internship technical report, submitted October 28, 2025. Sections 2–4.
+
+[18] iRobot Corporation.     Roomba Combo j9+ Fast Facts, 2023.              URL
+    https://filecache.mediaroom.com/mr5mm_irobot/181648/download/
+    iRobot%20Roomba%20Combo%20j9%2B%20Fast%20Facts.pdf. Manufacturer fact
+    sheet. Accessed October 11, 2026.
+
+[19] iRobot Corporation. Roomba Combo j9+ Auto-Fill Robot Vacuum and Mop.
+    Manufacturer product specifications. Model C975020. Accessed October 11,
+    2026.
+
+
+
+
+                                        27
+

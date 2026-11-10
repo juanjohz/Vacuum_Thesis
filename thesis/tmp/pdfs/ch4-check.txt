@@ -1,0 +1,2323 @@
+           FLORIDA INTERNATIONAL UNIVERSITY
+                           Miami, Florida
+
+
+
+
+  DEVELOPMENT AND OPTIMIZATION OF A ROS 2-BASED ROBOTIC
+VACUUM CRAWLER FOR DEBRIS REMOVAL AND INSPECTION SUPPORT
+IN DOUBLE-SHELL TANK ANNULUS ENVIRONMENTS AT THE HANFORD
+                                SITE
+
+
+
+
+           A thesis submitted in partial fulfillment of the
+                   requirements for the degree of
+                      MASTER OF SCIENCE
+                                  in
+                 MECHANICAL ENGINEERING
+                                 by
+                         Juan J. Hernandez
+
+
+
+
+                                2027
+             COPYRIGHT
+
+Copyright   © 2027 by Juan J. Hernandez
+            All rights reserved.
+
+
+
+
+                     ii
+                           ACKNOWLEDGMENTS
+
+Drafting note: Write personal and institutional acknowledgments after confirming
+names, affiliations, and any required funding language.
+
+
+
+
+                                         iii
+                        ABSTRACT OF THE THESIS
+
+
+   DEVELOPMENT AND OPTIMIZATION OF A ROS 2-BASED ROBOTIC
+VACUUM CRAWLER FOR DEBRIS REMOVAL AND INSPECTION SUPPORT
+IN DOUBLE-SHELL TANK ANNULUS ENVIRONMENTS AT THE HANFORD
+                           SITE
+
+                                         by
+                                 Juan J. Hernandez
+                       Florida International University, 2027
+                                  Miami, Florida
+
+
+Drafting note: Confirm the major professor and write the final abstract after the
+results are analyzed. State the problem, method, principal quantitative findings, and
+contribution.
+
+
+
+
+                                         iv
+                            TABLE OF CONTENTS
+
+LIST OF FIGURES                                                                    vii
+
+LIST OF TABLES                                                                     viii
+
+LIST OF ABBREVIATIONS                                                               ix
+
+1 Introduction                                                                       1
+  1.1 Background . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .     1
+  1.2 Operational Context and Motivation . . . . . . . . . . . . . . . . . .         5
+  1.3 Research Objectives and Questions . . . . . . . . . . . . . . . . . . .        8
+  1.4 Annulus Constraints and Requirements . . . . . . . . . . . . . . . . .         9
+       1.41 Geometric and Access Constraints . . . . . . . . . . . . . . . .         9
+       1.42 Deployment and Retrieval Requirements . . . . . . . . . . . .           10
+       1.43 Mobility and Obstacle Traversal Requirements . . . . . . . . .          11
+       1.44 Debris Collection Requirements . . . . . . . . . . . . . . . . .        11
+       1.45 Operator Feedback and Control Requirements . . . . . . . . .            12
+
+2 Literature Review                                                                 13
+  2.1 Related Work . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .    13
+       2.11 FIU 2024: Pedro Chaviano’s Vacuum Crawler . . . . . . . . .             13
+       2.12 FIU 2025: Ronald Verde’s Vacuum Crawler . . . . . . . . . .             14
+       2.13 Rolls-Royce Annulus Cleaning System . . . . . . . . . . . . .           15
+       2.14 Summary of Existing Annulus Cleaning Technologies . . . . .             17
+  2.2 Vacuum Generation and Debris Collection Technologies . . . . . . . .          18
+       2.21 Compressed-Air Venturi Vacuum Systems . . . . . . . . . . .             18
+       2.22 Electric Motor-Driven Vacuum Systems . . . . . . . . . . . . .          19
+       2.23 Regenerative or Side-Channel Blower Systems . . . . . . . . .           20
+       2.24 Suitability for Annulus Debris Removal . . . . . . . . . . . . .        21
+  2.3 Crawler Mechanical Configurations and Mobility . . . . . . . . . . . .        23
+       2.30 Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . .    23
+       2.31 Chassis Configurations . . . . . . . . . . . . . . . . . . . . . .      23
+       2.32 Wheeled versus Tracked Locomotion . . . . . . . . . . . . . .           25
+       2.33 Summary and Design Implications . . . . . . . . . . . . . . .           26
+  2.4 Research Gap and Implications for This Project . . . . . . . . . . . .        27
+
+3 Vacuum System Design and Experimental Characterization                            29
+  3.1 Physical Principles and Analytical Framework . . . . . . . . . . . . .        30
+      3.11 Motive Air, Entrainment, and Pickup . . . . . . . . . . . . . .          30
+      3.12 Mass Balance and Compressibility . . . . . . . . . . . . . . . .         31
+      3.13 Connected-System Resistance . . . . . . . . . . . . . . . . . .          32
+  3.2 Experimental Setup and Measurement Methods . . . . . . . . . . . .            33
+      3.21 Apparatus and Information Still Required . . . . . . . . . . .           33
+
+                                          v
+         3.22 Measurement Stations . . . . . . . . . . . . . . . . . . . . . .        34
+         3.23 Airflow Conversion and Calibration . . . . . . . . . . . . . . .        35
+         3.24 Uncertainty and Data Reduction . . . . . . . . . . . . . . . .          36
+   3.3   Single-Unit Characterization . . . . . . . . . . . . . . . . . . . . . . .   36
+   3.4   Two-Unit Series Characterization . . . . . . . . . . . . . . . . . . . .     38
+   3.5   Results, Comparison, and Design Implications . . . . . . . . . . . . .       39
+         3.51 Performance Curves and Air Demand . . . . . . . . . . . . . .           39
+         3.52 Configuration Selection and Debris Validation . . . . . . . . .         40
+
+4 Crawler Design and Mechanical Validation                                            42
+  4.1 Design Requirements . . . . . . . . . . . . . . . . . . . . . . . . . . .       42
+  4.2 Motor Selection and Torque Calculations . . . . . . . . . . . . . . . .         43
+      4.21 Mass Budget and Payload . . . . . . . . . . . . . . . . . . . .            43
+      4.22 Hose and Tether Resistance . . . . . . . . . . . . . . . . . . .           44
+      4.23 Driving Force, Wheel Loading, and Motor Demand . . . . . .                 45
+      4.24 Available Torque and Separate Operating Cases . . . . . . . .              47
+  4.3 CAD Design and Mechanical Integration . . . . . . . . . . . . . . . .           49
+  4.4 Retrieval Attachment Structural Assessment . . . . . . . . . . . . . .          51
+      4.41 Hand Calculations and Connection Checks . . . . . . . . . . .              52
+      4.42 Simulation Plan and Acceptance . . . . . . . . . . . . . . . .             53
+  4.5 Experimental Pulling-Capability Validation . . . . . . . . . . . . . . .        54
+      4.51 Drawbar-Pull Measurement . . . . . . . . . . . . . . . . . . .             54
+      4.52 Service-Line Resistance and Loaded Travel . . . . . . . . . . .            55
+      4.53 Integrated Validation and Retained Recovery Method . . . . .               56
+
+5 Results and Discussion                                                              59
+  5.1 Deployment and mobility . . . . . . . . . . . . . . . . . . . . . . . . .       59
+  5.2 Vacuum and debris recovery . . . . . . . . . . . . . . . . . . . . . . .        59
+  5.3 ROS 2 and operator control . . . . . . . . . . . . . . . . . . . . . . .        59
+  5.4 Integrated-system tradeoffs . . . . . . . . . . . . . . . . . . . . . . . .     59
+
+6 Conclusions and Future Work                                                         60
+  6.1 Answers to the research questions . . . . . . . . . . . . . . . . . . . .       60
+  6.2 Contributions and limitations . . . . . . . . . . . . . . . . . . . . . .       60
+  6.3 Future work . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .     60
+
+BIBLIOGRAPHY                                                                          61
+
+
+
+
+                                           vi
+                             LIST OF FIGURES
+
+1.1   Aerial view of the Hanford Site . . . . . . . . . . . . . . . . . . . . .     1
+1.2   Construction of underground tanks in Handford . . . . . . . . . . . .         3
+1.3   Illustration of a Double Shell Tank . . . . . . . . . . . . . . . . . . .     4
+1.4   Ultrasonic Testing Crawler . . . . . . . . . . . . . . . . . . . . . . . .    5
+1.5   Debri Inside of the Annulus . . . . . . . . . . . . . . . . . . . . . . .     7
+1.6   Annulus floor, curved tank surfaces, and installed piping. The
+      photograph illustrates these features but does not establish their
+      dimensions. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   10
+
+2.1   FIU 2024 vacuum crawler: Pedro Chaviano . . . . . . . . . . . . . . .         14
+2.2   FIU 2025 vacuum crawler: Ronald Verde . . . . . . . . . . . . . . . .         15
+2.3   Rolls-Royce annulus floor cleaner mockup . . . . . . . . . . . . . . .        16
+2.4   Venturi conveyor airflow principle . . . . . . . . . . . . . . . . . . . .    19
+2.5   Airflow path through an electric vacuum motor . . . . . . . . . . . .         20
+2.6   Side-channel blower airflow principle . . . . . . . . . . . . . . . . . .     21
+
+3.1   Proposed vacuum characterization measurement stations . . . . . . .           34
+
+4.1  Level-floor crawler force model . . . . . . . . . . . . . . . . . . . . . . 46
+4.2  Motor and drivetrain identification and performance data—pending. . 48
+4.3  Current crawler assembly and subsystem locations—CAD view pending. 49
+4.4  Motor mounting, wheel hub, and tire construction—details pending. . 50
+4.5  Dimensioned crawler and deployment-envelope check—pending. . . . 51
+4.6  Retrieval attachment and frame load path—detail pending. . . . . . . 52
+4.7  Retrieval assessment model, boundary conditions, and mesh—
+     simulation pending. . . . . . . . . . . . . . . . . . . . . . . . . . . . . 53
+4.8 Retrieval stress, displacement, and convergence results—reserved for
+     completed analysis. . . . . . . . . . . . . . . . . . . . . . . . . . . . . 54
+4.9 Proposed crawler drawbar-pull test arrangement—setup image pending. 55
+4.10 Measured pulling capability and loaded mobility outcomes—results
+     pending. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 56
+4.11 Cold Test Facility in Richland, Washington. . . . . . . . . . . . . . . 57
+
+
+
+
+                                        vii
+                             LIST OF TABLES
+
+3.1   Vacuum apparatus information to complete before characterization. .        33
+
+4.1   Mass budget to be completed for the tested crawler configuration. . .      44
+4.2   Retrieval load cases requiring definition before assessment. . . . . . .   51
+
+
+
+
+                                      viii
+                   LIST OF ABBREVIATIONS
+
+
+Abbreviation   Meaning
+
+CAD            Computer-aided design
+CTF            Cold Test Facility
+DOE            U.S. Department of Energy
+DST            Double-shell tank
+FIU            Florida International University
+HEPA           High-efficiency particulate air
+ROS 2          Robot Operating System 2
+SST            Single-shell tank
+UT             Ultrasonic testing
+
+
+
+
+                                    ix
+                                    CHAPTER 1
+                                INTRODUCTION
+
+
+
+1.1     Background
+The Hanford Site was established in 1943 in southeastern Washington State as part
+of the Manhattan Project, the United States’ wartime program to develop atomic
+weapons. Its primary purpose was the large-scale production of plutonium through
+the irradiation of uranium fuel and subsequent chemical separation. The location
+offered several advantages for this mission, including a large area isolated from
+major population centers, access to Columbia River water for reactor cooling, and
+an abundant supply of hydroelectric power. These conditions supported the rapid
+construction of nuclear reactors and processing facilities that became central to the
+nation’s nuclear weapons program [1].
+
+
+
+
+                      Figure 1.1: Aerial view of the Hanford Site
+
+
+       Plutonium produced at Hanford was used in the Trinity test and in the atomic
+bomb dropped on Nagasaki in 1945. Following World War II, production expanded
+to meet the demands of the Cold War, extending the site’s operations for several
+decades. Consequently, Hanford’s waste inventory developed from both its initial
+Manhattan Project activities and its subsequent defense production mission. In 1989,
+
+                                          1
+the site’s mission shifted toward environmental cleanup, requiring the management
+of the radioactive and chemical waste accumulated throughout its operating history
+[2, 3].
+          The recovery of plutonium from irradiated uranium fuel generated substantial
+quantities of radioactive waste. Chemical processing separated the desired plutonium
+from the fuel, leaving waste streams containing radioactive by-products and chemicals
+used during separation. Much of this waste was transferred to underground storage
+tanks arranged in groups known as tank farms within Hanford’s 200 Area. Over
+time, the stored material developed into a complex mixture of liquid supernatant,
+settled sludge, and saltcake. These forms differ in composition and physical behavior,
+complicating their storage, characterization, and eventual retrieval [4, 5].
+          The environmental consequences of this production legacy extend beyond
+the waste retained in the tanks. Historical waste disposal practices and losses of
+containment contributed to contamination of the surrounding soil and groundwater.
+Tank leakage presents an additional concern because contaminants released into the
+soil can migrate through the subsurface and potentially reach groundwater connected
+to the Columbia River.       The rate and extent of this movement depend on the
+properties of the contaminants and the surrounding geological conditions. Preventing
+further releases is therefore essential to protecting water resources, ecosystems, and
+nearby communities [5, 6].
+
+
+
+
+                                           2
+              Figure 1.2: Construction of underground tanks in Handford
+
+
+      Secure storage is a fundamental requirement for managing this waste while
+retrieval, treatment, and disposal activities proceed. Storage systems must maintain
+containment over extended periods while allowing operators to monitor their
+condition and identify deterioration. At Hanford, this requirement is particularly
+challenging because much of the original infrastructure has remained in service
+beyond its intended design life.     Maintaining tank integrity therefore requires
+continued assessment of the storage structures and the development of reliable
+methods for detecting conditions that could compromise containment [7].
+      The earliest underground storage system consisted of single-shell tanks
+(SSTs), of which 149 were constructed between 1943 and 1964.              These tanks
+incorporated a carbon-steel liner encased in concrete, with the steel providing the
+primary barrier between the waste and the surrounding structure. Their intended
+service life was approximately 20 years. However, the prolonged storage of waste
+and the deterioration of aging tanks exposed the limitations of this configuration.
+Because SSTs lack a separate secondary steel containment barrier, a failure of the
+
+
+                                         3
+liner can allow waste to escape into the surrounding environment [7].
+       To improve containment and support continued waste management, Hanford
+constructed 28 double-shell tanks (DSTs) between 1968 and 1986. Each DST consists
+of a primary carbon-steel tank positioned within a secondary carbon-steel liner and
+surrounded by a reinforced-concrete structure.       The secondary liner provides an
+additional barrier to retain waste if the primary tank leaks. The annulus separates
+the primary tank wall from the secondary liner and provides access for monitoring
+and inspection. These tanks receive waste retrieved from SSTs and support the
+transfer of waste for treatment. Their continued operation depends on maintaining
+the integrity of both containment barriers, making inspection and maintenance within
+the annular space an important component of Hanford’s waste storage mission [8].
+The annulus width specified for this project is 32 inches from wall to wall, as confirmed
+by the author; this dimension does not account for the bottom curvature discussed
+in Section 1.41.
+
+
+
+
+                     Figure 1.3: Illustration of a Double Shell Tank
+
+
+
+
+                                           4
+1.2      Operational Context and Motivation
+Hanford’s double-shell tanks are inspected regularly to check the condition of the steel
+that contains the waste. As these structures age, corrosion and localized degradation
+can reduce the remaining metal thickness and compromise their ability to retain waste.
+Visual examinations and ultrasonic inspections provide complementary information
+for evaluating tank condition and planning maintenance. While visual inspections
+document accessible surface conditions, thickness measurements provide quantitative
+evidence of metal loss that may not be apparent from images alone. Maintaining
+access to the surfaces being inspected is therefore an essential part of the tank integrity
+program [8, 9].
+
+
+
+
+                          Figure 1.4: Ultrasonic Testing Crawler
+
+
+       Ultrasonic testing (UT) is a nondestructive inspection method used to
+evaluate material condition without removing a sample from the structure.               In
+ultrasonic thickness measurements, a transducer introduces high-frequency sound
+into the steel, and the instrument determines thickness from the travel time of
+
+                                            5
+the returning echoes and the calibrated sound velocity in the material.         These
+measurements allow engineers to assess remaining wall thickness and identify areas
+of thinning associated with corrosion [10]. At Hanford, remotely operated inspection
+systems have been used to examine DST walls, and specialized equipment has been
+developed to obtain thickness measurements beneath the primary tank through air
+channels in its supporting insulating pad. These applications demonstrate both the
+importance of UT and the access challenges involved in inspecting underground tank
+structures [9].
+       The cleaning application addressed in this thesis concerns loose debris,
+including corrosion products and material released during mechanical surface
+preparation, that can collect on the annulus floor. Accumulated debris may hinder
+inspection equipment from reaching required measurement locations. Separately,
+loose material on the steel surface being examined can interfere with the transmission
+of ultrasonic waves between the probe and the steel. This transmission requires
+effective acoustic coupling at the measurement location [11]. Debris on the annulus
+floor does not necessarily affect measurements on tank walls. Vacuum cleaning may
+support access and removal of loose material, but it does not by itself establish that
+a measurement surface meets the preparation requirements of the applicable UT
+procedure.
+
+
+
+
+                                          6
+                       Figure 1.5: Debri Inside of the Annulus
+
+
+       These conditions motivate the development of a remotely operated system
+for removing loose debris from the DST annulus. The annulus provides limited
+access to the tank surfaces, and Hanford already uses remotely operated equipment
+for inspection [8, 9]. The cleaning approach considered here likewise uses remote
+operation to address the confined geometry and keep personnel outside the tank. A
+robotic vacuum crawler offers a means of moving an extraction inlet to affected areas
+while allowing an operator to guide the system from outside the tank. The objective
+is to collect loose material from the annulus floor, with the intended benefit of
+clearing inspection routes and improving equipment access to required measurement
+locations. Testing will evaluate debris recovery and crawler operation; improved
+UT measurements and compliance with UT surface-preparation requirements are not
+claimed outcomes. This operational need provides the motivation for the mechanical,
+vacuum, and control-system development investigated in this thesis.
+
+
+
+
+                                         7
+1.3      Research Objectives and Questions
+The aim of this thesis is to develop and experimentally evaluate a remotely operated
+vacuum crawler for removing loose debris from the annulus of Hanford double-shell
+tanks. The primary research emphasis is the vacuuming performance and compressed-
+air requirements of the debris-collection subsystem. The specific objectives are to:
+
+
+  1. Characterize debris-collection performance under defined operating
+      conditions using debris recovery efficiency, collection rate, and blockage
+      occurrence.
+
+  2. Evaluate vacuum-subsystem configurations and operating conditions
+      to identify an arrangement that achieves acceptable debris recovery with
+      reduced compressed-air consumption per unit mass collected. Assess the effects
+      of delivered supply pressure and downstream collection resistance on these
+      outcomes.
+
+  3. Integrate the selected vacuum configuration with the crawler and
+      Robot Operating System 2 (ROS 2) operator-control system, and
+      evaluate debris collection and operator feedback during representative cleaning
+      tasks.
+
+  4. Verify    deployment,       mobility,     and   retrieval    capability    under
+      representative access, clearance, and obstacle conditions with the operating
+      hose and control connections attached.
+
+
+       These objectives lead to four research questions:
+
+  1. What debris recovery efficiency, collection rate, and blockage occurrence does
+      the vacuum subsystem achieve for the defined debris and operating conditions?
+
+
+
+
+                                          8
+  2. How well does the vacuum system collect debris under different configurations,
+       supply pressures, and collection resistances, and how much compressed air does
+       it use?
+
+  3. Can the integrated crawler perform representative cleaning tasks while
+       providing the operator with sufficient control and visual feedback?
+
+  4. Can the complete crawler be deployed, maneuvered, and retrieved within the
+       specified geometric constraints with its hose and control connections attached?
+
+        The experimental evaluation will establish performance limits and support
+selection among the configurations tested. Acceptance criteria will be defined before
+the main experiments. The findings will apply to the materials, configurations, and
+operating conditions evaluated; they will not establish a universally optimal vacuum
+system. Section 1.4 defines the application constraints. Chapter 3 describes the
+selected implementation and distinguishes the author’s work from inherited features;
+Chapter 4 defines the test conditions, metrics, and acceptance criteria.
+
+
+
+1.4       Annulus Constraints and Requirements
+The requirements below apply to the complete crawler with its operating equipment,
+hose, and cables attached.     Confirmed requirements are author-specified project
+requirements, not evidence of completed validation. Proposed acceptance criteria
+and test conditions still to be defined are identified separately.
+
+
+
+1.41      Geometric and Access Constraints
+
+The confirmed project annulus width is 32 inches from wall to wall. This dimension
+does not account for the curvature at the tank bottom, which reduces the usable
+clearance near the floor. The allowable vehicle envelope must therefore be checked
+
+
+                                            9
+against the local tank profile. Figure 1.6 illustrates the curvature and piping but
+provides no dimensional verification.
+       The project uses a riser with a confirmed diameter of 12 inches. The allowable
+deployment envelope must fit within that opening with clearance for insertion and
+retrieval; the riser diameter is not an allowable 12-inch crawler diameter. The envelope
+must include cameras, lights, fittings, hose connections, and cables in the deployment
+configuration. Dimensional inspection will record the minimum clearance, and a
+passage demonstration will verify insertion and retrieval without interference that
+prevents deployment or damages the crawler.
+
+
+
+
+          Figure 1.6: Annulus floor, curved tank surfaces, and installed piping.
+          The photograph illustrates these features but does not establish their
+                                       dimensions.
+
+
+
+1.42     Deployment and Retrieval Requirements
+
+The crawler must be lowered, placed on the annulus floor, and retrieved with its hose
+and cables attached without damage that compromises operation. It must support its
+own assembled weight while suspended from the designated lifting attachment during
+deployment and retrieval. Verification will record the assembled mass, suspension
+configuration, and any hose or cable load carried by the attachment. Passing requires
+
+
+                                           10
+completion of lowering, placement, and retrieval without structural separation or
+damage that prevents subsequent motion, collection, or operator feedback.
+
+
+
+1.43    Mobility and Obstacle Traversal Requirements
+
+The crawler must travel forward, reverse, turn within the available annulus clearance,
+and cross protective pipes associated with thermocouple instrumentation while its
+hose and cables remain attached. The protective pipes have a confirmed outside
+diameter of 0.75 inch. The installed obstacle profile must represent the pipe and
+its supports; outside diameter alone does not specify the height of an elevated pipe
+above the floor. Passing requires completion of the specified maneuvers and crossing
+without immobilization, overturning, or damage to instrumentation. Verification will
+record completed maneuvers, interference, and failures under the representative pipe
+placement and hose routing; travel distance, turn extent, and repetition count will be
+defined in Chapter 4.
+
+
+
+1.44    Debris Collection Requirements
+
+The target materials are dust and sand-type debris representative of loose corrosion
+products and material generated by mechanical surface preparation on the annulus
+floor. Representative materials, particle-size distributions, moisture condition, and
+test mixture remain to be specified for testing. Cold-spray residue is not a target
+material.
+       The system must pick up the specified debris, transport it through the
+complete vacuum path, and retain it in the collection system.        Verification will
+distinguish material left at the pickup area, material lodged in the transport
+path, and material recovered in the collector. Proposed performance measures are
+recovered mass divided by introduced mass, collection time, and blockage events
+
+
+
+                                         11
+per trial. The debris mixture, introduced mass, hose length and routing, operating
+duration, and collection-system loading must be specified for each comparison.
+Recovery, time, and blockage acceptance limits have not yet been established; no
+numerical pass threshold is assigned here.
+
+
+1.45     Operator Feedback and Control Requirements
+
+Video feedback and onboard lighting must let the operator identify travel direction,
+approaching obstacles, surrounding clearance, and debris at the pickup inlet during
+navigation and cleaning.     Remote viewing is also identified in earlier Hanford
+inspection-system requirements [12].     A proposed visibility criterion is that the
+operator can identify designated clearance boundaries, the representative pipe, and
+the inlet working area during forward travel, reversing, turning, and pickup. The
+specific viewing targets and test lighting conditions require confirmation.
+       End-to-end video latency is a proposed measurement, with no acceptance
+limit yet set.   Stopping on command-link loss and requiring deliberate restart
+remain proposed control requirements.        If adopted, verification will measure the
+time and travel distance from link loss to stopping under specified speed and
+hose-loading conditions, and check that communication recovery alone does not
+restart motion. These behaviors and their thresholds must be approved and tested
+before being reported as established capabilities. Chapter 3 will describe the selected
+implementation, and Chapter 4 will specify the verification procedures.
+
+
+
+
+                                          12
+                                    CHAPTER 2
+                            LITERATURE REVIEW
+
+
+
+2.1     Related Work
+
+2.11    FIU 2024: Pedro Chaviano’s Vacuum Crawler
+
+Pedro Chaviano’s 2024 internship work investigated a remotely operated vacuum
+crawler for cleaning the DST annulus. The prototype combined a mobile platform
+and pneumatic debris collection, establishing a starting point for subsequent FIU
+development [13]. Figure 2.1 shows this prototype.
+       Chaviano’s prototype used a three-dimensionally printed plastic chassis, four-
+wheel differential drive, and a small EXAIR Venturi vacuum module approximately
+1 in in diameter. It used analog control with a Raspberry Pi Pico and did not use
+camera feedback [13]. Chaviano conducted debris-removal experiments; the reported
+vacuuming efficiency from 22% to 95%. The prototype used a vacuum line rather
+than an onboard collection bag, requiring debris to travel approximately 40ft to
+the collection point. That long conveying path may have contributed to the low
+measured efficiency, although the available report does not establish it as the cause.
+The prototype was not robust, and its vacuuming properties were not characterized
+sufficiently to establish reliable performance.   Remaining work included a metal
+chassis, further mobility testing with its added mass, and additional cleaning and
+sensing functions.
+
+
+
+
+                                         13
+          Figure 2.1: FIU 2024 vacuum crawler developed by Pedro Chaviano.
+                         Project image supplied by the author.
+
+
+       This version established the feasibility of combining remote mobility with
+pneumatic cleaning. Its prototype construction and configuration-dependent results
+motivated continued development of the chassis, collection arrangement, and
+operating controls. These earlier contributions form part of the project’s inherited
+foundation.
+
+
+
+2.12     FIU 2025: Ronald Verde’s Vacuum Crawler
+
+Ronald Verde continued the crawler’s development during 2025. His version used an
+aluminum chassis, treaded aluminum wheels, and an onboard collection bag, with
+both pneumatic modules located on the crawler [14]. These changes provided a
+metal platform with the collection components integrated onto the vehicle, shown
+in Figure 2.2.
+
+
+
+
+                                        14
+           Figure 2.2: FIU 2025 vacuum crawler developed by Ronald Verde.
+                         Project image supplied by the author.
+
+
+        Although the chassis was made from aluminum, the center of gravity was
+shifted forward relative to the wheel placement. As observed by the author, the
+crawler consequently tilted backward during operation, preventing the pickup inlet
+from maintaining the position needed for vacuuming. The inherited crawler also
+could not turn within the annulus or traverse the required obstacles. The aluminum
+construction therefore did not resolve the practical cleaning and mobility requirements
+of the project. These limitations motivate the present work on debris collection,
+maneuverability, and obstacle traversal with the complete crawler and its attached
+hose.
+
+
+
+2.13     Rolls-Royce Annulus Cleaning System
+
+Rolls-Royce developed a robotic cleaning system for debris that obstructed inspection
+and level monitoring in the Hanford tank annulus. The technology roadmap describes
+mechanically relocating debris or removing it through containers. Following factory
+testing, the system was demonstrated to Hanford personnel in Richland in 2019, and
+
+                                          15
+operators received training [15]. Figure 2.3 shows the reported mockup.
+
+
+
+
+         Figure 2.3: Annulus floor cleaner mockup reported for the Rolls-Royce
+                                       system [15].
+
+
+       The roadmap records successful factory acceptance testing and lists the
+cleaning activity as complete and retired [15]. The available roadmap does not report
+conduit-crossing performance or explain why the activity was retired. The pictured
+wheel geometry appears to offer limited ability to cross raised conduits, but this
+visual observation is not a demonstrated performance result. The system’s reported
+configuration is more consistent with a floor-cleaning platform than a vacuum-based
+debris-transport system; this distinction is relevant because the present project
+requires debris to be conveyed into a collection system.
+       The system demonstrates prior remote annulus-cleaning development. Its
+retired status and the limits of what the available documentation establishes provide
+context for the remaining project requirements: debris collection and transport, access
+across the required obstacles, and retrieval.
+
+
+
+
+                                          16
+2.14     Summary of Existing Annulus Cleaning Technologies
+
+The systems reviewed for this application comprise two FIU vacuum-crawler
+prototypes and the Rolls-Royce annulus floor-cleaning system.         They represent
+different approaches: pneumatic debris conveyance through a vacuum line, an
+aluminum crawler with an onboard collection bag, and a remotely operated floor-
+cleaning platform. The FIU prototypes provide project-specific evidence of attempted
+vacuum collection, while the Rolls-Royce roadmap documents factory acceptance
+testing, a 2019 demonstration, and eventual retirement of the activity [13–15].
+       Each documented system has limitations against the present project’s
+combined requirements.     Chaviano’s prototype had limited characterization and
+robustness, and its long vacuum line may have reduced recovery. Verde’s crawler
+did not maintain pickup orientation and could not turn or traverse the required
+obstacles, based on the author’s observations of the inherited system. The Rolls-
+Royce source does not report vacuum-based debris transport or conduit-crossing
+results; its pictured geometry suggests possible access limitations, but this requires
+operational evidence. The author reports that all three systems have since been
+decommissioned. Their documented limitations mean they do not provide a currently
+available, demonstrated solution to this project’s requirements; the available records
+do not establish a common reason for decommissioning.
+       The research need is therefore an integrated crawler that can be deployed
+through the riser, collect and retain the target debris, maneuver in the annulus, cross
+the specified protective pipes, and be retrieved with its hose and controls attached.
+The reviewed technologies establish relevant starting points, but do not demonstrate
+all of these functions together. Figure-based judgments about the Rolls-Royce system
+remain hypotheses until supported by test or project records.
+
+
+
+
+                                          17
+2.2     Vacuum Generation and Debris Collection
+        Technologies
+The annulus cleaner requires a source of suction and a way to retain the recovered
+debris for later disposal, or to convey it to a disposal point. This section reviews
+pneumatic conveyors, electric vacuum motors, and side-channel blowers, focusing
+on how their airflow arrangements produce suction and transport air through the
+collection path.
+
+
+
+2.21     Compressed-Air Venturi Vacuum Systems
+
+Pneumatic vacuum generators use compressed air to produce suction without a
+rotating impeller. In a Venturi ejector, an accelerated air stream draws air through a
+suction connection, and both streams leave through the exhaust. Compact ejectors
+are widely used in vacuum handling, including gripping airtight workpieces [16]. For
+debris collection, however, the device must also provide a passage suitable for the
+material being transported; a suction-gripping ejector is not automatically a solids
+conveyor.
+       The EXAIR Line Vac is an example of an air-operated conveyor relevant to this
+distinction. Directed compressed-air jets create suction at its intake and accelerate
+material through an open bore into the discharge hose. The device has no moving
+parts, and its conveying rate can be adjusted through the supply-pressure regulator
+[17]. This arrangement is relevant to a compact crawler because the conveying module
+can be located near the pickup point without an onboard vacuum motor.
+
+
+
+
+                                         18
+                                Suction inlet
+
+                               air and debris
+       Compressed-air
+                                           Diffuser and discharge hose
+            supply
+
+
+
+
+       Motive jet entrains material in the mixing section
+             Figure 2.4: Conceptual Venturi-conveyor airflow: compressed air
+         accelerates through a nozzle, draws material through the suction inlet,
+         and carries the combined stream toward the discharge. The schematic
+          illustrates the operating principle described for the EXAIR Line Vac
+                                            [17].
+
+
+       Its main limitations concern the air supply and the downstream collection path.
+EXAIR identifies conveying distance, vertical lift, bends, material characteristics, and
+input pressure as factors requiring application-specific testing. Powder collection also
+requires separation of the material from the discharged air [18]. The manufacturer
+cautions against opposing discharge pressure and undersized outlet piping [19].
+For this project, the receiver and filter must therefore accommodate the combined
+conveying and compressed-air flow without excessive restriction. A compact module
+alone does not establish adequate pickup, acceptable air consumption, or reliable
+operation as the collector loads with debris.
+
+
+2.22     Electric Motor-Driven Vacuum Systems
+
+An electric vacuum motor rotates an impeller or fan to move air from the inlet toward
+the exhaust. The moving air lowers pressure at the inlet, drawing air and entrained
+
+                                           19
+debris through the pickup nozzle and hose. In a through-flow motor, the working air
+also passes through and cools the motor; in a bypass motor, a separate airflow cools
+the motor while the working stream follows its own path through the vacuum unit
+[20]. In either arrangement, the collector and filter sit in the working-air path and
+must separate debris without restricting the flow excessively.
+       Fan geometry and stage count determine the balance between airflow and
+pressure rise: single-stage designs generally favor airflow at lower pressure differences,
+while additional stages can increase pressure capability [20]. Airflow carries debris
+through the line, while pressure must overcome losses at the pickup, hose, collector,
+and filter. For the crawler, an electric source could remain outside the deployment
+envelope, but its performance depends on the complete connected path. Testing
+should therefore measure airflow and debris recovery with the intended nozzle,
+hose, collector, and filter; motor rating alone does not establish pickup or transport
+performance.
+
+       Pickup           Hose          Collector          Impeller
+                                                                            Exhaust
+         inlet         airflow        and filter        and motor
+
+
+          Working airflow carries debris through the hose; the collector
+             and filter retain solids before air reaches the motor. In a
+         through-flow design, this filtered air also provides motor cooling.
+
+          Figure 2.5: Conceptual airflow path through a through-flow electric
+        vacuum system. The collector and filter remove debris before air reaches
+                                       the motor.
+
+
+
+2.23     Regenerative or Side-Channel Blower Systems
+
+A regenerative, or side-channel, blower also uses an electric motor and rotating
+impeller, but moves air through a ring-shaped side channel. As the impeller turns,
+
+
+                                           20
+it repeatedly transfers energy to the gas circulating through the channel, producing
+a pressure difference between the inlet and outlet. Repeated energy transfer allows
+the blower to sustain suction or pressure without contact between the impeller and
+housing [21]. Unlike the vacuum-motor arrangements above, the gas remains in the
+blower’s channel as it gains energy; the connected hose, collector, and filter still
+determine the airflow available at the pickup point.
+       The blower moves air rather than separating debris, so a collector and filter
+must retain solids upstream and protect its inlet. Resistance from the hose, loaded
+filter, or blockage can reduce airflow and affect cooling; Busch consequently requires
+suitable dust filtration, adequate cooling and minimum gas flow, and pressure relief
+where the inlet may be closed [22]. For this project, its suitability as an external
+source depends on airflow through the actual hose, separator, and filter. Continuous-
+duty capability alone does not establish debris-conveying performance.
+
+                                     Side channel
+        Inlet                                                             Outlet
+                                        Impeller
+   lower pressure                                                    higher pressure
+
+           Figure 2.6: Conceptual side-channel blower principle. The impeller
+           transfers energy to gas circulating through the channel, creating a
+                       pressure difference between inlet and outlet.
+
+
+
+2.24     Suitability for Annulus Debris Removal
+
+The reviewed technologies differ in how they create suction and move debris through
+the collection path. For the initial vacuum tests in this project, a compressed-air
+Venturi conveyor is selected as the primary candidate. This is a test-selection decision
+based on mechanical and integration considerations; it does not establish that the
+Venturi system will outperform an electric vacuum motor or side-channel blower.
+       The Venturi arrangement has a simple conveying module with no moving
+parts, and its open bore is designed to carry material in the induced airflow [17].
+
+                                           21
+Compared with an electric motor-driven unit, it avoids placing a rotating motor
+and impeller on the crawler and does not require motor cooling or electrical drive
+hardware at the pickup point. The compressed-air generator can be located remotely
+while the compact conveyor remains near the intake, which supports a simpler crawler
+package and keeps motor servicing outside the deployment envelope. The prior FIU
+crawler prototypes also used pneumatic conveying modules, so testing this approach
+first provides continuity with the inherited project architecture [13, 14]. These are
+reasons to prioritize the configuration for evaluation, not evidence of a measured mass,
+reliability, or recovery advantage.
+       The approach has corresponding costs and open questions. It depends on
+a suitable compressed-air supply and its pressure and flow must remain adequate
+through the intended service line. The combined motive air and conveyed material
+also require a receiver and filter that separate and retain the debris without excessive
+discharge resistance. Hose length, bends, lift, debris properties, and downstream
+restriction can affect conveying and must be represented in testing [18, 19]. The open
+bore and absence of moving parts do not by themselves prove that blockages will be
+less frequent or that recovery will meet the project target.
+       The test configuration should therefore use the intended pickup, hose route,
+receiver, and filter, and record recovery, conveying time, blockage, and compressed-air
+demand under controlled conditions. Results will determine whether the Venturi
+arrangement remains suitable for the integrated crawler.         Electric motor-driven
+vacuum and side-channel architectures remain valid alternatives if the measured
+pneumatic performance or utility demand is inadequate. Chapter 3 will document
+the implemented configuration, while Chapter 4 will describe the comparative tests
+and operating conditions.
+
+
+
+
+                                          22
+2.3      Crawler Mechanical Configurations and
+         Mobility
+
+2.30     Introduction
+
+The crawler must carry the vacuum equipment and position the pickup while
+moving through the annulus. The relevant mechanical choices concern the chassis
+configuration, the locomotion system, and the compliance available to accommodate
+changes in the floor profile. This section reviews these choices in relation to equipment
+support, maneuverability, and passage over protective pipes.
+
+
+
+2.31     Chassis Configurations
+
+Chassis articulation and suspension describe related but distinct features. Articulation
+allows connected frame sections or wheel-support assemblies to rotate relative to
+one another.    Suspension allows wheel movement relative to the main body to
+accommodate terrain and loading. The two can overlap: a jointed bogie can serve
+as a suspension mechanism without springs, while a rigid main body can carry
+independently suspended wheels. Here, a rigid chassis refers to a frame with fixed
+wheel mounting positions and no suspension travel; tire deformation is considered
+separately.
+       A rigid chassis provides fixed attachment locations for the vacuum equipment
+and pickup, without joints between frame sections or moving wheel supports. For
+this project, that arrangement simplifies equipment mounting and keeps the relative
+positions of the components fixed. Its limitation is ground accommodation. When the
+four supporting points lie at unequal elevations, the frame cannot adjust individual
+wheel positions, so wheel loading can become uneven and a wheel may lose contact.
+Bouton and Gao’s analysis contrasts rigid four-point support with a passive bogie,
+
+
+
+                                           23
+which permits unequal wheel elevations while approximately equalizing the loads on
+its two wheels [23].
+       An articulated chassis can accommodate changes in terrain through its joints,
+although the available motion depends on the joint axes. A steering joint alone
+does not provide vertical wheel travel. In the MARCEL rover, a central steering
+joint and a rear bogie provide distinct motions; active bogie torque also redistributes
+wheel loading. The central joint occupies equipment space, while bogie placement
+affects both payload accommodation and ground clearance [23].            For a vacuum
+crawler, equipment and hoses spanning moving sections would consequently need to
+accommodate that motion.
+       A rigid main body with suspension offers another arrangement: the equipment
+remains on a common frame while the wheel supports move. Passive suspension
+accommodates terrain through its mechanical response, whereas active suspension
+adds controlled adjustment of wheel position or loading.            These mechanisms
+can improve wheel contact, but add joints and supporting components; active
+arrangements also require actuation and control.        The suspension configurations
+reviewed by Bouton and Gao illustrate this tradeoff between terrain adaptation and
+mechanical complexity [23].
+       Neither articulation nor suspension alone establishes adequate clearance or
+stability. Otsu et al. show that clearance estimates for articulated rovers depend
+on the body pose produced by terrain contact [24]. Papadopoulos and Rey likewise
+relate tipover stability to the support contacts, center of mass, and external forces and
+moments [25]. Applied to the crawler, these findings favor low equipment placement
+within the supported footprint while preserving space beneath the pickup and frame.
+Hose forces must also be considered because their direction and attachment location
+can produce a tipping moment.
+       A rigid chassis is therefore a reasonable practical choice for supporting the
+
+
+                                           24
+vacuum equipment with a simple mounting arrangement. It avoids the additional
+mechanisms and motion allowances associated with articulation or suspension. This
+choice accepts a limited ability to accommodate uneven ground: wheel contact,
+underside clearance, and stability must still be assessed during obstacle crossing.
+
+
+2.32    Wheeled versus Tracked Locomotion
+
+Wheels and tracks offer different compromises between traction and mechanical
+complexity. Wheels provide separate ground contacts, while tracks distribute contact
+along a continuous belt. Mandow et al. identify generally better traction from
+tracked locomotion, together with greater mechanical complexity [26].          For the
+annulus crawler, wheels provide a practical arrangement around the equipment-
+carrying frame. A tracked alternative would require space for the track path and
+its supporting and driving components.         The traction advantage must therefore
+be weighed against integration requirements; neither arrangement establishes pipe-
+crossing capability without considering its geometry and contact conditions.
+       The selected four-wheel arrangement uses left-right differential drive with fixed
+wheel axes. Differences between the speeds on the two sides turn the crawler through
+skid steering, which requires lateral wheel slip. Opposite drive directions permit
+turning within a small footprint without separate steering hardware, although actual
+motion depends on ground contact [26]. This is relevant to maneuvering within the
+annulus, where turning space is restricted. Skid steering also introduces resistance
+during turns: Shamah’s same-rover comparison on natural terrain found higher power
+and wheel torque than with explicit wheel steering, particularly in tight turns [27].
+       Compliant tires provide local deformation at the contact without introducing
+chassis suspension.   Their selection must account for both forward traction and
+lateral sliding during turns. Mandow et al.’s tests with solid-rubber and pneumatic
+tires showed that tire construction and inflation affected skid-steering behavior;
+
+
+                                          25
+the tested wheel sets also differed in diameter, so the results do not establish a
+universally preferable tire material [26]. For this crawler, compliance is a means of
+accommodating local contact geometry, rather than a guarantee of improved traction
+under every condition.
+       Wheel diameter, tire deformation, and available drive torque also influence
+obstacle traversal. Wilhelm et al. relate step climbing to obstacle height relative to
+wheel radius and show that a larger radius does not necessarily reduce the required
+axle torque. In tests with a driven, foam-filled tire, deformation stored and released
+elastic energy, affecting climbing under an abrupt torque input [28]. These findings
+support considering wheel size and compliance together. Larger wheels also consume
+deployment space, while tire deformation changes the loaded wheel geometry; both
+must be considered when selecting clearance for the crawler.
+       The rigid four-wheel platform retains limitations that compliant tires cannot
+fully overcome. Tire deformation provides only local accommodation and cannot
+independently reposition a wheel as a suspension can. Uneven loading or loss of
+contact can therefore reduce the traction available for climbing. The pickup and
+underside must also clear the obstacle as it passes between the axles; front-wheel
+ascent alone does not establish successful traversal. In addition, the sharp step
+modeled by Wilhelm et al. differs from a protective pipe: the pipe presents a curved
+contact surface and requires descent after the crest [28]. Published step-climbing
+results consequently inform wheel selection but do not establish this crawler’s pipe-
+crossing limit.
+
+
+2.33     Summary and Design Implications
+
+The reviewed findings support a rigid chassis with four-wheel differential/skid steering
+and compliant tires as a practical configuration for carrying the vacuum equipment
+and maneuvering through the annulus. The arrangement combines fixed equipment
+
+
+                                          26
+mounting with steering through the drive wheels and local compliance at the tires.
+Its main limitations remain uneven wheel loading, turning resistance, and clearance
+and stability during pipe crossing.   Chapter 3 presents the selected dimensions,
+construction, and implementation; Chapter 4 describes evaluation with the complete
+crawler and its attached hose.
+
+
+
+2.4     Research Gap and Implications for This
+        Project
+The reviewed annulus-cleaning systems provide a starting point for this project, but
+do not demonstrate all of its cleaning and access requirements together. Chaviano’s
+prototype combined remote mobility with pneumatic debris conveyance, while Verde’s
+later version introduced the inherited aluminum platform and onboard collection
+arrangement [13, 14]. As discussed in Section 2.1, the author observed inadequate
+pickup orientation, restricted turning, and unsuccessful obstacle traversal in the
+inherited crawler. The Rolls-Royce system provides evidence of remote annulus-
+cleaning development, but its available record does not establish vacuum-based debris
+transport or protective-pipe crossing [15]. These limitations define the project need
+without implying that the earlier systems lacked value or shared the same reason for
+retirement.
+       The vacuum review identifies a compressed-air Venturi conveyor as the initial
+candidate for evaluation because of its simple conveying module, open material
+passage, and compatibility with the inherited pneumatic arrangement. Its suitability
+still depends on the complete pickup and collection path. Conveying distance, bends,
+supply conditions, and downstream resistance affect material transport [18, 19]. The
+remaining question is therefore whether the selected arrangement can recover and
+retain the target debris with acceptable compressed-air demand under the intended
+operating conditions.   Electric vacuum motors and side-channel blowers remain
+
+                                         27
+alternatives if the pneumatic arrangement proves inadequate; the review does not
+establish a measured performance ranking among them.
+       The mechanical review supports a rigid chassis with four-wheel differential/skid
+steering and compliant tires as a practical configuration for mounting the vacuum
+equipment and maneuvering within the annulus. It also identifies the limits that
+must be addressed: uneven wheel loading, resistance during skid steering, and
+clearance and stability as the crawler crosses protective pipes. Articulation and
+suspension can provide additional terrain accommodation, while tire compliance
+acts locally at the wheel contact [23, 26, 28]. The reviewed findings explain these
+tradeoffs but do not establish the traversal capability of the selected rigid platform
+with its equipment and hose attached.
+       The gap addressed by this thesis is the characterization of vacuum performance
+and compressed-air use, together with the integration and evaluation of the collection
+system on a crawler that meets the project’s access requirements. Recovery efficiency,
+collection rate, and blockage occurrence must be related to the tested debris, supply
+pressure, hose routing, and collection resistance. Mobility evaluation must account for
+the same equipment arrangement during turning and pipe crossing, since the pickup
+position and attached hose affect how the complete system operates.
+       Chapter 3 presents the selected dimensions, construction, and mechanical,
+collection, and control implementation, distinguishing the author’s changes from
+inherited features. Chapter 4 defines the representative debris, operating conditions,
+measurements, and trials used to assess vacuum performance and crawler operation.
+The resulting evidence will establish performance within those tested conditions;
+qualification for radioactive tank deployment remains outside what mockup testing
+alone can demonstrate.
+
+
+
+
+                                          28
+                                    CHAPTER 3
+           VACUUM SYSTEM DESIGN AND EXPERIMENTAL
+                     CHARACTERIZATION
+
+This chapter develops the vacuum-subsystem comparison between one purchased
+pneumatic conveyor and two units operating in series. The question is whether
+the second unit increases useful pickup performance enough to justify its additional
+compressed-air demand. Increased pickup airflow is a hypothesis to be tested. The
+characterization begins with air-only measurements; subsequent debris tests establish
+whether any airflow benefit improves material recovery.
+       The confirmed 12-inch-diameter deployment opening motivates investigating
+compact units in series instead of simply increasing the size of the onboard conveyor.
+Fit depends on the complete crawler, including its wheels, equipment, fittings, hose
+connections, and insertion orientation. A conveyor’s nominal diameter alone does not
+establish deployment clearance. The onboard conveyor is distinct from the external
+compressor supplying motive air. The opening does not constrain compressor size in
+this arrangement, and series operation still requires sufficient delivered compressor
+flow and pressure.
+       Experimental status. The measurements for this comparison have not yet
+been supplied. The following procedures are proposed, and the results spaces are
+reserved for the forthcoming tests. Equipment details that remain unverified are
+identified explicitly.
+
+
+
+
+                                         29
+3.1       Physical Principles and Analytical
+          Framework
+
+3.11      Motive Air, Entrainment, and Pickup
+
+The EXAIR Line Vac uses directed compressed-air jets to entrain air through its
+inlet and carry material through an open bore toward the discharge [17]. Motive air
+is the compressed air supplied to those jets. Induced air is the additional air entering
+through the pickup. The collector must pass the combined air stream while retaining
+debris. The purchased unit’s exact model and geometry must be recorded before
+applying any model-specific catalog data.
+       Pickup pressure and pickup flow describe different aspects of operation. Let
+pa be local atmospheric pressure and pp the absolute static pressure at the pickup
+measurement station. The gauge pressure and positive suction magnitude are defined
+as
+                       pp,g = pp − pa ,     S = pa − pp = −pp,g .                  (3.1)
+
+These definitions distinguish negative gauge pressure from a positive vacuum
+magnitude. A sealed inlet can exhibit suction while admitting essentially no air.
+Accordingly, a more negative pressure reading alone does not demonstrate better
+pickup.   Airflow must enter the pickup and then transport the target material
+through the connected path; air-only measurements cannot establish that debris will
+be entrained or retained.
+
+
+
+
+                                          30
+3.12     Mass Balance and Compressibility
+
+For steady air-only operation with negligible leakage and accumulation, conservation
+of mass gives
+
+
+                            ṁd,1 = ṁp,1 + ṁc,A,1 ,                              (3.2)
+
+                            ṁd,2 = ṁp,2 + ṁc,A,2 + ṁc,B,2 .                    (3.3)
+
+
+Here p, c, and d denote pickup, compressed-air supply, and discharge; A and B
+identify the upstream and downstream conveyors. Subscripts 1 and 2 distinguish
+the single-unit and series configurations. This balance follows the continuity relation
+ṁ = ρAv = ρQ, where ρ is local air density, A is flow area, v is mean velocity, and
+Q is actual volumetric flow [29]. The series discharge includes both motive streams.
+Increased discharge flow therefore does not, by itself, establish increased pickup flow.
+       Volumetric rates at different pressures and temperatures must be converted
+before comparison. For air approximated as an ideal gas,
+
+                                     p                     ṁ
+                              ρ=       ,         Qref =        ,                   (3.4)
+                                    RT                    ρref
+
+using absolute pressure p, absolute temperature T , and the specific gas constant R
+[29]. Report the reference pressure and temperature whenever a meter provides a
+normalized volume rate. The comparison will use pickup mass flow and total motive-
+air mass flow, with pickup volume flow also reported at stated conditions.
+       The motive jets may involve substantial density changes. In an ideal isentropic
+nozzle, mass flow reaches a limiting value at sonic conditions; its dependence on supply
+pressure cannot be represented by an incompressible Bernoulli calculation alone [29].
+Internal jet geometry, mixing losses, and discharge conditions are not sufficiently
+documented here to predict the purchased conveyor’s performance. The analytical
+
+
+
+                                            31
+framework consequently supports interpretation and measurement checks, while the
+performance curves must come from experiments.
+
+
+
+3.13     Connected-System Resistance
+
+For an air-only pipe segment with approximately constant density, the Darcy loss
+relation and fitting losses give
+                                       (︄               )︄
+                                              L ∑︂           ρv 2
+                            ∆ploss =        fD +   Kj             .              (3.5)
+                                              D  j
+                                                              2
+
+
+Here fD is the Darcy friction factor, L and D are pipe length and internal diameter,
+and Kj represents a fitting loss coefficient. Friction factor depends on flow regime
+and relative roughness [30]. This expression estimates dissipative loss in a specified
+segment; static-pressure differences can also include velocity and elevation changes.
+Corrugated hose and uncharacterized fittings require appropriate coefficients or
+measurements. It is not an internal ejector model, and constant density must not be
+assumed across the compressed-air expansion or a large pressure change.
+       The collector introduces additional resistance that depends on its airflow
+and condition. EXAIR cautions against opposing discharge pressure and undersized
+exhaust piping [19].    In series operation, the downstream conveyor receives the
+upstream mixture and adds motive air. Its action changes the pressure seen by the
+upstream unit, while the collector receives both motive streams. These coupled
+effects are reasons to measure pickup and discharge conditions rather than adding
+two catalog suction values. Air-only resistance also excludes particle acceleration,
+accumulation, and blockage, which must be assessed in debris tests.
+
+
+
+
+                                              32
+3.2         Experimental Setup and Measurement
+            Methods
+
+3.21        Apparatus and Information Still Required
+
+The available project assessment describes two EXAIR Line Vac units conveying
+toward a collection bag, a pickup pressure location upstream of the units, a discharge
+pressure location ahead of the bag, and an existing sensor on the compressed-air
+supply. It does not establish a calibrated inlet-flow measurement. The purchased
+conveyor will be identified as unit A for the baseline and the added conveyor as unit
+B for the series test. These identifiers follow flow direction and replace the reversed
+unit numbering used in the earlier apparatus notes.
+       The external compressor supplies a regulator and service line leading to the
+conveyor air ports. The existing supply-pressure sensor will be retained if its range
+and calibration are suitable; its location must first be checked. A sensor upstream of
+a restrictive hose or branch does not establish pressure at each unit during operation.
+Table 3.1 identifies the setup details needed before the main trials.
+
+   Table 3.1: Vacuum apparatus information to complete before characterization.
+
+
+Item                   Required record
+
+Conveyors              Model and unit identifiers, bore, port sizes, flow direction, rated
+                       operating limits, and whether both units are the same model.
+Air supply             Compressor identification and delivered capacity, regulator, service-
+                       line dimensions, branch fittings, and actual pressure-tap locations.
+Conveying path         Pickup geometry, hose internal diameters and lengths, bend layout,
+                       elevation, and inter-unit spacing.
+Collector              Bag or receiver identification, filter area or specification,
+                       attachment, and reproducible initial condition.
+Instrumentation        Sensor models, pressure reference, ranges, calibration, flow-meter
+                       method, logging rate, and uncertainty.
+
+
+       The existing pressure-reading code assumes a voltage-to-pressure conversion
+
+                                           33
+but does not supply a verified sensor datasheet or calibration record.              Those
+assumptions will not be used as instrument specifications. In particular, extrapolating
+a positive-pressure sensor’s output below its calibrated range cannot establish a valid
+vacuum measurement.
+
+
+3.22     Measurement Stations
+
+The proposed measurement chain is shown in Figure 3.1. The pickup-pressure tap will
+measure static pressure relative to atmosphere upstream of unit A, at a documented
+location outside the motive-jet region. Supply pressures pc,A,g and pc,B,g will be
+measured at the respective compressed-air inlet connections while flowing.           The
+discharge tap will measure pd,g before the collector. This last reading represents
+the connected downstream resistance; it is not a filter-only pressure drop unless taps
+bracket the filter.
+
+                                 External air supply, regulator,
+                                  and total motive-flow meter
+
+
+                                     pc,A,g                   pc,B,g
+
+  Inlet flow            Pickup                          Unit B             Collector
+                         pp,g          Unit A                            pd,g upstream
+ measurement                                           or spacer
+
+             Figure 3.1: Proposed air-only measurement arrangement, not an
+          as-built drawing. Unit B and its air branch are used only in the series
+           configuration. The inlet meter and required flow-conditioning section
+                             must be selected before testing.
+
+
+       Pickup airflow will be measured upstream of both conveyors so it excludes
+injected motive air.    Total compressed-air consumption will be measured in the
+common feed dedicated to the conveyors, after regulation and before the branch split,
+or obtained by summing calibrated branch meters. Other pneumatic users must be
+isolated or separately measured. The selected meters must accommodate their actual
+
+
+                                              34
+pressure, temperature, flow direction, and operating range. Pressure at the regulator
+and compressor nameplate capacity are not substitutes for measured consumption.
+
+
+
+3.23     Airflow Conversion and Calibration
+
+A differential-pressure sensor measures airflow only when paired with a characterized
+flow element and appropriate pressure taps. A restriction in the pickup line is one
+candidate; a calibrated direct-reading air-flow meter is another. Orifice metering
+relates flow to the square root of pressure difference, with coefficients affected by
+geometry and flow regime [31]. For a calibrated restriction in a range where density
+change across it is negligible, a useful measurement form is
+
+                                      √︄
+                                           ∆pm
+                          Qu = Ccal            ,   ṁp = ρu Qu .                     (3.6)
+                                            ρu
+
+The subscript u denotes conditions upstream of the meter, ∆pm is the differential
+across its specified taps, and Ccal includes the flow element’s geometry and calibrated
+coefficient. A constant coefficient is valid only over its verified range. If gas expansion
+is significant, use the selected meter’s compressible-flow relation or calibration rather
+than Equation 3.6.
+       Calibration must cover the anticipated flow range using a suitable
+reference, with documented pressure, temperature, tap geometry, and straight-
+run requirements. The sensor’s pressure span must resolve the low end without
+exceeding its upper limit.       Density errors and disturbed inlet profiles affect
+differential-pressure metering [31]. The meter also adds resistance, so results must
+identify the metered configuration; they cannot be presented as unrestricted pickup
+performance. Leakage between meter and conveyor must be checked before assigning
+the measured flow to the pickup.
+Drafting note: Airflow measurement remains unresolved.                Insert the selected
+
+
+                                              35
+meter or restriction, dimensions and tap locations, reference calibration, conversion,
+validated range, uncertainty, and measured installation loss. Until this is complete,
+pressure readings must not be reported as airflow.
+
+
+
+3.24     Uncertainty and Data Reduction
+
+Each run will retain synchronized pressure and flow records, ambient conditions,
+configuration identification, and the accepted averaging interval. Independent run
+means will be used to assess repeatability; samples within one time record will not
+be counted as independent trials. Calibration, resolution, zero drift, and density
+correction will be included where applicable.
+       For a derived result y = f (x1 , . . . , xN ), first-order propagation gives
+
+                          ∑︂                      ∑︂                                  ∂f
+              u2c (y) =        c2i u2 (xi ) + 2         ci cj cov(xi , xj ),   ci =       .   (3.7)
+                          i                       i<j
+                                                                                      ∂xi
+
+
+The covariance terms account for shared inputs and correlated calibration effects [32].
+Report run count, run-to-run spread, and combined standard uncertainty separately.
+If expanded uncertainty U = kuc is reported, state the coverage factor and its
+justification; a small repeat count does not automatically justify a 95% interval using
+k = 2 [33].
+
+
+
+3.3      Single-Unit Characterization
+Unit A will establish the baseline with the selected pickup, hose route, and collector.
+The proposed main matrix uses three supply-pressure levels, two reproducible
+downstream resistance conditions, and three independent runs per condition: 18
+baseline runs. The pressure levels will be selected after checking component ratings
+
+
+
+
+                                                        36
+and the compressor’s sustainable capacity. Numerical setpoints remain to be entered
+before the main tests.
+       The two resistance conditions will represent the intended clean collection
+path and a documented increase in path resistance, such as a second defined hose
+route. Their exact construction must be fixed in advance and kept identical between
+configurations. No arbitrary discharge throttling or sealed collector is specified, given
+the manufacturer’s backpressure guidance. If the second condition cannot be justified
+within the equipment’s permitted operation, retain one representative path and state
+the reduced scope.
+       Before each run, verify connections, pressure zeros, meter operation, and the
+collector condition. Set the motive pressure with the conveyor flowing. Record actual
+inlet pressure, pickup flow, pickup pressure, total motive consumption, and discharge
+pressure throughout the run. Ambient pressure and temperature will support density
+correction. Alternate or randomize pressure order within each resistance condition
+and return to a reference condition to check drift.
+       Steady operation will be accepted only when successive averaging windows
+show no systematic trend and changes in the principal pressure and flow channels
+remain within predefined tolerances. Pilot records will determine the window duration
+and tolerances from sensor resolution and observed fluctuations. These values, the
+logging rate, and the run duration must be fixed before the main matrix. Compressor
+cycling or pressure droop must be recorded; a run that fails the criterion will be
+identified rather than selectively averaged into a steady result. Independent repeats
+require resetting and re-establishing the operating condition.
+Drafting note: Insert the finalized pressure setpoints, resistance configurations,
+steady-state tolerances, window and run durations, sampling rate, and completed
+baseline run log. No single-unit characterization results are available in this draft.
+
+
+
+
+                                           37
+3.4     Two-Unit Series Characterization
+In the series arrangement, pickup air enters unit A, passes through the connecting hose
+into unit B, and then enters the same discharge path and collector. Both conveyors
+point toward the collector, and both receive motive air from parallel supply branches.
+They are in series in the conveying path, not in the compressed-air supply. Unit
+spacing will be defined by the hose length between the outlet connection of A and
+the inlet connection of B; bore, bends, orientation, and fittings will be recorded.
+One fixed spacing is proposed for the main comparison, not an additional spacing
+optimization study.
+       For the baseline, unit B will be removed and replaced with a smooth
+connector preserving the overall route as closely as practicable.      An unpowered
+second conveyor left in the path is not the single-unit baseline because it introduces
+its own restriction. Record any residual difference in connector geometry. The
+collector, pickup, measurement hardware, and downstream resistance conditions will
+otherwise remain unchanged.
+       The series matrix repeats the three pressure levels, two resistance conditions,
+and three independent runs, giving 18 additional runs if both resistance conditions
+are retained. At each matched-pressure point, the delivered pressure at A and at
+B will each be brought to the baseline unit’s pressure within a stated matching
+tolerance. Branch regulation or balancing must be selected as needed. Simultaneous
+measurements at both inlets are required to establish this match; the same regulator
+setting does not establish equal delivered pressure. If compressor capacity prevents a
+match, report the measured pressures and classify the condition separately.
+       The downstream unit may alter the upstream discharge condition, while
+additional motive air can increase collector loading. Compare Qp , S, total motive
+consumption, and pd,g together.      An inter-unit pressure tap may be added for
+diagnosis if it can be installed without materially disturbing the flow; it is not
+
+                                          38
+essential to the initial comparison. Any increase in outlet airflow must be interpreted
+through Equation 3.3.
+       A matched-total-consumption comparison is optional. If stable branch control
+permits it, reduce the series supply settings until the measured sum of motive-air
+mass flows matches a selected baseline point. Record both resulting inlet pressures.
+This addresses performance under a common air budget and is distinct from the main
+matched-pressure comparison. It will be omitted if it requires an extensive additional
+control or calibration effort.
+Drafting note: Insert unit B identification, orientation photograph, inter-unit hose
+dimensions and spacing, branch layout, pressure-matching tolerance, and series run
+log. No increase in pickup airflow or suction has yet been established.
+
+
+
+3.5      Results, Comparison, and Design
+         Implications
+Analysis plan; results pending. The following comparisons will be completed
+after the measurements are collected and checked. No performance curve, numerical
+improvement, or preferred unit count is assigned at this stage.
+
+
+3.51     Performance Curves and Air Demand
+
+For each resistance condition, plot pickup airflow, suction magnitude, and total
+compressed-air mass flow against measured delivered supply pressure. Show both
+configurations with individual run means and uncertainty, identifying series points
+where the two supply pressures were not adequately matched. Plot pickup flow against
+total motive consumption as a second view of the tradeoff. Discharge-pressure records
+will help identify changes associated with the downstream path.
+
+
+
+
+                                          39
+       At comparable conditions, define
+
+                                                                     ṁp
+             ∆Qp = Qp,2 − Qp,1 ,      ∆ṁc = ṁc,2 − ṁc,1 ,   E=        .        (3.8)
+                                                                     ṁc
+
+Here ṁc is total motive consumption, and E is an induced-to-motive air mass-flow
+ratio, not thermodynamic efficiency or debris recovery efficiency. Compare volume
+rates at common stated conditions. Report uncertainty on differences and ratios,
+accounting for shared calibration. Relative improvement may be reported only when
+the baseline value is sufficiently above zero to make the ratio meaningful. Curves will
+describe the measured range without extrapolating an optimum.
+Drafting note: Results space: insert single-unit and series performance curves with
+uncertainty, the condition-by-condition comparison table, supply-pressure stability
+records, and observations of downstream resistance. Preserve failed or excluded runs
+and explain their treatment.
+
+
+
+3.52     Configuration Selection and Debris Validation
+
+A useful series benefit requires more than a detectable increase in air-only flow.
+The change must be practically meaningful for pickup, compatible with compressor
+capacity, and achievable within the complete deployment envelope. The minimum
+useful improvement and acceptable air demand will be defined before the main
+comparison. If the second unit offers little or no benefit, or its additional demand
+outweighs the benefit, the single-unit arrangement remains a valid outcome. The
+comparison may also remain inconclusive if uncertainty is too large.
+       Subsequent tests will use known masses of the target dust and sand-type
+debris, with specified particle size, moisture, pickup geometry, standoff, path,
+duration, and collector condition. Chapter 4 defines these recovery trials and their
+integration with crawler operation.     They will distinguish material recovered in
+
+
+                                          40
+the collector from material left on the floor or retained in the conveying path.
+Compressed-air use per recovered mass and blockage occurrence will supplement
+recovery efficiency and collection rate. Airflow improvement will not be equated with
+improved cleaning efficiency without this evidence.
+Drafting note: Results space: state the supported air-only configuration decision
+and its uncertainty, then link the subsequent debris results in Chapter 5. Record any
+revision to that decision after practical recovery testing.
+
+
+
+
+                                           41
+                                    CHAPTER 4
+       CRAWLER DESIGN AND MECHANICAL VALIDATION
+
+This chapter documents the existing crawler and defines the mechanical checks
+needed to support its vacuum equipment during deployment and operation. The
+calculations are verification of the assembled design; they are not presented as
+calculations completed before construction.       The scope covers drive demand,
+equipment integration, the retrieval load path, and measured pulling capability.
+Vacuum generation and compressed-air characterization remain in Chapter 3.
+       Verification status. The available records do not include a completed mass
+budget, verified motor performance curves, attachment load limits, or mechanical test
+data. Numerical conclusions and simulation results therefore remain pending. The
+figures marked as placeholders identify the motor photographs, current computer-
+aided design (CAD) views, and analysis outputs required to complete the chapter.
+
+
+
+4.1     Design Requirements
+The complete crawler must pass through the confirmed 12-inch-diameter opening,
+equivalent to 304.8 mm.      The deployed assembly includes the wheels, vacuum
+units, collection hardware, electronics, fittings, and connected services. Width and
+height checked separately against the opening are insufficient; the assembly must fit
+within its circular cross section throughout the intended insertion sequence, with an
+allowance for handling and manufacturing variation.
+       The frame must support the operating equipment and an explicitly defined
+maximum debris mass in the collection bag. This full-bag condition is a design
+assumption until its mass and location are specified. Bag volume alone does not define
+payload. The 32-inch wall-to-wall annulus spacing and 0.75-inch protective-pipe
+
+
+
+                                         42
+outside diameter remain the confirmed project requirements. Local floor curvature
+and the installed pipe supports must be represented when assessing clearance; pipe
+diameter is not automatically the obstacle’s exposed height.
+       For this chapter, the author specifies a 100-ft (30.48 m) compressed-air hose, a
+power/Ethernet tether, and a rear attachment. The tether’s length, mass distribution,
+and support arrangement still require confirmation. The crawler must start, travel,
+turn, and cross the representative pipes with these services connected. Deployment
+and retrieval must transfer the applicable loads through the designated attachment
+into the frame. Whether the same attachment is approved for lifting, horizontal
+recovery, and angled recovery must be established before assigning its working load.
+
+
+
+4.2     Motor Selection and Torque Calculations
+Wang et al. organize their chassis power calculation around rolling resistance, slope
+resistance, traction force, and travel power [34]. This sequence is useful here, but
+their agricultural-track coefficients, slope, power values, and engine margin are not
+transferred to the vacuum crawler. The following balance adds the external service-
+line forces and uses consistent SI units: mass in kilograms, force in newtons, torque
+in newton-metres, and power in watts.
+
+
+
+4.21    Mass Budget and Payload
+
+Let m0 be the empty operating assembly mass and md the assumed maximum debris
+mass. The loaded crawler mass is
+
+                                                       ∑︂
+                          m = m 0 + md ,        m0 =        mk .                  (4.1)
+                                                       k
+
+
+
+
+                                           43
+The component sum is an alternative to, and a check on, a measured assembly
+mass. Components already included in a weighed assembly must not be added again.
+Table 4.1 identifies the contributions. Only hose or cable segments carried onboard
+belong in m0 ; the externally routed bundle is treated separately.
+   Table 4.1: Mass budget to be completed for the tested crawler configuration.
+
+
+Contribution                        Mass (kg)      Required identification
+
+Frame and structural mounts         Pending        Material, revision, included brackets
+Motors and transmissions            Pending        Quantity, model, included gearheads
+Wheels, hubs, and tires             Pending        Quantity     and      installed   tire
+                                                   configuration
+Electronics and enclosure           Pending        Complete operating contents
+Onboard Venturi units               Pending        One- or two-unit configuration
+Empty bag and collection hardware   Pending        Bag, cage, inlet, and fittings
+Other onboard fittings/services     Pending        Items not included above
+Maximum debris payload md           Assumed;       Material, mass, and bag location
+                                    unset
+
+
+       Record the empty assembly mass on a calibrated scale, reconcile it with the
+component inventory, and add only the selected debris payload. The loaded center of
+                  ∑︁
+mass follows r G = k mk r k /m, including the debris contribution. The representative
+full-bag location must follow the actual bag support; a mass placed arbitrarily on top
+of the crawler does not reproduce that loading.
+
+
+
+4.22    Hose and Tether Resistance
+
+The baseline route is a straight, level corridor without bends, edge contact, or
+snagging. For each line j, distinguish floor-supported length Lf,j , suspended length
+Ls,j , and length supported externally Le,j . These portions account for the external
+line length. For the air hose, their sum is 30.48 m less any segment already included
+onboard. The partition may change as the crawler moves and must be recorded at
+the evaluated position.
+
+                                          44
+       For a freely sliding floor-supported segment, a preliminary resistance model is
+
+                                         ∑︂
+                                  Df =          µj λj gLf,j ,                     (4.2)
+                                          j
+
+
+where λj is mass per unit length, µj is the effective sliding coefficient, and g is
+gravitational acceleration. This applies the sliding-friction relation to the supported
+line weight [35]. Starting resistance requires its own measurement or coefficient.
+Binding between bundled lines, connector drag, and changes in pressure or line shape
+should be represented by measuring the actual bundle rather than assuming this
+model is exact.
+       Suspended portions transmit tension according to their routing and external
+supports. Their full weight is not automatically carried by the crawler. Let the
+resultant line force at the rear attachment be (−D, H) in the forward and upward
+directions, respectively. D is the opposing longitudinal component, including floor
+drag and any suspended-line contribution; H is signed and may act upward or
+downward. Until the routing and support reactions are known, these components
+remain parameters. If the endpoint force is measured directly, do not add Equation 4.2
+to it a second time. Bends and edge contact are excluded from this baseline and need
+separate evaluation if present in deployment.
+
+
+4.23     Driving Force, Wheel Loading, and Motor Demand
+
+Figure 4.1 defines the level-floor force model. For straight motion on a local slope α,
+taken as positive uphill, a first estimate is
+
+
+                            N = mg cos α − H,                                     (4.3)
+
+                          Freq = Crr N + D + mg sin α + ma.                       (4.4)
+
+
+
+
+                                              45
+Here N is total wheel normal load, Crr is an effective dimensionless rolling-resistance
+coefficient, and a is forward acceleration. On a slope, D and H are resolved parallel
+and normal to the surface. The baseline uses α = 0; a nonzero slope is included only
+when its geometry is specified. The force balance neglects aerodynamic resistance at
+the intended low speed and treats wheel/rotor rotational inertia separately. Crr must
+describe the installed tires and floor, not agricultural tracks.
+
+          H (signed)
+
+                                                                         +x, travel
+                        Loaded center of mass
+  D                      NR                   NF
+    hR attachment
+   Rear
+                                       mg                          FD
+
+               Frr
+                                      L
+                             xG
+        Figure 4.1: Level-floor force model, not a dimensioned drawing. NR and
+         NF are rear and front axle load sums; FD is total forward wheel force
+           and Frr is rolling resistance. The rear attachment coordinate xR is
+               measured from the rear contact line and may be negative.
+
+
+       The rear force also changes wheel loading.        For level, quasi-static travel,
+neglecting small rolling-resistance moments, moment and vertical-force equilibrium
+give
+                      mgxG − xR H − hR D
+               NF =                      ,         NR = mg − H − NF .              (4.5)
+                              L
+
+L is the distance between axle contact lines, xG is the loaded center-of-mass distance
+ahead of the rear contact line, and (xR , hR ) locates the rear attachment. This is
+a sagittal-plane equilibrium model, not a four-wheel load solution. Negative axle
+reactions indicate loss of the assumed contact state. Unequal wheel elevations and
+lateral loading require the actual support geometry; contact forces and external
+
+
+
+                                            46
+moments govern stability [25]. Acceleration-induced load transfer is outside this
+quasi-static relation.
+       For common loaded wheel radius r, total wheel torque is estimated as
+
+
+                         τw,tot = rFreq + τrot ,      Ptravel = Freq v,                   (4.6)
+
+
+where v is travel speed and τrot accounts for acceleration of rotating components.
+For steady travel it is zero; if startup is evaluated, obtain it from verified inertias or
+identify its omission as a model limitation. Power alone cannot assess starting torque
+because v = 0 at rest.
+                                                                          ∑︁
+       Let γi be motor i’s share of wheel-torque demand, with              i γi = 1. With speed
+
+reduction Gi = ωm,i /ωw,i and transmission efficiency ηi ,
+
+                                        γi τw,tot              v
+                           τm,i,req =             ,   ωm,i = Gi .                         (4.7)
+                                         Gi ηi                 r
+
+The speed relation assumes negligible longitudinal slip. Four wheels and left-right
+differential control do not establish the number of motors or mechanical couplings.
+Equal sharing, γi = 1/nm , is only a preliminary assumption for nm identical equally
+loaded drives. The installed arrangement and unequal-load cases must be recorded
+before numerical evaluation. If a rating is already given at the gearmotor output
+shaft, compare at that shaft without applying its internal gearbox ratio again.
+
+
+4.24     Available Torque and Separate Operating Cases
+
+Compare the required torque with the available continuous torque at the intended
+motor speed, terminal voltage, and thermal conditions. Check the gearbox output
+limit and controller current limit as well.           Manufacturer guidance distinguishes
+continuous thermal demand from short-duration peak torque and evaluates voltage
+
+
+
+                                                 47
+against the operating speed [36].      Stall torque is a zero-speed endpoint, not a
+continuous operating allowance. Intermittent operation requires a specified duration
+and recovery time from the applicable datasheet.
+       Use a documented demand margin kT > 1 once, so the comparison is τm,i,avail ≥
+kT τm,i,req . Its value must cover the remaining uncertainty in payload, resistance,
+and load sharing without repeating allowances already included in those inputs. No
+numerical margin is assigned before the motor data and load bounds are available.
+An appropriate margin will be justified from those bounds and checked against the
+measured pulling capability.
+       Straight travel, skid steering, and pipe crossing are separate cases. During a
+turn, fixed-axis wheels undergo lateral slip and additional resistance [26, 27]. Turning
+demand will therefore be assessed from loaded turning trials, including current and
+speed where available. Pipe crossing changes contact position, wheel loading, and
+clearance; compliant-wheel step-climbing results do not establish a rounded-pipe limit
+for this crawler [28]. The straight-travel torque balance is not evidence that either
+maneuver succeeds. Available traction also limits usable drive force, approximately
+∑︁
+  i µt,i Ni over driven contacts, with contact-specific friction µt,i and load Ni rather
+
+than an assumed equal quarter of the weight.
+
+
+
+                               IMAGE PLACEHOLDER
+     Insert photographs identifying the installed motor and gearbox, followed by the
+                  verified torque–speed curve at the operating voltage.
+
+
+            Figure 4.2: Motor and drivetrain identification and performance
+                                   data—pending.
+
+
+Drafting note: Complete the assembly and debris masses, loaded wheel radius,
+axle spacing, center of mass, rear attachment coordinates, motor count/coupling,
+gearbox ratio and efficiency, terminal voltage, torque–speed and thermal limits, target
+
+                                           48
+speed/acceleration, and measured line resistance. Insert the numerical demand and
+margin comparison only after these inputs are verified.
+
+
+
+4.3      CAD Design and Mechanical Integration
+The selected configuration is a rigid four-wheel platform with differential/skid
+steering and compliant tires, as reviewed in Section 2.31. The inherited crawler used
+an aluminum chassis; the current frame’s alloy, temper, section dimensions, and
+connection details must be verified from the as-built parts. Aluminum should not be
+assigned a generic strength value for structural assessment. Existing CAD screenshots
+show the arrangement but do not establish that every displayed dimension belongs
+to the current test assembly.
+
+
+
+                              IMAGE PLACEHOLDER
+      Insert the current assembled crawler CAD view. Label the frame, wheel drives,
+        vacuum units, collection hardware, electronics, and rear attachment; include
+                                     revision and date.
+
+          Figure 4.3: Current crawler assembly and subsystem locations—CAD
+                                     view pending.
+
+
+       Motor mounts must transfer driving and reaction loads into the frame while
+maintaining wheel alignment. The wheel/hub detail should show the shaft connection,
+bearings or supports, fastening method, and service access.          Tire compliance is
+intended to accommodate local contact geometry; its material, construction, and
+loaded radius require identification. No verified traction advantage is assigned to a
+material name alone.
+       The vacuum units and collection bag must be secured without obstructing
+the wheel sweep, pickup, or retrieval connection.        Record the one- or two-unit
+configuration selected through Chapter 3, including any mass difference. Show both
+
+                                           49
+                             IMAGE PLACEHOLDER
+      Insert an exploded motor-mount and wheel-hub view with connection details
+                        and a section through the installed tire.
+
+
+         Figure 4.4: Motor mounting, wheel hub, and tire construction—details
+                                      pending.
+
+
+the empty bag and the assumed full-bag extent and center of mass. The electronics
+enclosure and service routing must preserve component access and prevent loads
+on the tether from being carried by electrical connectors.           The rear service-line
+attachment and the designated lifting connection must be identified separately if
+they are different parts; a shared location does not establish a shared load rating.
+       For each proposed insertion pose, project the complete assembly onto the plane
+normal to the riser axis. If (uj , wj ) are the transverse coordinates of envelope point
+j relative to that axis, a conservative circular-envelope check is
+
+                                 √︂
+                           max     u2j + wj2 + c ≤ 152.4 mm,                         (4.8)
+                             j
+
+
+
+where c is the required radial clearance, still to be selected. Include the full-bag shape
+when loaded retrieval is required, protruding fittings, and permissible hose/cable
+motion. Check the sequence against riser length and orientation as well as the cross
+section, then demonstrate passage physically. CAD clearance is a geometric check,
+not proof of successful handling.
+Drafting note: Insert the current CAD revision, measured overall dimensions,
+actual frame material and thicknesses, connection details, bag payload location,
+minimum ground clearance, and insertion/retrieval clearance. Resolve differences
+between archived CAD screenshots and the assembled crawler before using them as
+design dimensions.
+
+
+                                           50
+                               IMAGE PLACEHOLDER
+        Insert dimensioned front, side, and plan views, including overall dimensions,
+       wheelbase, loaded radius, pickup/underbody clearance, rear attachment height,
+                             and the 12-inch circular envelope.
+
+
+                  Figure 4.5: Dimensioned crawler and deployment-envelope
+                                      check—pending.
+
+
+4.4        Retrieval Attachment Structural Assessment
+The structural scope is the load path from the designated attachment through its
+connection and supporting frame members. The assessment begins by confirming its
+intended lifting and recovery functions. Table 4.2 separates the load cases so that
+crawler weight is not used as an unsupported bound on stuck-vehicle recovery force.
+
+          Table 4.2: Retrieval load cases requiring definition before assessment.
+
+
+Case                  Load definition and missing inputs
+
+Lifting               Loaded crawler weight plus the line load actually carried during
+                      suspension; specify lift direction, support points, and dynamic
+                      allowance.
+Horizontal            Maximum intended recovery tension Tmax , with its basis in the retrieval
+recovery              equipment and operating limit. This value is not yet established.
+Angled recovery       Tmax resolved at the permitted pull angles; include attachment
+                      eccentricity and the corresponding frame reactions.
+
+
+          For a vertical quasi-static lift, the attachment force is TL = mg + Wℓ,carried ,
+where Wℓ,carried is the downward service-line load transferred to the crawler. This
+excludes weight carried by other supports. Acceleration or impact allowances require
+a stated operating basis and are added to the load case explicitly. For an angled pull,
+use the actual vector T and the connection moment M = r×T , with r measured from
+the resisting connection to the force application point. A horizontal stuck-recovery
+case requires its own tension limit even when the attachment can lift the crawler.
+
+
+                                              51
+                               IMAGE PLACEHOLDER
+       Insert a close-up CAD view of the retrieval attachment, its fasteners or welds,
+          adjacent frame members, force direction, and the continuous load path.
+
+
+          Figure 4.6: Retrieval attachment and frame load path—detail pending.
+
+
+4.41      Hand Calculations and Connection Checks
+
+Use the defined force and moment to estimate section tension, bending, and shear
+before numerical simulation. For a suitable prismatic section under axial load and
+one-axis bending, nominal normal stress is σ = Fn /A ± M cs /I, where A is net area, I
+is the second moment of area, and cs is distance from the neutral axis. This nominal
+estimate does not resolve local hole or fillet stress concentrations; membrane and
+bending stress must be distinguished from such peaks [37].
+        If the connection is bolted, distribute force and eccentric moment over the
+actual bolt group. Evaluate bolt tension and shear together, joint separation where
+relevant, and the surrounding material’s bearing, net-section, tear-out, and thread-
+pullout limits. NASA’s fastener manual provides the load-group and combined-
+loading framework [38]. Preliminary stresses include Nb /At in bolt tension, Vb /Av in
+shear, and Vb /(td) in plate bearing, using the appropriate tensile/shear areas, plate
+thickness t, and bolt diameter d. Do not assume all bolts carry equal load under an
+eccentric pull. If welded, assess the actual weld group and effective throat instead;
+neither connection type is yet confirmed.
+        Strength allowables and design factors must follow the verified materials,
+connection, and intended service. State whether factors are applied to loads or
+allowables so they are not duplicated. Required inputs are the attachment dimensions,
+eccentricities, material certificates or defensible specifications, bolt or weld details,
+
+
+
+
+                                             52
+maximum recovery force, pull-angle range, and permitted deformation. No working
+load or structural pass is assigned without these inputs.
+
+
+
+4.42     Simulation Plan and Acceptance
+
+Analysis pending. No completed finite element analysis is reported. A focused
+model is appropriate if the geometry or connection load distribution cannot be
+represented adequately by the hand checks. Document the material model, geometry
+simplifications, contacts, fastener or weld representation, applied forces, and
+boundary conditions. Lifting must transfer gravity and supported line loads through
+the suspended frame to the attachment; horizontal recovery requires reactions at
+the actual resisting contacts or equivalent justified supports. Fixing a face next to
+the loaded eye while omitting the supporting frame would bypass the intended load
+path.
+
+
+
+                             IMAGE PLACEHOLDER
+         Insert the analysis model with load arrows, support/contact conditions,
+             connection assumptions, element type, and locally refined mesh.
+
+
+            Figure 4.7: Retrieval assessment model, boundary conditions, and
+                               mesh—simulation pending.
+
+
+        Compare successive mesh refinements using the selected stress measure and
+attachment displacement, with an acceptance tolerance defined before interpreting
+the result [39]. Check reaction balance and agreement with the hand-calculated load
+path. Point constraints and sharp idealized corners can produce nonconvergent stress
+peaks; identify their cause rather than treating a contour maximum automatically
+as material failure [37]. For an applicable ductile-metal model, compare a justified
+
+
+
+
+                                           53
+equivalent stress with the material allowable and assess displacement against clearance
+and permanent-deformation limits. Connection failure modes remain separate checks.
+
+
+
+                               IMAGE PLACEHOLDER
+        Insert stress and displacement plots with units, deformation scale, load-case
+      identification, and a mesh-convergence table or graph. Do not insert illustrative
+                                       stress values.
+
+                Figure 4.8: Retrieval stress, displacement, and convergence
+                         results—reserved for completed analysis.
+
+
+Drafting note: Report hand-calculation results, governing connection checks, load-
+case-specific stress and displacement, convergence evidence, and acceptance margins.
+Conclusions must identify the assessed components and loads; an analysis image alone
+does not establish safety of the complete crawler.
+
+
+
+4.5        Experimental Pulling-Capability Validation
+
+4.51       Drawbar-Pull Measurement
+
+The proposed drawbar test measures the pulling capability of the assembled crawler,
+including traction, drivetrain, and controller limitations. It does not directly measure
+isolated motor torque. Use a calibrated force transducer or load cell in a rated tension
+fixture connected at the actual rear attachment height. Record the pull angle; the
+horizontal component is FDB = T cos θ for a planar tension reading T at angle θ above
+the floor. Upward or downward components must be retained when interpreting wheel
+loading.
+        Specify floor material and condition, empty or loaded payload mass and
+location, tire configuration, commanded speed, measured motor-terminal voltage,
+and controller settings.     For moving tests, use a controllable resisting load that
+
+
+                                             54
+permits a measured travel speed. A restrained test may establish a short-duration
+peak, but must be reported separately from sustained pull at speed. Increase load in
+controlled increments within the verified attachment, fixture, and drive limits. Stop
+at excessive slip, motor slowdown, current limiting, loss of contact, or a predefined
+thermal/load limit; do not require a prolonged stall.
+       Record force versus time and, where feasible, vehicle speed, wheel rotation,
+motor current, and temperature. Identify whether slip, loss of speed, or electronic
+limiting set the observed limit; if the cause cannot be distinguished, report it as
+unresolved.    The initial proposal is three independent repeats for each selected
+payload condition, with fixed run duration and averaging interval established during
+preliminary checks. Report peak and sustained force separately, run-to-run spread,
+calibration uncertainty, and alignment error using the uncertainty approach in
+Section 3.2.
+
+
+
+                              IMAGE PLACEHOLDER
+           Insert a photograph or drawing of the load cell, tension fixture, rear
+          attachment, pull direction, floor, and representative ballast locations.
+
+
+          Figure 4.9: Proposed crawler drawbar-pull test arrangement—setup
+                                   image pending.
+
+
+
+
+4.52     Service-Line Resistance and Loaded Travel
+
+Measure the actual hose/tether bundle resistance along the representative straight
+route with the same support partition, pressure state, connector arrangement, and
+pull height used in operation. Record starting peak and sustained resistance at
+the intended travel speed, with repeated runs. This supplies an endpoint demand
+to compare with the line-force model and available drawbar pull.              The forward
+
+
+                                            55
+demand Freq includes the crawler’s own rolling resistance; measured drawbar
+pull is the external pulling capability remaining after the crawler propels itself.
+Compare measured bundle resistance directly with drawbar capability under matched
+conditions, or add the crawler resistance back before comparing with total wheel
+force. Do not subtract or count that resistance twice.
+       Loaded travel will use the operating equipment and ballast reproducing the
+specified debris mass and bag location. Test starting, sustained forward/reverse
+travel, turning in both directions, and crossing the representative protective pipes
+with the actual service bundle connected. Record route geometry, pipe diameter
+and support height, approach direction, travel distance, run duration, completed
+maneuvers, interference, and failures. Repeat the selected maneuvers and report the
+number of successes and attempts. The existing criteria require completion without
+immobilization, overturning, or damage that prevents operation; travel distances,
+repetition counts, and numerical limits remain to be fixed. A stationary pull test
+does not establish these capabilities.
+
+
+
+                             IMAGE PLACEHOLDER
+     Insert force–time or force–speed plots, measured bundle resistance, uncertainty,
+                       and a maneuver-outcome table after testing.
+
+
+              Figure 4.10: Measured pulling capability and loaded mobility
+                              outcomes—results pending.
+
+
+
+
+4.53     Integrated Validation and Retained Recovery Method
+
+Full-system validation remains planned at Hanford’s Cold Test Facility (CTF), which
+has supported mockup demonstrations of deployment and navigation in a simulated
+annulus [40]. Figure 4.11 retains the available facility photograph. The project tests
+
+
+                                           56
+will connect the mechanical checks to deployment, retrieval, debris recovery, and
+operator feedback with the hose and control system attached. Facility arrangements,
+test geometry, and acceptance criteria still require confirmation. No radiation or
+environmental qualification follows from this mechanical demonstration.
+
+
+
+
+                Figure 4.11: Cold Test Facility in Richland, Washington.
+
+
+       The existing debris-recovery method is retained here to link air-only
+characterization to loaded crawler operation. With known deposited mass mdeposited
+and recovered collector mass mcollected ,
+
+                                            mcollected
+                             ηrecovery =               × 100%.                   (4.9)
+                                            mdeposited
+
+Specify surrogate properties, initial and recovered mass measurement, material
+remaining on the floor or in the line, pickup path, cleaning time, and scale
+uncertainty. Hold the collector and supply conditions documented in Chapter 3.
+Record operator visibility and command behavior during these trials; the previously
+proposed latency, telemetry, restart, and communication-loss checks remain to be
+defined with the control implementation.           They are not established mechanical
+results.
+
+                                              57
+Drafting note: Insert the completed mass and torque verification, drawbar and
+line-resistance measurements, loaded maneuver records, retrieval observations, and
+the final mechanical limitations. Detailed integrated results remain for Chapter 5; do
+not duplicate Chapter 3’s air-only performance curves.
+
+
+
+
+                                         58
+                                    CHAPTER 5
+                        RESULTS AND DISCUSSION
+
+
+
+5.1     Deployment and mobility
+Drafting note: Insert measured results with sample sizes, uncertainty, figures, and
+comparison to the baseline. Distinguish observations from explanations.
+
+
+
+5.2     Vacuum and debris recovery
+Drafting note: Report recovery calculated with Equation 4.9, operating conditions,
+and the effect of nozzle and generator configuration.
+
+
+
+5.3     ROS 2 and operator control
+Drafting note: Report latency, reliability, fault recovery, and operator observations
+under the documented test conditions.
+
+
+
+5.4     Integrated-system tradeoffs
+Drafting note: Discuss whether improvements in one subsystem imposed costs
+elsewhere. Connect every conclusion to a result or a clearly identified limitation.
+
+
+
+
+                                          59
+                                   CHAPTER 6
+                  CONCLUSIONS AND FUTURE WORK
+
+
+
+6.1     Answers to the research questions
+Drafting note: Answer each question from Chapter 1 with the measured evidence
+and state the limits of the comparison.
+
+
+
+6.2     Contributions and limitations
+Drafting note: Summarize the verified engineering contributions and the conditions
+under which the findings apply.
+
+
+
+6.3     Future work
+Drafting note: Prioritize remaining design, testing, and field-validation tasks based
+on the demonstrated limitations.
+
+
+
+
+                                          60
+                               BIBLIOGRAPHY
+
+[1] National Park Service. Manhattan Project Site Selection, 2023. URL https:
+   //www.nps.gov/articles/000/manhattan-project-site-selection.htm.
+   Accessed October 4, 2026.
+
+[2] National Park Service. Hanford: T Plant Virtual Tour. URL https://www.nps.
+   gov/mapr/learn/photosmultimedia/hanford-t-plant-virtual-tour.htm.
+   Accessed October 4, 2026.
+
+[3] U.S. Department of Energy. Hanford Progress Shows Trump Administration’s
+   Commitment to Environmental Management.         Department of Energy news
+   release, 2020. Accessed October 4, 2026.
+
+[4] U.S. Department of Energy. Tank Farms. URL https://www.hanford.gov/
+   page.cfm/tankfarms. Accessed October 4, 2026.
+
+[5] U.S. Government Accountability Office. Nuclear Waste: DOE Lacks Critical
+   Information Needed to Assess Its Tank Management Strategy at Hanford.
+   Technical Report GAO-08-793, U.S. Government Accountability Office, 2008.
+   URL https://www.gao.gov/assets/a277692.html.
+
+[6] Washington State Department of Ecology.    Hanford Leaking Tanks.    URL
+   https://ecology.wa.gov/waste-toxics/nuclear-waste/hanford-cleanup/
+   leaking-tanks. Accessed October 4, 2026.
+
+[7] U.S. Department of Energy, Office of Inspector General.      Tank Waste
+   Management at the Hanford Site.      Technical Report DOE-OIG-20-57, U.S.
+   Department of Energy, 2020. URL https://www.energy.gov/ig/articles/
+   audit-report-doe-oig-20-57.
+
+
+
+                                      61
+ [8] U.S. Department of Energy. Hanford Double-Shell Tanks Fact Sheet. Technical
+    report, U.S. Department of Energy, January 2024. URL https://www.hanford.
+    gov/files.cfm/DST_Fact_Sheet_AP-106.pdf.
+
+ [9] U.S. Department of Energy, Office of Environmental Management. Hanford
+    Uses Innovative Robotic System to Inspect Bottom of Waste Storage Tanks.
+    Department of Energy article, March 2020. March 10, 2020. Accessed October
+    4, 2026.
+
+[10] Evident Scientific. An Introduction to Ultrasonic Thickness Gauging. Technical
+    application guide, . Accessed October 4, 2026.
+
+[11] Evident Scientific. Precision Ultrasonic Gauging: Factors That Can Impact
+    Testing. Ultrasonic Thickness Gauge Tutorial, . Accessed October 4, 2026.
+
+[12] Allan F. Pardini and Todd J. Samuel. Functions and Requirements for the DST
+    Knuckle Region Ultrasonic Scanning System. Technical Report PNNL-13436,
+    Pacific Northwest National Laboratory, January 2001. URL https://www.pnnl.
+    gov/main/publications/external/technical_reports/PNNL-13436.pdf.
+    January 29, 2001. Sections 2.1.1 and 2.3. Accessed October 11, 2026.
+
+[13] Pedro Chaviano. Development of Double Shell Tank Annulus Vacuum Crawler
+    System. Technical report, Florida International University, DOE-FIU Science &
+    Technology Workforce Development Program, January 2025. Student summer
+    internship technical report for 2024 work. Inner title page submitted January
+    2025; supplied public-release copy TOC-PRES-24-6032, Rev. 0. Sections 2.2–4.
+
+[14] Ronald Verde. Development of Double Shell Tank Annulus Vacuum Crawler
+    System. Technical report, Florida International University, DOE-FIU Science &
+    Technology Workforce Development Program, October 2025. Student summer
+    internship technical report, submitted October 28, 2025. Sections 2–4.
+
+                                        62
+[15] Tank     Annulus       Floor     Cleaning—Complete      (MTW-82)—Retired.
+    Technology    roadmap     excerpt,   RPP-PLAN-43988,      Rev.   7,   p.     202,
+    2022.        URL    https://www.energy.gov/sites/default/files/2023-08/
+    Hanford-Tank-Farms-TD-Roadmap-Appendices.pdf.            Verified against the
+    author-supplied page image, stamped October 12, 2022 (page 216 of 243).
+    Accessed October 11, 2026.
+
+[16] J. Schmalz GmbH. Vacuum Ejectors. Vacuum Knowledge technical guide.
+    Accessed October 11, 2026.
+
+[17] EXAIR Corporation. Line Vac Air Operated Conveyors. Manufacturer catalog
+    excerpt, .    Printed pp. 169–171:     operating principle, configuration, and
+    performance information. Accessed October 11, 2026.
+
+[18] EXAIR Corporation. FAQ Library: Air Operated Conveyors. Manufacturer
+    application guidance, . Conveying factors, placement, and powder separation.
+    Accessed October 11, 2026.
+
+[19] Lee Evans. Line Vac Back Pressure. EXAIR application engineering article, May
+    2013. May 30, 2013. Accessed October 11, 2026.
+
+[20] Mauro Garantola.      Universal Blowers—The Technology Behind Cleaning
+    Applications. White paper, AMETEK SRL, 2023. Through-flow and bypass
+    motors, pp. 3–4. Manufacturer white paper. Accessed October 11, 2026.
+
+[21] Busch Vacuum Solutions. Side Channel Blowers. Manufacturer technology guide,
+    . Operating principle and vacuum/pressure applications. Accessed October 11,
+    2026.
+
+[22] Busch Vacuum Solutions.        SAMOS SI 0045–2200 E1 / SI 0150–1100 E2:
+    Instruction Manual. Manufacturer operating instructions, . Product description
+    and installation requirements, printed pp. 3–6. Accessed October 11, 2026.
+
+                                         63
+[23] Arthur Bouton and Yang Gao.        MARCEL: Mobile active rover chassis for
+    enhanced locomotion. Journal of Field Robotics, 40(6):1504–1524, 2023. doi:
+    10.1002/rob.22188. URL https://doi.org/10.1002/rob.22188.
+
+[24] Kyohei Otsu, Guillaume Matheron, Sourish Ghosh, Olivier Toupet, and
+    Masahiro Ono. Fast approximate clearance evaluation for rovers with articulated
+    suspension systems.      Journal of Field Robotics, 37(5):768–785, 2020.     doi:
+    10.1002/rob.21892. URL https://doi.org/10.1002/rob.21892.
+
+[25] E. G. Papadopoulos and D. A. Rey. A new measure of tipover stability margin
+    for mobile manipulators. In Proceedings of the IEEE International Conference
+    on Robotics and Automation, volume 4, pages 3111–3116, 1996. doi: 10.1109/
+    ROBOT.1996.509185. URL https://nereus.mech.ntua.gr/pdf_ps/ICRA96.
+    pdf.
+
+[26] Anthony Mandow, Jorge L. Martı́nez, Jesús Morales, José L. Blanco, Alfonso
+    Garcı́a-Cerezo, and Javier González. Experimental kinematics for wheeled skid-
+    steer mobile robots. In Proceedings of the IEEE/RSJ International Conference
+    on Intelligent Robots and Systems, pages 1222–1227, 2007. doi: 10.1109/IROS.
+    2007.4399139. URL https://doi.org/10.1109/IROS.2007.4399139.
+
+[27] Benjamin Shamah. Experimental comparison of skid steering vs. explicit steering
+    for a wheeled mobile robot. Master’s thesis, Carnegie Mellon University, Robotics
+    Institute, March 1999.
+
+[28] Alexander Wilhelm, William Melek, Jan Huissoon, Chris Clark, Gerd Hirzinger,
+    Norbert Sporer, and Matthias Fuchs. Dynamics of step-climbing with deformable
+    wheels and applications for mobile robotics. In Proceedings of the IEEE/RSJ
+    International Conference on Intelligent Robots and Systems, pages 783–788,
+
+
+
+
+                                         64
+    2007.   doi: 10.1109/IROS.2007.4399601.        URL https://doi.org/10.1109/
+    IROS.2007.4399601.
+
+[29] NASA Glenn Research Center. Mass flow choking. Compressible mass-flow
+    technical explanation. Continuity, ideal-gas density, and sonic mass-flow limit.
+    Accessed November 8, 2026.
+
+[30] U.S. Department of Energy. Doe fundamentals handbook: Thermodynamics,
+    heat transfer, and fluid flow, volume 3 of 3. Technical Report DOE-HDBK-
+    1012/3-92, U.S. Department of Energy, June 1992. URL https://www.energy.
+    gov/sites/default/files/2026-04/DOE-HDBK-1012-92_VOL3.pdf.                   Module
+    3, printed pp. 31–36: friction and fitting losses. Accessed November 8, 2026.
+
+[31] DwyerOmega. Differential pressure flow meters. Manufacturer measurement
+    guide. Flow coefficients, density correction, usable range, and installation effects.
+    Accessed November 8, 2026.
+
+[32] National Institute of Standards and Technology. Nist tn 1297: Appendix a. law
+    of propagation of uncertainty. Technical Note 1297 online appendix, . Equations
+    A-3–A-5. Accessed November 8, 2026.
+
+[33] National Institute of Standards and Technology. Nist tn 1297: 6. expanded
+    uncertainty. Technical Note 1297 online section, . Expanded uncertainty and
+    coverage-factor interpretation. Accessed November 8, 2026.
+
+[34] Zhenlong Wang, Fanting Kong, Qing Xie, Yuanyuan Zhang, Yongfei Sun,
+    Teng Wu, and Changlin Chen. Design and testing of a crawler chassis for
+    brush-roller cotton harvesters. Agriculture, 14(10):1832, 2024. doi: 10.3390/
+    agriculture14101832. Section 2.5 used for the resistance-to-power presentation
+    approach; application-specific values are not adopted.
+
+
+
+                                          65
+[35] Samuel J. Ling, Jeff Sanny, and William Moebs. University Physics Volume 1:
+    Section 6.2, Friction. OpenStax, Rice University, 2016. Sliding and limiting
+    static friction. Accessed November 8, 2026.
+
+[36] maxon precision motors, inc. Motor Type Selection. Manufacturer application
+    guide. Continuous torque, peak load, speed, and winding selection. Accessed
+    November 8, 2026.
+
+[37] Ansys.    Assessing Stress Singularity.      Ansys Innovation Courses,      .
+    Model idealizations, nonconvergent peaks, and membrane/bending stress
+    interpretation. Accessed November 8, 2026.
+
+[38] Richard T. Barrett. Fastener Design Manual. Technical Report NASA-RP-1228,
+    National Aeronautics and Space Administration, March 1990. URL https://
+    ntrs.nasa.gov/api/citations/19900009424/downloads/19900009424.pdf.
+    Printed pp. 17–21: fastener groups, combined loading, and surrounding material
+    checks. Accessed November 8, 2026.
+
+[39] Ansys. Mechanical User’s Guide: Using Adaptive Convergence. Release 2024
+    R2 documentation, Section 18.10, . Convergence of selected solution quantities
+    with mesh refinement. Accessed November 8, 2026.
+
+[40] U.S. Department of Energy, Office of Environmental Management.          Tank
+    Refurbishment Technology Under Development at Hanford.         Department of
+    Energy article, June 2024. June 11, 2024. Accessed October 11, 2026.
+
+
+
+
+                                         66
+

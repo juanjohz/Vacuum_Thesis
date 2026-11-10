@@ -1,0 +1,135 @@
+% !TeX root = ../main.tex
+\chapter{Introduction}
+\label{chap:introduction}
+
+\section{Background}
+\noindent
+The Hanford Site was established in 1943 in southeastern Washington State as part of the Manhattan Project, the United States' wartime program to develop atomic weapons. Its primary purpose was the large-scale production of plutonium through the irradiation of uranium fuel and subsequent chemical separation. The location offered several advantages for this mission, including a large area isolated from major population centers, access to Columbia River water for reactor cooling, and an abundant supply of hydroelectric power. These conditions supported the rapid construction of nuclear reactors and processing facilities that became central to the nation's nuclear weapons program \citep{npsManhattanSiteSelection}.
+
+% Introduce the site visually before continuing its production history.
+\begin{figure}[H]
+\centering
+\thesisimage{Hanford_site_aerial.png}
+\caption{Aerial view of the Hanford Site}
+\label{fig:Aerial View of the Handford Site}
+\end{figure}
+
+Plutonium produced at Hanford was used in the Trinity test and in the atomic bomb dropped on Nagasaki in 1945. Following World War II, production expanded to meet the demands of the Cold War, extending the site's operations for several decades. Consequently, Hanford's waste inventory developed from both its initial Manhattan Project activities and its subsequent defense production mission. In 1989, the site's mission shifted toward environmental cleanup, requiring the management of the radioactive and chemical waste accumulated throughout its operating history \citep{npsHanfordTPlant,doeHanfordCleanup2020}.
+
+The recovery of plutonium from irradiated uranium fuel generated substantial quantities of radioactive waste. Chemical processing separated the desired plutonium from the fuel, leaving waste streams containing radioactive by-products and chemicals used during separation. Much of this waste was transferred to underground storage tanks arranged in groups known as tank farms within Hanford's 200 Area. Over time, the stored material developed into a complex mixture of liquid supernatant, settled sludge, and saltcake. These forms differ in composition and physical behavior, complicating their storage, characterization, and eventual retrieval \citep{doeHanfordTankFarms,gao2008TankManagement}.
+
+
+The environmental consequences of this production legacy extend beyond the waste retained in the tanks. Historical waste disposal practices and losses of containment contributed to contamination of the surrounding soil and groundwater. Tank leakage presents an additional concern because contaminants released into the soil can migrate through the subsurface and potentially reach groundwater connected to the Columbia River. The rate and extent of this movement depend on the properties of the contaminants and the surrounding geological conditions. Preventing further releases is therefore essential to protecting water resources, ecosystems, and nearby communities \citep{gao2008TankManagement,ecologyHanfordLeakingTanks}.
+
+\begin{figure}[H]
+\centering
+\thesisimage{Handford_tank_constuction.png}
+\caption{Construction of underground tanks in Handford}
+\label{fig:Handford tank constuction}
+\end{figure}
+
+Secure storage is a fundamental requirement for managing this waste while retrieval, treatment, and disposal activities proceed. Storage systems must maintain containment over extended periods while allowing operators to monitor their condition and identify deterioration. At Hanford, this requirement is particularly challenging because much of the original infrastructure has remained in service beyond its intended design life. Maintaining tank integrity therefore requires continued assessment of the storage structures and the development of reliable methods for detecting conditions that could compromise containment \citep{doe2020TankWasteAudit}.
+
+The earliest underground storage system consisted of single-shell tanks (SSTs), of which 149 were constructed between 1943 and 1964. These tanks incorporated a carbon-steel liner encased in concrete, with the steel providing the primary barrier between the waste and the surrounding structure. Their intended service life was approximately 20 years. However, the prolonged storage of waste and the deterioration of aging tanks exposed the limitations of this configuration. Because SSTs lack a separate secondary steel containment barrier, a failure of the liner can allow waste to escape into the surrounding environment \citep{doe2020TankWasteAudit}.
+
+To improve containment and support continued waste management, Hanford constructed 28 double-shell tanks (DSTs) between 1968 and 1986. Each DST consists of a primary carbon-steel tank positioned within a secondary carbon-steel liner and surrounded by a reinforced-concrete structure. The secondary liner provides an additional barrier to retain waste if the primary tank leaks. The annulus separates the primary tank wall from the secondary liner and provides access for monitoring and inspection. These tanks receive waste retrieved from SSTs and support the transfer of waste for treatment. Their continued operation depends on maintaining the integrity of both containment barriers, making inspection and maintenance within the annular space an important component of Hanford's waste storage mission \citep{doe2024DoubleShellTanks}. The annulus width specified for this project is 32 inches from wall to wall, as confirmed by the author; this dimension does not account for the bottom curvature discussed in Section~\ref{sec:annulus-geometry}.
+
+\begin{figure}[H]
+\centering
+\thesisimage{DST_Tank_explained.png}
+\caption{Illustration of a Double Shell Tank}
+\label{fig:Illustration of a Double Shell Tank}
+\end{figure}
+
+
+
+\section{Operational Context and Motivation}
+\label{sec:operational-context}
+Hanford's double-shell tanks are inspected regularly to check the condition of the steel that contains the waste. As these structures age, corrosion and localized degradation can reduce the remaining metal thickness and compromise their ability to retain waste. Visual examinations and ultrasonic inspections provide complementary information for evaluating tank condition and planning maintenance. While visual inspections document accessible surface conditions, thickness measurements provide quantitative evidence of metal loss that may not be apparent from images alone. Maintaining access to the surfaces being inspected is therefore an essential part of the tank integrity program \citep{doe2024DoubleShellTanks,doe2020HanfordRoboticInspection}.
+
+\begin{figure}[H]
+\centering
+\thesisimage{UT_Crawler_ITIVS.png}
+\caption{Ultrasonic Testing Crawler}
+\label{fig:Ultrasonic Testing Crawler}
+\end{figure}
+
+Ultrasonic testing (UT) is a nondestructive inspection method used to evaluate material condition without removing a sample from the structure. In ultrasonic thickness measurements, a transducer introduces high-frequency sound into the steel, and the instrument determines thickness from the travel time of the returning echoes and the calibrated sound velocity in the material. These measurements allow engineers to assess remaining wall thickness and identify areas of thinning associated with corrosion \citep{evidentThicknessGauging}. At Hanford, remotely operated inspection systems have been used to examine DST walls, and specialized equipment has been developed to obtain thickness measurements beneath the primary tank through air channels in its supporting insulating pad. These applications demonstrate both the importance of UT and the access challenges involved in inspecting underground tank structures \citep{doe2020HanfordRoboticInspection}.
+
+
+The cleaning application addressed in this thesis concerns loose debris, including corrosion products and material released during mechanical surface preparation, that can collect on the annulus floor. Accumulated debris may hinder inspection equipment from reaching required measurement locations. Separately, loose material on the steel surface being examined can interfere with the transmission of ultrasonic waves between the probe and the steel. This transmission requires effective acoustic coupling at the measurement location \citep{evidentUltrasonicSurfaceFactors}. Debris on the annulus floor does not necessarily affect measurements on tank walls. Vacuum cleaning may support access and removal of loose material, but it does not by itself establish that a measurement surface meets the preparation requirements of the applicable UT procedure.
+
+\begin{figure}[H]
+\centering
+\thesisimage{Debri_DST2.png}
+\caption{Debri Inside of the Annulus}
+\label{fig:Debri Inside of the Annulus}
+\end{figure}
+
+These conditions motivate the development of a remotely operated system for removing loose debris from the DST annulus. The annulus provides limited access to the tank surfaces, and Hanford already uses remotely operated equipment for inspection \citep{doe2024DoubleShellTanks,doe2020HanfordRoboticInspection}. The cleaning approach considered here likewise uses remote operation to address the confined geometry and keep personnel outside the tank. A robotic vacuum crawler offers a means of moving an extraction inlet to affected areas while allowing an operator to guide the system from outside the tank. The objective is to collect loose material from the annulus floor, with the intended benefit of clearing inspection routes and improving equipment access to required measurement locations. Testing will evaluate debris recovery and crawler operation; improved UT measurements and compliance with UT surface-preparation requirements are not claimed outcomes. This operational need provides the motivation for the mechanical, vacuum, and control-system development investigated in this thesis.
+
+
+\section{Double-Shell Tank Annulus Constraints and Requirements}
+\label{sec:dst-constraints}
+\begingroup
+\renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
+
+The requirements below apply to the complete crawler with its operating equipment, hose, and cables attached. Confirmed requirements are author-specified project requirements, not evidence of completed validation. Preliminary inputs and proposed acceptance criteria are identified separately; numerical limits not yet established remain to be confirmed.
+
+\subsection{Geometric and Access Constraints}
+\label{sec:annulus-geometry}
+The confirmed project annulus width is 32 inches from wall to wall. This dimension does not account for the curvature at the tank bottom, which reduces the usable clearance near the floor. The allowable vehicle envelope must therefore be checked against the local tank profile. Figure~\ref{fig:annulus-clearance} illustrates the curvature and piping but provides no dimensional verification.
+
+The nominal 12-inch riser diameter remains a preliminary access input pending verification of the clear opening and obstructions. The allowable deployment envelope must fit within that opening with clearance for insertion and retrieval; it is not an allowable 12-inch crawler diameter. The envelope must include cameras, lights, fittings, hose connections, and cables in the deployment configuration. Dimensional inspection and a passage demonstration will check the minimum clearance and any interference. The required clearance allowance and verified riser profile remain to be established.
+
+\begin{figure}[H]
+\centering
+\thesisimage{annulus_dimension.jpg}
+\caption{Annulus floor, curved tank surfaces, and installed piping. The photograph illustrates these features but does not establish their dimensions.}
+\label{fig:annulus-clearance}
+\end{figure}
+
+\subsection{Deployment and Retrieval Requirements}
+\label{sec:deployment-requirements}
+The crawler must be lowered, placed on the annulus floor, and retrieved with its hose and cables attached without damage that compromises operation. It must support its own assembled weight while suspended from the designated lifting attachment in the deployment configuration. Verification will record the assembled mass, suspension configuration, and any hose or cable load carried by the attachment. Passing requires no structural separation or damage that prevents subsequent motion, collection, or operator feedback, followed by successful retrieval. Suspension duration, additional handling loads, and permissible deformation remain to be established.
+
+\subsection{Mobility and Obstacle Traversal Requirements}
+\label{sec:mobility-requirements}
+The crawler must travel forward, reverse, turn within the available annulus clearance, and cross protective pipes associated with thermocouple instrumentation while its hose and cables remain attached. The 0.75-inch obstacle height remains preliminary: nominal pipe diameter, outside diameter, and installed rise above the floor must be distinguished. The final profile, supports, and allowable instrumentation contact loads require confirmation. Passing requires completion of the specified maneuvers and crossing without immobilization, overturning, or damage to instrumentation. Verification will record completed maneuvers, interference, and failures under the confirmed geometry and representative hose routing; travel distance, turn extent, and repetition count remain to be defined.
+
+\subsection{Debris Collection Requirements}
+\label{sec:collection-requirements}
+The target materials are loose corrosion products and debris from mechanical surface preparation on the annulus floor. The confirmed collection range extends from dust to individual debris particles with a maximum volume of $0.75~\mathrm{in}^{3}$. This upper limit specifies particle volume, not a linear dimension or total collector capacity. Particle shapes, corresponding maximum dimensions, and the representative dust fraction remain to be specified for testing. Cold-spray residue is not a target material.
+
+The system must pick up the specified debris, transport it through the complete vacuum path, and retain it in the collection system. Verification will distinguish material left at the pickup area, material lodged in the transport path, and material recovered in the collector. Proposed performance measures are recovered mass divided by introduced mass, collection time, and blockage events per trial. The debris mixture, introduced mass, hose length and routing, operating duration, and collection-system loading must be specified for each comparison. Recovery, time, and blockage acceptance limits have not yet been established; no numerical pass threshold is assigned here.
+
+\subsection{Operator Feedback and Control Requirements}
+\label{sec:operator-requirements}
+Video feedback and onboard lighting must let the operator identify travel direction, approaching obstacles, surrounding clearance, and debris at the pickup inlet during navigation and cleaning. Remote viewing is also identified in earlier Hanford inspection-system requirements \citep{pardini2001DSTRequirements}. A proposed visibility criterion is that the operator can identify designated clearance boundaries, the representative pipe, and the inlet working area during forward travel, reversing, turning, and pickup. The specific viewing targets and test lighting conditions require confirmation.
+
+End-to-end video latency is a proposed measurement, with no acceptance limit yet set. Stopping on command-link loss and requiring deliberate restart remain proposed control requirements. If adopted, verification will measure the time and travel distance from link loss to stopping under specified speed and hose-loading conditions, and check that communication recovery alone does not restart motion. These behaviors and their thresholds must be approved and tested before being reported as established capabilities. Chapter~\ref{chap:design} will describe the selected implementation, and Chapter~\ref{chap:methods} will specify the verification procedures.
+\par
+\endgroup
+
+\section{Planned Validation at the Cold Test Facility}
+\label{sec:ctf-validation}
+\begingroup
+\setlength{\emergencystretch}{2em}
+
+Full-system validation of the crawler is planned at Hanford's Cold Test Facility (CTF), shown in Figure~\ref{fig:ctf}. The facility has supported mockup demonstrations of robotic deployment and navigation in a simulated DST annulus \citep{doe2024CTFDemonstration}. For this project, testing will evaluate riser deployment and retrieval, maneuverability, obstacle traversal, debris recovery, and operator feedback with the vacuum hose and control system connected. The test configuration and acceptance criteria will be established before the demonstration. These tests will assess integrated operation under representative conditions; radiation tolerance and any specified splash-resistance rating require separate qualification.
+
+\begin{figure}[H]
+\centering
+\thesisimage{CTF_Picture.png}
+\caption{Cold Test Facility in Richland, Washington.}
+\label{fig:ctf}
+\end{figure}
+\par
+\endgroup
+
+
+\section{Research objectives and questions}
+\label{sec:research-objectives}
+\begingroup
+\setlength{\emergencystretch}{2em}
+\endgroup
