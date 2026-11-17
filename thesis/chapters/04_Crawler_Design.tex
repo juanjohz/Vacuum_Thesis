@@ -1,9 +1,9 @@
 % !TeX root = ../main.tex
-\chapter{Crawler Design and Mechanical Validation}
+\chapter{Crawler Mechanical Design}
 \label{chap:crawler}
-\label{chap:methods}
-% Retain chap:methods for existing links from Chapters 1, 3, and 5.
-% Other chapter files are intentionally unchanged in this revision.
+% Experimental methods now belong to Chapter 6.
+% Retain chap:crawler as the mechanical-design chapter label.
+% Chapters 5 and 6 document controls and validation; Chapter 7 is the conclusions outline.
 \begingroup
 \setlength{\emergencystretch}{3em}
 \clubpenalty=10000
@@ -17,77 +17,123 @@
 \caption{#2}\label{#3}
 \end{figure}}
 
-This chapter documents the existing crawler and defines the mechanical checks needed to support its vacuum equipment during deployment and operation. The calculations are verification of the assembled design; they are not presented as calculations completed before construction. The scope covers drive demand, equipment integration, the retrieval load path, and measured pulling capability. Vacuum generation and compressed-air characterization remain in Chapter~\ref{chap:vacuum}.
+This chapter presents the crawler's mechanical design, beginning with the deployment and operating requirements in Section~\ref{sec:mechanical-requirements}. Section~\ref{sec:crawler-cad} develops the preliminary computer-aided design (CAD) layout and estimates the geometry and operating mass needed for the drive calculations. Section~\ref{sec:motor-verification} uses these inputs and the assumed service-bundle loads to determine force, torque, and differential-drive requirements and guide the selection of a compact motor and gearbox package. The chapter concludes with the retrieval attachment lifting-simulation check in Section~\ref{sec:retrieval-structure}. Experimental validation is outlined in Chapter~\ref{chap:validation}.
 
-\textbf{Verification status.} The available records do not include a completed mass budget, verified motor performance curves, attachment load limits, or mechanical test data. Numerical conclusions and simulation results therefore remain pending. The figures marked as placeholders identify the motor photographs, current computer-aided design (CAD) views, and analysis outputs required to complete the chapter.
+\draftnote{Complete motor selection using the target travel speed, turning requirements, and candidate motor dimensions and performance data. Verify the preliminary mass and resistance assumptions against the assembled crawler and report whole-crawler pull-test results.}
 
 \section{Design Requirements}
 \label{sec:mechanical-requirements}
-The complete crawler must pass through the confirmed 12-inch-diameter opening, equivalent to 304.8~mm. The deployed assembly includes the wheels, vacuum units, collection hardware, electronics, fittings, and connected services. Width and height checked separately against the opening are insufficient; the assembly must fit within its circular cross section throughout the intended insertion sequence, with an allowance for handling and manufacturing variation.
+The complete crawler must pass through a 12-inch-diameter (304.8~mm) opening with its wheels, vacuum units, collection hardware, electronics, fittings, and service lines attached. All components must fit through the circular opening, with enough clearance to guide the crawler through and account for small differences in the manufactured dimensions.
 
-The frame must support the operating equipment and an explicitly defined maximum debris mass in the collection bag. This full-bag condition is a design assumption until its mass and location are specified. Bag volume alone does not define payload. The 32-inch wall-to-wall annulus spacing and 0.75-inch protective-pipe outside diameter remain the confirmed project requirements. Local floor curvature and the installed pipe supports must be represented when assessing clearance; pipe diameter is not automatically the obstacle's exposed height.
+The frame must support the operating equipment and the assumed maximum debris mass in the collection bag. Motor-selection calculations use this loaded condition, with the debris mass and its location stated as design assumptions. The crawler must operate within the 32-inch wall-to-wall annulus spacing and cross an obstacle representative of a 0.75-inch-diameter pipe.
 
-For this chapter, the author specifies a 100-ft (30.48~m) compressed-air hose, a power/Ethernet tether, and a rear attachment. The tether's length, mass distribution, and support arrangement still require confirmation. The crawler must start, travel, turn, and cross the representative pipes with these services connected. Deployment and retrieval must transfer the applicable loads through the designated attachment into the frame. Whether the same attachment is approved for lifting, horizontal recovery, and angled recovery must be established before assigning its working load.
+The complete service bundle comprises the compressed-air hose, Ethernet cable, separate power cable, and support/retrieval rope. A nominal length of 100~ft (30.48~m) is used for each line in the preliminary load calculation. The bundle connects at the rear of the crawler. The crawler must start, travel, turn, and cross the representative pipe obstacle with the complete bundle connected.
+\section{Preliminary CAD Design and Mechanical Integration}
+\label{sec:crawler-cad}
+The preliminary CAD layout develops the four-wheel configuration discussed in Section~\ref{sec:chassis-configurations} around the requirements in Section~\ref{sec:mechanical-requirements}. Figure~\ref{fig:crawler-assembly-cad} shows the wheel drives along the sides of the frame, leaving the central space for the vacuum equipment and its connections. The layout must also accommodate the collection bag and electronics without obstructing the wheels or pickup. Bag supports must allow for the assumed full-bag shape, while the electronics and service lines need accessible connections and strain relief at the planned rear tether attachment.
 
-\section{Motor Selection and Torque Calculations}
-\label{sec:motor-verification}
-Wang et al. organize their chassis power calculation around rolling resistance, slope resistance, traction force, and travel power \citep{wang2024CrawlerChassis}. This sequence is useful here, but their agricultural-track coefficients, slope, power values, and engine margin are not transferred to the vacuum crawler. The following balance adds the external service-line forces and uses consistent SI units: mass in kilograms, force in newtons, torque in newton-metres, and power in watts.
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}
+\node[anchor=south west,inner sep=0] (assembly) at (0,0) {\thesisimage{Preliminary_crawler_iso.png}};
+\begin{scope}[x={(assembly.south east)},y={(assembly.north west)}]
+\node[fill=white,inner sep=2pt,font=\footnotesize] (frame) at (0.25,0.12) {Frame};
+\draw[->,thick] (frame) -- (0.48,0.43);
+\node[fill=white,inner sep=2pt,font=\footnotesize] (drive) at (0.77,0.12) {Wheel drive};
+\draw[->,thick] (drive) -- (0.59,0.36);
+\node[fill=white,inner sep=2pt,font=\footnotesize] (vacuum) at (0.24,0.92) {Vacuum equipment};
+\draw[->,thick] (vacuum) -- (0.39,0.69);
+\end{scope}
+\end{tikzpicture}
+\caption[Preliminary crawler assembly]{Preliminary crawler assembly showing the frame, wheel drives, and vacuum equipment. The collection bag and electronics enclosure are not shown; their locations remain preliminary.}
+\label{fig:crawler-assembly-cad}
+\end{figure}
 
-\subsection{Mass Budget and Payload}
-Let $m_0$ be the empty operating assembly mass and $m_d$ the assumed maximum debris mass. The loaded crawler mass is
+The preliminary design uses wheels 4 inches (101.6~mm) in diameter and 0.75 inches (19.05~mm) wide, giving a nominal wheel radius $r=2$ inches (50.8~mm). The wheelbase is $L=13$ inches (330.2~mm), measured between the front and rear axle lines. The specified 8.5-inch (215.9~mm) width is taken as the track width $b$, measured between the left and right wheel centerlines. These are the preliminary geometry inputs for Section~\ref{sec:motor-verification}; the effective tire radius under load remains to be checked.
+
+The motor and gearbox installation must accommodate mounts, shaft connections, wiring, and assembly access. The side, bottom, and front views in Figure~\ref{fig:crawler-envelope-cad} show the modeled assembly within a 10-inch-diameter (254~mm) envelope. Centering that modeled envelope in the required 12-inch opening gives a nominal radial clearance of 1 inch (25.4~mm). Complete deployment clearance must also include the bag, electronics, fittings, and service lines in their deployment positions; the modeled envelope alone does not establish that clearance.
+\begin{figure}[p]
+\centering
+\begingroup\singlespacing
+\thesisimage[height=0.20\textheight,keepaspectratio]{Preliminary_crawler_side.png}\par
+{\small (a) Side view}\par\medskip
+\thesisimage[height=0.20\textheight,keepaspectratio]{Preliminary_crawler_bottom.png}\par
+{\small (b) Bottom view}\par\medskip
+\thesisimage[height=0.27\textheight,keepaspectratio]{Preliminary_crawler_front.png}\par
+{\small (c) Front view}\par
+\endgroup
+\caption[Preliminary crawler side, bottom, and front views]{Preliminary crawler side, bottom, and front views. The front view shows the modeled assembly within a 10-inch-diameter envelope. Clearance through the 12-inch deployment opening must be checked with the bag, electronics, fittings, and service lines included.}
+\label{fig:crawler-envelope-cad}
+\end{figure}
+
+The frame and custom machined parts are specified as aluminum 6061 for in-house machining. The CAD mass estimate for the crawler and Venturi equipment is $m_{\mathrm{CAD}}=8.55$~lb (3.88~kg). A preliminary mass allowance equal to the CAD estimate is added for onboard equipment and model uncertainty, giving an empty operating design mass $m_0=2m_{\mathrm{CAD}}$ of 17.1~lb (7.76~kg). Adding an assumed dust payload $m_d$ of 10~lb (4.54~kg) gives the loaded design mass in Table~\ref{tab:crawler-mass-budget}.
+
+The empty bag, electronics, fittings, mounts, and onboard service-line segments are included within $m_0$; external service-bundle resistance is treated separately. The mass allowance does not establish a structural safety factor.
 \begin{equation}
- m=m_0+m_d, \qquad
- m_0=\sum_k m_k.
+ m=m_0+m_d=2m_{\mathrm{CAD}}+m_d=27.1~\mathrm{lb}\approx12.29~\mathrm{kg}.
  \label{eq:crawler-mass}
 \end{equation}
-The component sum is an alternative to, and a check on, a measured assembly mass. Components already included in a weighed assembly must not be added again. Table~\ref{tab:crawler-mass-budget} identifies the contributions. Only hose or cable segments carried onboard belong in $m_0$; the externally routed bundle is treated separately.
 
 \begin{table}[htbp]
 \centering
-\caption{Mass budget to be completed for the tested crawler configuration.}
+\caption{Preliminary CAD mass estimate and adopted operating-mass assumption.}
 \label{tab:crawler-mass-budget}
 \begingroup\small\singlespacing
 \renewcommand{\arraystretch}{1.2}
-\begin{tabularx}{\textwidth}{@{}p{0.39\textwidth}p{0.15\textwidth}X@{}}
+\begin{tabularx}{\textwidth}{@{}p{0.34\textwidth}p{0.19\textwidth}X@{}}
 \toprule
-Contribution & Mass (kg) & Required identification \\
+Item & Mass & Basis \\
 \midrule
-Frame and structural mounts & Pending & Material, revision, included brackets \\
-Motors and transmissions & Pending & Quantity, model, included gearheads \\
-Wheels, hubs, and tires & Pending & Quantity and installed tire configuration \\
-Electronics and enclosure & Pending & Complete operating contents \\
-Onboard Venturi units & Pending & One- or two-unit configuration \\
-Empty bag and collection hardware & Pending & Bag, cage, inlet, and fittings \\
-Other onboard fittings/services & Pending & Items not included above \\
-Maximum debris payload $m_d$ & Assumed; unset & Material, mass, and bag location \\
+Modeled crawler and Venturi equipment & 8.55~lb (3.88~kg) & Supplied CAD mass-properties report. \\
+Preliminary mass allowance & 8.55~lb (3.88~kg) & Allowance equal to the modeled mass. \\
+Empty operating design mass $m_0$ & 17.1~lb (7.76~kg) & Twice the CAD mass; includes the allowance above. \\
+Assumed debris payload $m_d$ & 10~lb (4.54~kg) & Additional dust load for the full-bag design case. \\
+Loaded design mass $m$ & 27.1~lb (12.29~kg) & Empty design mass plus debris payload. \\
 \bottomrule
 \end{tabularx}
 \endgroup
 \end{table}
 
-Record the empty assembly mass on a calibrated scale, reconcile it with the component inventory, and add only the selected debris payload. The loaded center of mass follows $\boldsymbol r_G=\sum_k m_k\boldsymbol r_k/m$, including the debris contribution. The representative full-bag location must follow the actual bag support; a mass placed arbitrarily on top of the crawler does not reproduce that loading.
+These mass and geometry estimates provide the inputs to the force and torque calculations in Section~\ref{sec:motor-verification}. Motor selection may require changes to the mounting space, layout, and mass budget, so the CAD model and calculations must be updated together.
+
+\draftnote{Confirm the CAD revision and included hidden components, aluminum 6061 temper, remaining frame and motor/gearbox dimensions, loaded tire radius, and bag, payload, and electronics locations. Check material assignments and component coverage without double counting. Do not apply the preliminary mass allowance again in the torque margin.}
+
+\section{Motor Selection and Torque Calculations}
+\label{sec:motor-verification}
+The following force balance combines the crawler's rolling resistance with the drag of the complete service bundle to estimate preliminary wheel-output torque.
+
+\subsection{Mass and Geometry Inputs}
+Section~\ref{sec:crawler-cad} supplies the loaded design mass $m=12.29~\mathrm{kg}$. The adopted tire diameter is 4~in (101.6~mm), giving a nominal radius $r=2$~in ($0.0508~\mathrm{m}$). The wheelbase is $L=13$~in ($0.3302~\mathrm{m}$) and the preliminary track width is $b=8.5$~in ($0.2159~\mathrm{m}$).
+
+As a design assumption, the loaded center of gravity is taken to lie at the longitudinal midpoint between the axles and on the lateral centerline, so $x_G=L/2=6.5$~in ($0.1651~\mathrm{m}$). The rear line attachment height is assumed to be $h_R=4$~in ($0.1016~\mathrm{m}$) above the floor. Its value is distinct from the center-of-gravity height, which is not needed for this level, steady-travel balance.
+
+The mass $m$ includes the preliminary mass allowance and assumed dust payload. The weight of all four service lines is also accounted for, but according to where each portion is supported: onboard segments are included in $m$, floor-supported segments contribute to sliding drag, and externally supported segments load their supports. Thus the external line mass is not added to the crawler's wheel-supported mass. The calculation uses $g=9.81~\mathrm{m/s^2}$; the effective tire radius under load remains to be checked.
 
 \subsection{Hose and Tether Resistance}
-The baseline route is a straight, level corridor without bends, edge contact, or snagging. For each line $j$, distinguish floor-supported length $L_{f,j}$, suspended length $L_{s,j}$, and length supported externally $L_{e,j}$. These portions account for the external line length. For the air hose, their sum is 30.48~m less any segment already included onboard. The partition may change as the crawler moves and must be recorded at the evaluated position.
+\label{sec:service-bundle-routing}
+The nominal routing allocation for each line is 30~ft (9.144~m) externally managed between the operator cabin and the riser, 30~ft (9.144~m) suspended and supported at the riser, and 40~ft (12.192~m) sliding on the annulus floor. Applying this allocation to the air hose, Ethernet cable, separate power cable, and support/retrieval rope is a preliminary routing assumption. The crawler tows the floor-supported portions; their weight acts on the floor rather than being added to the crawler mass.
 
-For a freely sliding floor-supported segment, a preliminary resistance model is
+The hanging portions are assumed to terminate in slack transitions, with any required payout freely supplied from outside the annulus. Support at the riser carries the suspended weight, while slack prevents a taut hanging line from transmitting tension to the crawler. Free feeding means negligible additional resistance from the cabin, support, or reel. The 30/30/40-ft allocation is nominal and does not provide extra payout beyond the 100-ft total.
+
+The total rearward bundle force $D$ is idealized as horizontal at the rear attachment. Vertical line force, local line weight at the short rise to the attachment, bending stiffness, and riser-contact resistance are neglected. These assumptions isolate floor sliding from other route effects; a taut or angled attachment load would require a revised force balance.
+
+Using the sliding-friction relation $F=\mu N$ \citep{openstaxFriction}, the floor-supported weight of each line gives
 \begin{equation}
- D_f=\sum_j \mu_j\lambda_j gL_{f,j},
+ D=g\sum_{j\in\{h,e,p,s\}}\mu_j\lambda_j\ell_j,
+ \qquad m_{\mathrm{bundle,floor}}=\sum_j\lambda_j\ell_j.
  \label{eq:line-drag}
 \end{equation}
-where $\lambda_j$ is mass per unit length, $\mu_j$ is the effective sliding coefficient, and $g$ is gravitational acceleration. This applies the sliding-friction relation to the supported line weight \citep{openstaxFriction}. Starting resistance requires its own measurement or coefficient. Binding between bundled lines, connector drag, and changes in pressure or line shape should be represented by measuring the actual bundle rather than assuming this model is exact.
-
-Suspended portions transmit tension according to their routing and external supports. Their full weight is not automatically carried by the crawler. Let the resultant line force at the rear attachment be $(-D,H)$ in the forward and upward directions, respectively. $D$ is the opposing longitudinal component, including floor drag and any suspended-line contribution; $H$ is signed and may act upward or downward. Until the routing and support reactions are known, these components remain parameters. If the endpoint force is measured directly, do not add Equation~\ref{eq:line-drag} to it a second time. Bends and edge contact are excluded from this baseline and need separate evaluation if present in deployment.
-
+Here $h$, $e$, $p$, and $s$ denote the hose, Ethernet cable, power cable, and support/retrieval rope; $\lambda_j$ is linear mass and $\ell_j$ is floor-supported length. The baseline adopts $\ell_j=12.192~\mathrm{m}$ and $\mu_j=0.5$ for every line. This is an assumed effective sliding coefficient, not a published or measured material property. Section~\ref{sec:bundle-design-calculation} supplies the reference-based linear masses and resulting drag. A measured attachment drag may replace this estimate, but must not be added to it.
 \subsection{Driving Force, Wheel Loading, and Motor Demand}
-Figure~\ref{fig:crawler-force-diagram} defines the level-floor force model. For straight motion on a local slope $\alpha$, taken as positive uphill, a first estimate is
+For steady travel, acceleration is zero. With no vertical line force, Figure~\ref{fig:crawler-force-diagram} gives
 \begin{align}
- N &= mg\cos\alpha-H, \\
- F_{\mathrm{req}} &= C_{rr}N+D+mg\sin\alpha+ma.
+ N&=N_R+N_F=mg, \qquad F_{rr}=C_{rr}mg, \nonumber\\
+ F_{\mathrm{req}}&=F_{rr}+D=C_{rr}mg+D.
  \label{eq:crawler-driving-force}
 \end{align}
-Here $N$ is total wheel normal load, $C_{rr}$ is an effective dimensionless rolling-resistance coefficient, and $a$ is forward acceleration. On a slope, $D$ and $H$ are resolved parallel and normal to the surface. The baseline uses $\alpha=0$; a nonzero slope is included only when its geometry is specified. The force balance neglects aerodynamic resistance at the intended low speed and treats wheel/rotor rotational inertia separately. $C_{rr}$ must describe the installed tires and floor, not agricultural tracks.
+Here $C_{rr}=F_{rr}/N$ is the dimensionless rolling-resistance coefficient, distinct from the service-line sliding coefficients $\mu_j$. The calculation retains $C_{rr}=0.031$ as the preliminary assumption for rubber tires on a hard, level floor. Blickle lists 3.1\% rolling resistance for 200-mm standard solid-rubber wheels with ball bearings \citep{blickleRubberElastomers}. This is a reference value rather than a measurement or an upper bound for the crawler's smaller 101.6-mm tires.
 
+With $mg=120.56~\mathrm{N}$, the adopted rolling resistance is $F_{rr}=3.74~\mathrm{N}$, giving $F_{\mathrm{drive}}=F_{\mathrm{req}}=3.74~\mathrm{N}+D$.
 \begin{figure}[htbp]
 \centering
 \resizebox{0.96\textwidth}{!}{%
@@ -96,167 +142,215 @@ Here $N$ is total wheel normal load, $C_{rr}$ is an effective dimensionless roll
 \draw[thick] (0,0.9) rectangle (6,2.2);
 \draw[thick,fill=white] (1,0.5) circle (0.5);
 \draw[thick,fill=white] (5,0.5) circle (0.5);
-\fill (2.9,1.6) circle (0.06);
-\node[above] at (2.9,1.65) {Loaded center of mass};
-\draw[force] (2.9,1.6)--(2.9,0.35) node[right] {$mg$};
+\fill (3,1.6) circle (0.06);
+\node[above] at (3,1.65) {Loaded center of mass};
+\draw[force] (3,1.6)--(3,0.35) node[right] {$mg$};
 \fill (0,1.3) circle (0.06);
 \draw[force] (0,1.3)--(-1.8,1.3) node[above] {$D$};
-\draw[force] (0,1.3)--(0,2.8) node[above] {$H$ (signed)};
+
 \node[align=center] at (-1.05,2.1) {Rear\\attachment};
 \draw (-0.5,1.8)--(0,1.3);
 \draw[force] (1,0)--(1,1.4) node[right] {$N_R$};
 \draw[force] (5,0)--(5,1.4) node[right] {$N_F$};
-\draw[force] (4.6,0.08)--(7.3,0.08) node[above] {$F_D$};
+\draw[force] (4.6,0.08)--(7.3,0.08) node[above] {$F_{\mathrm{drive}}$};
 \draw[force] (2.1,-0.2)--(0.1,-0.2) node[below] {$F_{rr}$};
 \draw[<->] (1,-0.8)--(5,-0.8) node[midway,fill=white] {$L$};
-\draw[dashed] (2.9,0)--(2.9,-1.4);
-\draw[<->] (1,-1.3)--(2.9,-1.3) node[midway,fill=white] {$x_G$};
-\draw[<->] (-1.1,0)--(-1.1,1.3) node[midway,left] {$h_R$};
+\draw[dashed] (3,0)--(3,-1.4);
+\draw[<->] (1,-1.3)--(3,-1.3) node[midway,below] {$x_G=L/2$};
+\draw[<->] (-1.1,0)--(-1.1,1.3) node[midway,left] {$h_R=4~\mathrm{in}$};
 \draw[force] (6.3,2.3)--(7.6,2.3) node[right] {$+x$, travel};
 \end{tikzpicture}}
-\caption[Level-floor crawler force model]{Level-floor force model, not a dimensioned drawing. $N_R$ and $N_F$ are rear and front axle load sums; $F_D$ is total forward wheel force and $F_{rr}$ is rolling resistance. The rear attachment coordinate $x_R$ is measured from the rear contact line and may be negative.}
+\caption[Level-floor crawler force model]{Equivalent forces during level, steady, straight travel: loaded weight $mg$, rear and front normal reactions $N_R$ and $N_F$, forward driving force $F_{\mathrm{drive}}$, rolling resistance $F_{rr}$, and total horizontal rearward service-bundle drag $D$. Vertical line force is zero. Schematic, not to scale.}
 \label{fig:crawler-force-diagram}
 \end{figure}
 
-The rear force also changes wheel loading. For level, quasi-static travel, neglecting small rolling-resistance moments, moment and vertical-force equilibrium give
+A horizontal pull at attachment height $h_R$ can redistribute the axle loads even though their sum remains $mg$. In the equivalent-force model, neglecting rolling-resistance moments,
 \begin{equation}
- N_F=\frac{mgx_G-x_RH-h_RD}{L}, \qquad
- N_R=mg-H-N_F.
+ N_F=\frac{mgx_G-h_RD}{L}, \qquad N_R=mg-N_F.
  \label{eq:crawler-axle-loads}
 \end{equation}
-$L$ is the distance between axle contact lines, $x_G$ is the loaded center-of-mass distance ahead of the rear contact line, and $(x_R,h_R)$ locates the rear attachment. This is a sagittal-plane equilibrium model, not a four-wheel load solution. Negative axle reactions indicate loss of the assumed contact state. Unequal wheel elevations and lateral loading require the actual support geometry; contact forces and external moments govern stability \citep{papadopoulos1996Stability}. Acceleration-induced load transfer is outside this quasi-static relation.
-
-For common loaded wheel radius $r$, total wheel torque is estimated as
+Here $x_G=L/2$ is the assumed loaded center-of-mass distance ahead of the rear axle line and $h_R=0.1016~\mathrm{m}$. Substitution gives
 \begin{equation}
- \tau_{w,\mathrm{tot}}=rF_{\mathrm{req}}+\tau_{\mathrm{rot}},
- \qquad P_{\mathrm{travel}}=F_{\mathrm{req}}v,
+ N_F=60.28~\mathrm{N}-0.3077D,\qquad
+ N_R=60.28~\mathrm{N}+0.3077D,
+\end{equation}
+where $D$ is in newtons. Using the baseline bundle drag $D=29.81~\mathrm{N}$ from Section~\ref{sec:bundle-design-calculation} gives $N_F=51.11~\mathrm{N}$ and $N_R=69.46~\mathrm{N}$. Rearward drag therefore increases rear-axle loading despite the midpoint center-of-gravity assumption. Both reactions remain positive in this model; axle sums alone do not establish individual wheel loads or available traction.
+
+For a tangential force at radius $r$, torque is $rF$.\footnote{OpenStax, \emph{University Physics Volume 1}, \href{https://openstax.org/books/university-physics-volume-1/pages/10-6-torque}{Section 10.6, Torque}, Equation 10.23, with force perpendicular to the radius.} Thus the total steady wheel torque is
+\begin{equation}
+ \tau_{w,\mathrm{tot}}\approx rF_{\mathrm{req}}=r(C_{rr}mg+D).
  \label{eq:wheel-torque-demand}
 \end{equation}
-where $v$ is travel speed and $\tau_{\mathrm{rot}}$ accounts for acceleration of rotating components. For steady travel it is zero; if startup is evaluated, obtain it from verified inertias or identify its omission as a model limitation. Power alone cannot assess starting torque because $v=0$ at rest.
-
-Let $\gamma_i$ be motor $i$'s share of wheel-torque demand, with $\sum_i\gamma_i=1$. With speed reduction $G_i=\omega_{m,i}/\omega_{w,i}$ and transmission efficiency $\eta_i$,
+Substituting the preliminary mass and radius gives
 \begin{equation}
- \tau_{m,i,\mathrm{req}}=\frac{\gamma_i\tau_{w,\mathrm{tot}}}{G_i\eta_i},
- \qquad \omega_{m,i}=G_i\frac{v}{r}.
+ \tau_{w,\mathrm{tot}}\approx 0.190~\mathrm{N\,m}+(0.0508~\mathrm{m})D,
+ \label{eq:steady-wheel-torque-numeric}
+\end{equation}
+where $D$ is in newtons and the result is in newton-metres. The rolling-resistance contribution uses $C_{rr}=0.031$ and the drag contribution includes all four service lines.
+
+The crawler uses four independent wheel motors, $n=4$, in the rigid four-wheel differential/skid-steer configuration described in Section~\ref{sec:mechanical-design-implications}. For preliminary sizing, assume identical drives sharing the total torque equally, with reduction ratio $G=\omega_{\mathrm{motor}}/\omega_{\mathrm{wheel}}$ and transmission efficiency $\eta$,
+\begin{equation}
+ \tau_{w,\mathrm{drive}}=\frac{\tau_{w,\mathrm{tot}}}{4}, \qquad
+ \tau_{\mathrm{motor}}=\frac{\tau_{w,\mathrm{drive}}}{G\eta}, \qquad
+ \omega_{\mathrm{motor}}=G\frac{v}{r}.
  \label{eq:motor-demand}
 \end{equation}
-The speed relation assumes negligible longitudinal slip. Four wheels and left-right differential control do not establish the number of motors or mechanical couplings. Equal sharing, $\gamma_i=1/n_m$, is only a preliminary assumption for $n_m$ identical equally loaded drives. The installed arrangement and unequal-load cases must be recorded before numerical evaluation. If a rating is already given at the gearmotor output shaft, compare at that shaft without applying its internal gearbox ratio again.
+The torque conversion follows from $P_{\mathrm{out}}=\eta P_{\mathrm{in}}$ and $P=\tau\omega$; the speed relation assumes negligible longitudinal slip. Equal torque sharing is a design assumption and does not imply equal wheel normal loads. Unequal sharing requires separate drive demands. If a rating is already given at the gearmotor output shaft, compare at that shaft without applying its internal gearbox ratio again.
 
-\subsection{Available Torque and Separate Operating Cases}
-Compare the required torque with the available continuous torque at the intended motor speed, terminal voltage, and thermal conditions. Check the gearbox output limit and controller current limit as well. Manufacturer guidance distinguishes continuous thermal demand from short-duration peak torque and evaluates voltage against the operating speed \citep{maxonMotorSelection}. Stall torque is a zero-speed endpoint, not a continuous operating allowance. Intermittent operation requires a specified duration and recovery time from the applicable datasheet.
-
-Use a documented demand margin $k_T>1$ once, so the comparison is $\tau_{m,i,\mathrm{avail}}\geq k_T\tau_{m,i,\mathrm{req}}$. Its value must cover the remaining uncertainty in payload, resistance, and load sharing without repeating allowances already included in those inputs. No numerical margin is assigned before the motor data and load bounds are available. An appropriate margin will be justified from those bounds and checked against the measured pulling capability.
-
-Straight travel, skid steering, and pipe crossing are separate cases. During a turn, fixed-axis wheels undergo lateral slip and additional resistance \citep{mandow2007Kinematics,shamah1999SkidSteering}. Turning demand will therefore be assessed from loaded turning trials, including current and speed where available. Pipe crossing changes contact position, wheel loading, and clearance; compliant-wheel step-climbing results do not establish a rounded-pipe limit for this crawler \citep{wilhelm2007StepClimbing}. The straight-travel torque balance is not evidence that either maneuver succeeds. Available traction also limits usable drive force, approximately $\sum_i\mu_{t,i}N_i$ over driven contacts, with contact-specific friction $\mu_{t,i}$ and load $N_i$ rather than an assumed equal quarter of the weight.
-
-\mechanicalplaceholder{Insert photographs identifying the installed motor and gearbox, followed by the verified torque--speed curve at the operating voltage.}{Motor and drivetrain identification and performance data---pending.}{fig:motor-identification}
-
-\draftnote{Complete the assembly and debris masses, loaded wheel radius, axle spacing, center of mass, rear attachment coordinates, motor count/coupling, gearbox ratio and efficiency, terminal voltage, torque--speed and thermal limits, target speed/acceleration, and measured line resistance. Insert the numerical demand and margin comparison only after these inputs are verified.}
-
-\section{CAD Design and Mechanical Integration}
-\label{sec:crawler-cad}
-The selected configuration is a rigid four-wheel platform with differential/skid steering and compliant tires, as reviewed in Section~\ref{sec:chassis-configurations}. The inherited crawler used an aluminum chassis; the current frame's alloy, temper, section dimensions, and connection details must be verified from the as-built parts. Aluminum should not be assigned a generic strength value for structural assessment. Existing CAD screenshots show the arrangement but do not establish that every displayed dimension belongs to the current test assembly.
-
-\mechanicalplaceholder{Insert the current assembled crawler CAD view. Label the frame, wheel drives, vacuum units, collection hardware, electronics, and rear attachment; include revision and date.}{Current crawler assembly and subsystem locations---CAD view pending.}{fig:crawler-assembly-cad}
-
-Motor mounts must transfer driving and reaction loads into the frame while maintaining wheel alignment. The wheel/hub detail should show the shaft connection, bearings or supports, fastening method, and service access. Tire compliance is intended to accommodate local contact geometry; its material, construction, and loaded radius require identification. No verified traction advantage is assigned to a material name alone.
-
-\mechanicalplaceholder{Insert an exploded motor-mount and wheel-hub view with connection details and a section through the installed tire.}{Motor mounting, wheel hub, and tire construction---details pending.}{fig:wheel-drive-cad}
-
-The vacuum units and collection bag must be secured without obstructing the wheel sweep, pickup, or retrieval connection. Record the one- or two-unit configuration selected through Chapter~\ref{chap:vacuum}, including any mass difference. Show both the empty bag and the assumed full-bag extent and center of mass. The electronics enclosure and service routing must preserve component access and prevent loads on the tether from being carried by electrical connectors. The rear service-line attachment and the designated lifting connection must be identified separately if they are different parts; a shared location does not establish a shared load rating.
-
-For each proposed insertion pose, project the complete assembly onto the plane normal to the riser axis. If $(u_j,w_j)$ are the transverse coordinates of envelope point $j$ relative to that axis, a conservative circular-envelope check is
-\begin{equation}
- \max_j\sqrt{u_j^2+w_j^2}+c\leq 152.4~\mathrm{mm},
- \label{eq:circular-deployment-envelope}
-\end{equation}
-where $c$ is the required radial clearance, still to be selected. Include the full-bag shape when loaded retrieval is required, protruding fittings, and permissible hose/cable motion. Check the sequence against riser length and orientation as well as the cross section, then demonstrate passage physically. CAD clearance is a geometric check, not proof of successful handling.
-
-\mechanicalplaceholder{Insert dimensioned front, side, and plan views, including overall dimensions, wheelbase, loaded radius, pickup/underbody clearance, rear attachment height, and the 12-inch circular envelope.}{Dimensioned crawler and deployment-envelope check---pending.}{fig:crawler-envelope-cad}
-
-\draftnote{Insert the current CAD revision, measured overall dimensions, actual frame material and thicknesses, connection details, bag payload location, minimum ground clearance, and insertion/retrieval clearance. Resolve differences between archived CAD screenshots and the assembled crawler before using them as design dimensions.}
-
-\section{Retrieval Attachment Structural Assessment}
-\label{sec:retrieval-structure}
-The structural scope is the load path from the designated attachment through its connection and supporting frame members. The assessment begins by confirming its intended lifting and recovery functions. Table~\ref{tab:retrieval-loads} separates the load cases so that crawler weight is not used as an unsupported bound on stuck-vehicle recovery force.
+\subsection{Published Reference Data and Design Demand}
+\label{sec:bundle-design-calculation}
+Table~\ref{tab:service-bundle-masses} gives the adopted reference-based mass estimates for the complete service bundle. These are representative manufacturer weights, not verified properties of the installed lines. The project hose and Ethernet cord have been identified as McMaster-Carr 1593N38 and 4172T141; the reference products below supply mass estimates without asserting equivalence to those parts. Power-cable conductor size is stated in American wire gauge (AWG); SJOOW identifies the reference flexible-cord type.
 
 \begin{table}[htbp]
 \centering
-\caption{Retrieval load cases requiring definition before assessment.}
-\label{tab:retrieval-loads}
+\caption{Representative service-line masses and assumed floor-supported lengths.}
+\label{tab:service-bundle-masses}
 \begingroup\small\singlespacing
-\renewcommand{\arraystretch}{1.2}
-\begin{tabularx}{\textwidth}{@{}p{0.20\textwidth}X@{}}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{0.18\textwidth} >{\raggedright\arraybackslash}p{0.16\textwidth} >{\raggedright\arraybackslash}p{0.16\textwidth}@{}}
 \toprule
-Case & Load definition and missing inputs \\
+Line and reference product & Published weight & Linear mass (kg/m) & Floor length (m) \\
 \midrule
-Lifting & Loaded crawler weight plus the line load actually carried during suspension; specify lift direction, support points, and dynamic allowance. \\
-Horizontal recovery & Maximum intended recovery tension $T_{\max}$, with its basis in the retrieval equipment and operating limit. This value is not yet established. \\
-Angled recovery & $T_{\max}$ resolved at the permitted pull angles; include attachment eccentricity and the corresponding frame reactions. \\
+Air hose: Reelcraft 601143-100 \citep{reelcraft601143100} & 18.3~lb/100~ft & 0.2723 & 12.192 \\
+Ethernet: Belden 2412 Category~6 \citep{belden2412Mass} & 22~lb/1000~ft & 0.03274 & 12.192 \\
+Power: Southwire 12-AWG, two-conductor SJOOW \citep{southwireSjoowMass} & 114~lb/1000~ft & 0.16965 & 12.192 \\
+Rope: Samson 1/4-inch AmSteel-Blue \citep{samsonAmsteelMass} & 1.6~lb/100~ft & 0.02381 & 12.192 \\
 \bottomrule
 \end{tabularx}
 \endgroup
 \end{table}
 
-For a vertical quasi-static lift, the attachment force is $T_L=mg+W_{\ell,\mathrm{carried}}$, where $W_{\ell,\mathrm{carried}}$ is the downward service-line load transferred to the crawler. This excludes weight carried by other supports. Acceleration or impact allowances require a stated operating basis and are added to the load case explicitly. For an angled pull, use the actual vector $\boldsymbol T$ and the connection moment $\boldsymbol M=\boldsymbol r\times\boldsymbol T$, with $\boldsymbol r$ measured from the resisting connection to the force application point. A horizontal stuck-recovery case requires its own tension limit even when the attachment can lift the crawler.
+The conversions use $1~\mathrm{lb}=0.45359237~\mathrm{kg}$ and $1~\mathrm{ft}=0.3048~\mathrm{m}$, rounded to the values shown. The Reelcraft weight is an assembly-average estimate including fittings. The Belden cable is a Category~6 mass reference, not the identified Category~6A cord. The Southwire 12-AWG, two-conductor SJOOW cord is a mass proxy, not an electrical sizing recommendation. The rope reference supplies mass only; it does not select or qualify the retrieval system.
 
-\mechanicalplaceholder{Insert a close-up CAD view of the retrieval attachment, its fasteners or welds, adjacent frame members, force direction, and the continuous load path.}{Retrieval attachment and frame load path---detail pending.}{fig:retrieval-load-path}
+\begin{samepage}
+The combined linear mass and 40-ft floor-supported mass are
+\begin{align}
+ \lambda_{\mathrm{bundle}}&=0.2723+0.03274+0.16965+0.02381
+ =0.49850~\mathrm{kg/m},\nonumber\\
+ m_{\mathrm{bundle,floor}}&=(0.49850)(12.192)
+ =6.077712~\mathrm{kg}\approx6.08~\mathrm{kg}.
+ \label{eq:bundle-floor-mass}
+\end{align}
+\end{samepage}
+For the assumed effective coefficient $\mu_j=\mu_{\mathrm{eff}}=0.5$, the preliminary design calculation is
+\begin{align}
+ D&=(9.81)(0.5)(6.077712)\approx29.81~\mathrm{N},\nonumber\\
+ F_{\mathrm{req}}&=(0.031)(12.29)(9.81)+D\approx33.55~\mathrm{N},\nonumber\\
+ \tau_{w,\mathrm{tot}}&=(0.0508)F_{\mathrm{req}}\approx1.70~\mathrm{N\,m},\nonumber\\
+ \tau_{w,\mathrm{drive}}&=\frac{\tau_{w,\mathrm{tot}}}{4}
+ \approx0.426~\mathrm{N\,m}.
+ \label{eq:bundle-baseline-demand}
+\end{align}
+The per-drive value assumes equal torque sharing among the four independent motors and is evaluated at the wheel output rather than the bare motor shaft. Calculations retain the unrounded intermediate values from the tabulated masses. The 6.08-kg floor-supported bundle mass enters $D$ only; the crawler mass remains 12.29~kg.
 
-\subsection{Hand Calculations and Connection Checks}
-Use the defined force and moment to estimate section tension, bending, and shear before numerical simulation. For a suitable prismatic section under axial load and one-axis bending, nominal normal stress is $\sigma=F_n/A\pm Mc_s/I$, where $A$ is net area, $I$ is the second moment of area, and $c_s$ is distance from the neutral axis. This nominal estimate does not resolve local hole or fillet stress concentrations; membrane and bending stress must be distinguished from such peaks \citep{ansysStressSingularity}.
+Table~\ref{tab:bundle-friction-sensitivity} varies a common effective bundle coefficient while retaining the same masses, routing, and $C_{rr}$. The values 0.3, 0.5, and 0.7 are exploratory scenarios, not measured bounds.
+\begin{table}[htbp]
+\centering
+\caption{Exploratory sensitivity to assumed effective bundle sliding friction.}
+\label{tab:bundle-friction-sensitivity}
+\begingroup\small\singlespacing
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}ccccc@{}}
+\toprule
+$\mu_{\mathrm{eff}}$ & $D$ (N) & $F_{\mathrm{req}}$ (N) &
+$\tau_{w,\mathrm{tot}}$ (N\,m) & $\tau_{w,\mathrm{drive}}$, $n=4$ (N\,m) \\
+\midrule
+0.3 & 17.89 & 21.62 & 1.10 & 0.275 \\
+0.5 & 29.81 & 33.55 & 1.70 & 0.426 \\
+0.7 & 41.74 & 45.47 & 2.31 & 0.578 \\
+\bottomrule
+\end{tabular}
+\endgroup
+\end{table}
 
-If the connection is bolted, distribute force and eccentric moment over the actual bolt group. Evaluate bolt tension and shear together, joint separation where relevant, and the surrounding material's bearing, net-section, tear-out, and thread-pullout limits. NASA's fastener manual provides the load-group and combined-loading framework \citep{barrett1990Fasteners}. Preliminary stresses include $N_b/A_t$ in bolt tension, $V_b/A_v$ in shear, and $V_b/(td)$ in plate bearing, using the appropriate tensile/shear areas, plate thickness $t$, and bolt diameter $d$. Do not assume all bolts carry equal load under an eccentric pull. If welded, assess the actual weld group and effective throat instead; neither connection type is yet confirmed.
+These calculations address steady, straight, level travel with freely fed lines; startup, turning, obstacle crossing, and snagging require separate assessment. They provide preliminary demand estimates, not validation of motor selection or proof of deployment readiness.
+\subsection{Motor and Gearbox Selection}
+\label{sec:motor-selection}
+Pololu item 4696 is the candidate for the four independent wheel drives. Candidate status reflects the remaining operating-point and installation checks rather than a completed performance validation. The comparison uses the output-shaft demands in Section~\ref{sec:bundle-design-calculation}, assuming direct wheel attachment and equal torque sharing.
 
-Strength allowables and design factors must follow the verified materials, connection, and intended service. State whether factors are applied to loads or allowables so they are not duplicated. Required inputs are the attachment dimensions, eccentricities, material certificates or defensible specifications, bolt or weld details, maximum recovery force, pull-angle range, and permitted deformation. No working load or structural pass is assigned without these inputs.
-
-\subsection{Simulation Plan and Acceptance}
-\textbf{Analysis pending.} No completed finite element analysis is reported. A focused model is appropriate if the geometry or connection load distribution cannot be represented adequately by the hand checks. Document the material model, geometry simplifications, contacts, fastener or weld representation, applied forces, and boundary conditions. Lifting must transfer gravity and supported line loads through the suspended frame to the attachment; horizontal recovery requires reactions at the actual resisting contacts or equivalent justified supports. Fixing a face next to the loaded eye while omitting the supporting frame would bypass the intended load path.
-
-\mechanicalplaceholder{Insert the analysis model with load arrows, support/contact conditions, connection assumptions, element type, and locally refined mesh.}{Retrieval assessment model, boundary conditions, and mesh---simulation pending.}{fig:retrieval-fea-model}
-
-Compare successive mesh refinements using the selected stress measure and attachment displacement, with an acceptance tolerance defined before interpreting the result \citep{ansysMeshConvergence}. Check reaction balance and agreement with the hand-calculated load path. Point constraints and sharp idealized corners can produce nonconvergent stress peaks; identify their cause rather than treating a contour maximum automatically as material failure \citep{ansysStressSingularity}. For an applicable ductile-metal model, compare a justified equivalent stress with the material allowable and assess displacement against clearance and permanent-deformation limits. Connection failure modes remain separate checks.
-
-\mechanicalplaceholder{Insert stress and displacement plots with units, deformation scale, load-case identification, and a mesh-convergence table or graph. Do not insert illustrative stress values.}{Retrieval stress, displacement, and convergence results---reserved for completed analysis.}{fig:retrieval-fea-results}
-
-\draftnote{Report hand-calculation results, governing connection checks, load-case-specific stress and displacement, convergence evidence, and acceptance margins. Conclusions must identify the assessed components and loads; an analysis image alone does not establish safety of the complete crawler.}
-
-\section{Experimental Pulling-Capability Validation}
-\label{sec:pulling-validation}
-\subsection{Drawbar-Pull Measurement}
-The proposed drawbar test measures the pulling capability of the assembled crawler, including traction, drivetrain, and controller limitations. It does not directly measure isolated motor torque. Use a calibrated force transducer or load cell in a rated tension fixture connected at the actual rear attachment height. Record the pull angle; the horizontal component is $F_{\mathrm{DB}}=T\cos\theta$ for a planar tension reading $T$ at angle $\theta$ above the floor. Upward or downward components must be retained when interpreting wheel loading.
-
-Specify floor material and condition, empty or loaded payload mass and location, tire configuration, commanded speed, measured motor-terminal voltage, and controller settings. For moving tests, use a controllable resisting load that permits a measured travel speed. A restrained test may establish a short-duration peak, but must be reported separately from sustained pull at speed. Increase load in controlled increments within the verified attachment, fixture, and drive limits. Stop at excessive slip, motor slowdown, current limiting, loss of contact, or a predefined thermal/load limit; do not require a prolonged stall.
-
-Record force versus time and, where feasible, vehicle speed, wheel rotation, motor current, and temperature. Identify whether slip, loss of speed, or electronic limiting set the observed limit; if the cause cannot be distinguished, report it as unresolved. The initial proposal is three independent repeats for each selected payload condition, with fixed run duration and averaging interval established during preliminary checks. Report peak and sustained force separately, run-to-run spread, calibration uncertainty, and alignment error using the uncertainty approach in Section~\ref{sec:vacuum-measurements}.
-
-\mechanicalplaceholder{Insert a photograph or drawing of the load cell, tension fixture, rear attachment, pull direction, floor, and representative ballast locations.}{Proposed crawler drawbar-pull test arrangement---setup image pending.}{fig:drawbar-test-setup}
-
-\subsection{Service-Line Resistance and Loaded Travel}
-Measure the actual hose/tether bundle resistance along the representative straight route with the same support partition, pressure state, connector arrangement, and pull height used in operation. Record starting peak and sustained resistance at the intended travel speed, with repeated runs. This supplies an endpoint demand to compare with the line-force model and available drawbar pull. The forward demand $F_{\mathrm{req}}$ includes the crawler's own rolling resistance; measured drawbar pull is the external pulling capability remaining after the crawler propels itself. Compare measured bundle resistance directly with drawbar capability under matched conditions, or add the crawler resistance back before comparing with total wheel force. Do not subtract or count that resistance twice.
-
-Loaded travel will use the operating equipment and ballast reproducing the specified debris mass and bag location. Test starting, sustained forward/reverse travel, turning in both directions, and crossing the representative protective pipes with the actual service bundle connected. Record route geometry, pipe diameter and support height, approach direction, travel distance, run duration, completed maneuvers, interference, and failures. Repeat the selected maneuvers and report the number of successes and attempts. The existing criteria require completion without immobilization, overturning, or damage that prevents operation; travel distances, repetition counts, and numerical limits remain to be fixed. A stationary pull test does not establish these capabilities.
-
-\mechanicalplaceholder{Insert force--time or force--speed plots, measured bundle resistance, uncertainty, and a maneuver-outcome table after testing.}{Measured pulling capability and loaded mobility outcomes---results pending.}{fig:drawbar-results}
-
-\subsection{Integrated Validation and Retained Recovery Method}
-\label{sec:ctf-validation}
-Full-system validation remains planned at Hanford's Cold Test Facility (CTF), which has supported mockup demonstrations of deployment and navigation in a simulated annulus \citep{doe2024CTFDemonstration}. Figure~\ref{fig:ctf} retains the available facility photograph. The project tests will connect the mechanical checks to deployment, retrieval, debris recovery, and operator feedback with the hose and control system attached. Facility arrangements, test geometry, and acceptance criteria still require confirmation. No radiation or environmental qualification follows from this mechanical demonstration.
+The manufacturer labels item 4696 as 131:1, with exact ratio $G=131.25:1$; its published no-load speed is 79~rpm at 24~V \citep{pololu4696}. Figure~\ref{fig:motor-identification} shows the candidate. The nominal body is 37~mm in diameter and 73~mm long, with a 6-mm-diameter, 16-mm-long output shaft. Mounts, hub, encoder cap, and wiring clearance must be included in the assembly envelope \citep{pololu37dDimensions}. These component dimensions do not establish complete crawler clearance.
 
 \begin{figure}[htbp]
 \centering
-\thesisimage{CTF_Picture.png}
-\caption{Cold Test Facility in Richland, Washington.}
-\label{fig:ctf}
+\includegraphics[width=0.50\textwidth]{pololu_130-1_dc_mot.png}
+\caption[Candidate Pololu 4696 gearmotor]{Candidate Pololu 4696, 24-V gearmotor with encoder and exact reduction ratio 131.25:1. Product photograph from Pololu \citep{pololu4696}.}
+\label{fig:motor-identification}
 \end{figure}
 
-The existing debris-recovery method is retained here to link air-only characterization to loaded crawler operation. With known deposited mass $m_{\mathrm{deposited}}$ and recovered collector mass $m_{\mathrm{collected}}$,
-\begin{equation}
- \eta_{\mathrm{recovery}}=\frac{m_{\mathrm{collected}}}{m_{\mathrm{deposited}}}\times100\%.
- \label{eq:recovery}
-\end{equation}
-Specify surrogate properties, initial and recovered mass measurement, material remaining on the floor or in the line, pickup path, cleaning time, and scale uncertainty. Hold the collector and supply conditions documented in Chapter~\ref{chap:vacuum}. Record operator visibility and command behavior during these trials; the previously proposed latency, telemetry, restart, and communication-loss checks remain to be defined with the control implementation. They are not established mechanical results.
+The published stall torque is an extrapolated $47~\mathrm{kgf\,cm}$ ($4.61~\mathrm{N\,m}$), not a continuous motor rating. Pololu recommends maximum gearbox loads of $10~\mathrm{kgf\,cm}$ ($0.981~\mathrm{N\,m}$) continuously and $25~\mathrm{kgf\,cm}$ ($2.45~\mathrm{N\,m}$) instantaneously. Its general guidance to operate at no more than 25\% of the 3-A stall current corresponds to 0.75~A per motor \citep{pololu4696}. Neither the gearbox limit nor that current guideline guarantees continuous motor capability at the required speed and duty cycle \citep{maxonMotorSelection}.
 
-% Complete the numerical verification and mechanical test placeholders above.
-% Detailed integrated results remain in Chapter 5; avoid duplicating Chapter 3's air-only curves.
+The low, baseline, and high friction scenarios require 0.275, 0.426, and 0.578~N\,m per drive, respectively. These are approximately 28\%, 43\%, and 59\% of the recommended continuous gearbox-load limit. For the baseline,
+\begin{equation}
+ \frac{\tau_{w,\mathrm{drive}}}{\tau_{\mathrm{gearbox,limit}}}
+ =\frac{0.426}{0.981}\approx0.434.
+ \label{eq:selected-motor-load-comparison}
+\end{equation}
+All three demands lie below this mechanical limit, supporting further consideration of the candidate. This ratio is not a motor safety factor or a thermal margin. Published output-shaft torque already includes the gearbox; its ratio and efficiency must not be applied again. The preliminary crawler mass allowance is likewise not repeated as a torque factor.
+
+The manufacturer's 24-V performance data give a loaded maximum-efficiency reference point of approximately 68~rpm, $63~\mathrm{kgf\,mm}$ ($0.618~\mathrm{N\,m}$), and 0.40~A for item 4696 \citep{pololu37dDatasheet}. This is a published curve point, not a guaranteed continuous rating or the crawler's predicted operating point. For the 0.0508-m wheel radius, wheel speed $n_w$ in revolutions per minute relates to ideal no-slip travel speed by
+\begin{equation}
+ v=\frac{2\pi r n_w}{60}.
+ \label{eq:candidate-travel-speed}
+\end{equation}
+Thus 68~rpm corresponds kinematically to approximately 0.362~m/s. The required travel speed has not been established, and the 79-rpm no-load value must not be used as loaded performance. Candidate confirmation requires a matching torque--speed point at the delivered terminal voltage, including cable voltage drop, followed by current and temperature checks under the intended duty cycle.
+
+The four-drive arrangement is confirmed, but the controller model, channel ratings, and wiring configuration are not documented sufficiently here to establish compatibility. The controller check must establish four independently commanded bidirectional drive channels, operation at the intended 24-V supply, and adequate continuous and transient current capability with suitable current limiting. The motor's quadrature encoder requires a separate 3.5--20-V supply and produces outputs referenced to that supply \citep{pololu4696}; its interface must match the controller's input levels. Chapter~\ref{chap:controls} reserves the implementation details. The power-cable reference in Section~\ref{sec:bundle-design-calculation} remains a mass proxy, not an electrical sizing decision.
+
+Startup adds breakaway resistance and acceleration demand. Skid steering adds lateral-slip resistance \citep{mandow2007Kinematics,shamah1999SkidSteering}; obstacle crossing changes wheel contacts and loading \citep{wilhelm2007StepClimbing}. Traction also limits usable force through the driven-wheel normal loads and wheel--floor friction \citep{openstaxFriction}. These cases require assessment beyond the steady straight-travel comparison. Chapter~\ref{chap:validation} reserves the corresponding tests; the candidate is not declared suitable from the torque comparison alone.
+
+\section{Retrieval Attachment Simulation Check}
+\label{sec:retrieval-structure}
+This check concerns the load path from the lifting attachment through its connection into the supporting frame while the crawler hangs from the intended lifting point. It addresses the suspended design load and local structural response. It does not establish the force needed to free a stuck crawler or the attachment's stuck-recovery capacity.
+
+\textbf{Analysis status: not yet completed.} No verified simulation model, material certificates, or stress/displacement results are available for this assessment. The following defines the proposed check and the evidence to report; the reserved figures are analysis placeholders.
+
+\subsection{Suspended Load and Hand Check}
+\label{sec:suspended-load}
+For a quasi-static vertical lift, use the loaded crawler design mass $m=12.29~\mathrm{kg}$ and the service-line weight actually transferred downward to the attachment:
+\begin{equation}
+ T_L=mg+W_{\ell,\mathrm{carried}}
+     =120.56~\mathrm{N}+W_{\ell,\mathrm{carried}}.
+ \label{eq:retrieval-lift-load}
+\end{equation}
+The crawler mass already includes onboard components and line segments. Externally supported line weight is excluded. For unsupported hanging portions carried by the crawler, a preliminary estimate is
+\begin{equation}
+ W_{\ell,\mathrm{carried}}
+ =g\sum_j\lambda_j\ell_{j,\mathrm{carried}}+W_{\mathrm{fittings,extra}},
+ \label{eq:carried-line-weight}
+\end{equation}
+where each carried length follows the lifting configuration, and the fitting term includes only weight not already represented in the mass estimates. The reference linear masses in Table~\ref{tab:service-bundle-masses} may be used provisionally, with their stated limitations.
+
+The floor-travel 30/30/40-ft routing allocation does not specify the suspended load. In particular, the 6.08-kg floor-supported bundle mass is not automatically carried by the lifting attachment. Identify which portions remain supported at the riser, on the floor, or by separate handling equipment as the crawler is raised. The supporting rope supplies the upward reaction; its full length is not also added as a downward crawler load. Any nonvertical line tension must be applied in its actual direction. Acceleration and impact require separate, explicitly defined load allowances.
+
+As a reaction-balance check, the total vertical support reaction must equal $T_L$, and the applied forces and reactions must balance moments about the attachment. The crawler-only contribution is 120.56~N, not a complete suspended-load specification unless carried external line weight is zero. For a critical prismatic section, a nominal hand check is
+\begin{equation}
+ \sigma_{\mathrm{nom}}=\frac{F_n}{A}\pm\frac{Mc_s}{I},
+ \qquad M=T_L e
+ \label{eq:attachment-hand-check}
+\end{equation}
+for a defined perpendicular eccentricity $e$. Here $A$ is net area, $I$ is second moment of area, and $c_s$ is the extreme-fiber distance. This section check does not resolve local hole or fillet peaks \citep{ansysStressSingularity}. Geometry and load orientation must establish whether this idealization applies.
+
+\mechanicalplaceholder{Insert the attachment, connection, supporting frame, suspended center of gravity, and actual lifting/line-load directions.}{Lifting attachment and frame load path---geometry confirmation required.}{fig:retrieval-load-path}
+
+\subsection{Model Geometry, Materials, and Constraints}
+The model must include the attachment, its actual connection, and enough of the frame to transmit the suspended load. Retain holes, fillets, thickness changes, and contact regions that govern load transfer. Document omitted components and represent their weight at the appropriate locations so both total force and moment are preserved.
+
+Aluminum 6061 is specified for the frame and custom parts, but its temper and material properties must be verified before numerical strength assessment. Record elastic modulus, Poisson's ratio, density, and yield strength for each modeled material, including the connection hardware. Do not assign frame properties to purchased fasteners or assume that an unspecified temper provides a particular strength allowable.
+
+For a bolted connection, represent the actual fastener arrangement, contact, and any justified preload; check bolt tension/shear and surrounding bearing, net-section, and tear-out behavior. NASA's fastener manual supplies the load-group and combined-loading framework \citep{barrett1990Fasteners}. If the connection is welded, use its documented weld geometry and effective throat instead. A bonded interface is acceptable only where the physical connection justifies that idealization.
+
+Apply gravity to included bodies and equivalent loads for omitted equipment and carried lines without double counting their weight. Represent the lifting interface as the actual pin, hook, or rope contact allows; do not clamp a nearby frame face merely to stabilize the model. A freely hanging assembly must be allowed to adopt its equilibrium orientation, or an imposed orientation must include the real restraints maintaining it. Boundary conditions must remove rigid-body modes without introducing unsupported moments or bypassing the connection into the frame.
+
+\mechanicalplaceholder{Insert the proposed finite element model, materials, connection/contact representation, gravity and line loads, lifting restraint, and mesh refinement regions.}{Lifting model, boundary conditions, and mesh---analysis pending.}{fig:retrieval-fea-model}
+
+\subsection{Convergence, Results, and Acceptance}
+Record element formulation, mesh quality, and local refinement near connections and geometric transitions. Compare successive refinements using attachment displacement and a physically meaningful stress measure in the load-bearing region, with a convergence tolerance defined before evaluating the results \citep{ansysMeshConvergence}. Check force and moment reactions against Equations~\ref{eq:retrieval-lift-load}--\ref{eq:attachment-hand-check}. A nonconvergent stress peak at an idealized sharp corner or point restraint must be investigated rather than treated automatically as a failure stress \citep{ansysStressSingularity}.
+
+For an applicable ductile-material model, compare converged equivalent stress with an allowable derived from verified material strength and a stated design factor. Define allowable displacement from functional clearance and permitted deformation. The acceptance record must also address connection failure modes and load-path continuity; a frame stress contour alone cannot qualify the connection. Numerical allowables, convergence tolerances, and displacement limits remain to be set from the confirmed geometry, materials, and intended suspended load.
+
+\mechanicalplaceholder{Insert completed stress/displacement plots with units and deformation scale, reaction balance, convergence evidence, and comparison with the stated acceptance limits.}{Lifting simulation results and acceptance comparison---reserved for completed analysis.}{fig:retrieval-fea-results}
+
+Report only the modeled configuration, applied load, and demonstrated limits; no structural pass is assigned before the analysis is completed. The corresponding experimental hanging check is outlined in Section~\ref{sec:hanging-test} of Chapter~\ref{chap:validation}.
+
 \par
 \endgroup

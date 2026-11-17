@@ -1,4 +1,4 @@
-Put approved thesis figures here. Planned names from the workspace outline are `crawler.png`, `wheel_design.png`, and `vacuum_system.png`. Add the real images when they are selected; no blank or fabricated figure files are included.
+Put approved thesis figures here. Existing images include both active figures and retained alternatives; unused assets must not be deleted automatically. The filenames in the example below are illustrative, not missing required files. Generated page previews belong in the workspace's `tmp/pdfs/`, not this folder.
 
 Keep editable source files for diagrams when available. Every figure in the thesis needs a caption, source or attribution where applicable, and an in-text reference.
 

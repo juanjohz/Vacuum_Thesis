@@ -37,6 +37,15 @@
     "**/*.lot": true,
     "**/*.out": true,
     "**/*.synctex.gz": true,
-    "**/*.toc": true
+    "**/*.toc": true,
+    "**/tmp/pdfs": true,
+    "tmp/*.png": true,
+    "tmp/github-vacuum-review": true,
+    "tmp/vacuum_crawler_ch5": true
+  },
+  "search.exclude": {
+    "**/tmp/**": true,
+    "**/archive/**": true,
+    "**/main.bbl": true
   }
 }

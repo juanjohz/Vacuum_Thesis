@@ -1,0 +1,13 @@
+% Former crawler-design outline retained below until relocation is authorized.
+% Requirements and design constraints: traceable requirements table with source,
+% target, verification method, and status; confirm dimensions and environment.
+% Overall architecture and deployment: labeled system diagram, riser sequence,
+% tether/hose routing, operator station, and retrieval strategy.
+% Chassis, drivetrain, and traction: wheel geometry, modular assemblies, traction,
+% dimensioned CAD, component specifications, materials, and mass properties.
+% Distinguish the author's changes from inherited prototype features.
+% Electronics and ROS 2: hardware/node diagrams, topics, command/video paths,
+% power distribution, software versions, and verified fault behavior.
+% The author implemented ROS 2; do not attribute it to Verde's crawler.
+% Design tradeoffs: deployment size, traction, suction, power, serviceability,
+% and tether effects. Other chapters remain unchanged at the author's request.

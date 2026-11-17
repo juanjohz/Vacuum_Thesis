@@ -11,16 +11,31 @@ vacuum_thesis/
     main.pdf                Compiled thesis preview
     metadata.tex            Author, title, degree, and year
     fiu_thesis.sty          Shared draft formatting
-    chapters/               Chapter 1 through Chapter 6
+    chapters/               Seven active chapters, in main.tex order
+    archive/                Preserved legacy outlines; excluded from the build
     frontmatter/            Title-related pages, abstract, lists, abbreviations
     references/             BibTeX database, source register, saved source PDFs
     figures/                Images for figures; existing filenames preserved
     data/                   Experimental CSV templates
     notes/                  Source and template decisions
     template_examples/      Theo's and Benjamin's example theses
+  tmp/                      Rendered previews, source extracts, recovery drafts, review checkouts
+  vacuum_pressure_test/     Arduino pressure-test sketch (separate from the thesis build)
 ```
 
 ## Write and build
+
+`thesis/main.tex` is the sole thesis build entry point. The active chapter files are:
+
+1. `01_introduction.tex`
+2. `02_literature_review.tex`
+3. `03_Vacuum_system_design.tex`
+4. `04_Crawler_Design.tex`
+5. `05_Control_System.tex`
+6. `06_Experimental_Validation.tex`
+7. `07_Conclusions.tex`
+
+The former results and conclusions outlines are preserved in [the archive](thesis/archive/README.md). They are not alternative active chapters. Keep one active file per chapter number; update `main.tex` if a chapter filename changes.
 
 Edit the chapter files and save. The existing LaTeX Workshop MiKTeX texify recipe builds `thesis/main.tex` and updates `thesis/main.pdf`. Use LaTeX Workshop's Build command if an external edit has not triggered a rebuild. Changes to citations or page numbers can require BibTeX and multiple LaTeX passes. The compiler handles generated files; they are hidden in the VS Code Explorer to reduce clutter, not deleted. The PDF remains visible.
 
@@ -38,7 +53,13 @@ Use [the source register](thesis/references/source_register.md) to track each so
 
 ## Folder cleanup and draft status
 
-The unused, empty top-level `chapters/` and `frontmatter/` duplicates were removed. The populated versions under `thesis/` are the active folders. Data CSVs are intentional templates for future measurements. Figures are source assets awaiting selection and insertion. Remaining drafting notes identify work still needed; they are not results.
+The populated folders under `thesis/` are active. Data CSVs are intentional templates for future measurements. Unused figures, source PDFs, writing samples, experiment code, and recovery drafts are retained; being absent from the current build is not a reason to delete them. Remaining drafting notes identify work still needed; they are not results.
+
+Generated page previews and the two temporary review checkouts are ignored for new Git additions and hidden from the Explorer. Already tracked previews remain tracked and unchanged. `tmp/recovery/` and extracted source text are not ignored by Git. Temporary folders and `thesis/archive/` are excluded from ordinary editor searches; turn off **Use Exclude Settings and Ignore Files** in VS Code Search when looking for historical material. Hidden files still exist on disk.
+
+The root `.vscode/settings.json` supports this workspace; `thesis/.vscode/settings.json` retains equivalent build settings for opening `thesis/` directly. This duplication is intentional. The workspace's separate `Pressure_Sensor_test` folder points to the existing PlatformIO project outside this repository and is preserved.
+
+See [the workspace audit](thesis/notes/workspace_audit.md) for checks, preserved material, and remaining issues. Store new page-render checks in root `tmp/pdfs/`; `thesis/tmp/pdfs/` is retained as a historical location.
 
 The layout follows the supplied FIU thesis examples and is not an official FIU class. Confirm final graduate-school formatting, committee details, and submission requirements before filing.
 

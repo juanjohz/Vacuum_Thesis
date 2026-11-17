@@ -1,0 +1,1191 @@
+H2C Vacuum Debris Collection                                                            Assessment and Thesis Planning
+
+TECHNICAL ASSESSMENT
+
+
+H2C Vacuum Debris Collection System
+Pressure Sensors, Pneumatic Conveying, and Master’s Thesis Research
+
+   Confirmed system correction
+
+   A separate pressure sensor is already connected to the compressed-air pressure line,
+   although it is not shown in the supplied diagram. This report identifies that existing instrument as
+   SP , reporting Psupply . Retain it in its supply-monitoring role. There is no need to add a supply
+   sensor or repurpose S1 or S2 solely because SP is absent from the photographs.
+   The remaining selection questions concern S2 for pickup vacuum and S1 for discharge backpressure.
+   The range, output, accuracy, and exact tapping location of the unshown SP have not been provided;
+   the photographed transmitters’ labels must not be assigned to it.
+
+Recommended direction. For this compact pickup-to-bag arrangement, establish a well-configured
+single-Line-Vac baseline, retain the existing SP , use a documented vacuum-capable instrument at S2 ,
+and use an appropriately sensitive low-pressure instrument at S1 . Retain the second Line Vac if testing
+demonstrates a worthwhile improvement in debris collection.
+Basis and scope. This assessment uses the four-page supplied file H2C_vacuum(1).pdf [17], the user’s
+clarification about SP , manufacturer literature, and verified journal and engineering-method references.
+It is an engineering assessment of the proposed apparatus; actual pickup performance has not been
+measured. Product information, indicative U.S. prices, and research citations were reviewed on 17
+October 2026.
+
+
+Contents
+1 Updated interpretation of the apparatus . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .           2
+2 Suitability of the photographed pressure sensors . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .            3
+3 One Line Vac versus two closely coupled units . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .             4
+4 Collector, plumbing, and pressure-tap improvements . . . . . . . . . . . . . . . . . . . . . . . . . . . . .              5
+5 Purchasable replacement sensors . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .           8
+6 A controlled single-versus-tandem comparison . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .           10
+7 Recommended revised configuration and remaining inputs . . . . . . . . . . . . . . . . . . . . . . . . . .               12
+8 Research literature and the master’s thesis opportunity . . . . . . . . . . . . . . . . . . . . . . . . . . .            14
+9 Five candidate mechanical-engineering master’s thesis topics . . . . . . . . . . . . . . . . . . . . . . . .             16
+10 Common experimental methodology for the thesis options . . . . . . . . . . . . . . . . . . . . . . . . . .              20
+11 Proposed 12-month master’s research schedule . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .            23
+References . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   24
+
+
+
+
+Pressure sensing and pneumatic conveying                                                                             1 of 26
+H2C Vacuum Debris Collection                                                     Assessment and Thesis Planning
+
+
+1 Updated interpretation of the apparatus
+The photographs indicate the following debris-conveying sequence:
+
+                      Pickup −→ S2 −→ V2 −→ V1 −→ S1 −→ collection bag.
+
+Here, V2 is the Line Vac nearest the pickup, and V1 is the downstream Line Vac nearer the exhaust. Both
+units point in the same conveying direction. Their motive-air ports are supplied from the compressed-air
+line. The additional existing sensor SP measures pressure somewhere on that supply line.
+
+                         Table 1. The three existing pressure-measurement functions.
+
+Instrument           Measurement role                 Expected normal                 Revised treatment
+                                                      pressure
+SP (existing;        Compressed-air supply          Positive; the user reports an Retain and log during
+unshown)             pressure at its actual tapping available supply of about 100 operation. Verify its own
+                     point                          PSI                           specifications and interpret
+                                                                                  its location.
+S2 (shown)           Suction pressure near the        Below atmospheric pressure      Use a documented vacuum
+                     pickup, upstream of V2           during suction                  or suitable
+                                                                                      compound-pressure sensor.
+S1 (shown)           Discharge pressure               Usually near atmospheric        Use a lower-range instrument
+                     downstream of V1 , ahead of      pressure or modestly positive   for useful backpressure
+                     the collector                                                    measurement.
+
+
+The presence of SP resolves the supply-sensor inventory question. It does not by itself establish adequate
+negative-pressure measurement at S2 or adequate low-pressure sensitivity at S1 .
+
+1.1 Pressure reference and location matter
+
+Unless otherwise stated, pressure values in this report are gauge pressures relative to the local atmosphere:
+
+                                           pg = pabsolute − patmosphere .
+
+A negative gauge reading indicates suction. A positive supply pressure of 100 PSIG does not imply a
+vacuum of 100 PSI at the pickup.
+The location of SP remains relevant. If it is near the Line Vac inlet and downstream of restrictive
+components, it can closely represent the delivered motive pressure. If it is upstream of the regulator,
+coupling, or branch restrictions, it measures the upstream condition. This qualification does not imply
+that another permanent sensor must be purchased; first establish where the existing pressure tap is
+located.
+
+
+
+
+Pressure sensing and pneumatic conveying                                                                   2 of 26
+H2C Vacuum Debris Collection                                                Assessment and Thesis Planning
+
+
+2 Suitability of the photographed pressure sensors
+
+2.1 The visible range does not establish vacuum capability
+
+The label on the photographed transmitter appears to read:
+
+• pressure range: 0–150 PSI;
+
+• electrical output: 0.5–4.5 V;
+
+• supply: 5 VDC.
+
+The manufacturer and exact part number are not legible enough to verify a datasheet. Assuming this is
+a conventional positive gauge-pressure transmitter, it is unsuitable for calibrated vacuum measurement
+at S2 . If the actual datasheet specifies a different pressure reference or a calibrated negative-pressure
+range, that information would change the assessment.
+A transmitter may survive a vacuum without accurately measuring it. A negative value calculated in
+software can also arise from zero offset, noise, or extrapolation below the specified range. Therefore, use
+a sensor explicitly specified for vacuum, compound gauge pressure, or a suitable differential-pressure
+range.
+
+   Specifications of the unshown sensor are separate
+
+   The 0–150 PSI, 0.5–4.5 V, and 5 VDC markings above refer to the photographed transmitter type.
+   The available information does not establish that the existing supply-line sensor SP is the same
+   model. Retain SP and verify its own datasheet and calibration.
+
+
+2.2 Why the range at S1 also needs attention
+
+S1 is downstream of the ejectors. With a collection bag attached, its most useful role is tracking discharge
+resistance. A 0–150 PSI range is much wider than the small positive pressures of interest in this channel.
+If S1 remains upstream of bends and hose, its reading includes the effect of those downstream components
+as well as the bag. It is not automatically the pressure drop across the bag alone. To measure a filter’s
+pressure drop specifically, measure on the two sides of that filter.
+
+2.3 Proposed measuring ranges
+
+Select the calibrated measuring range separately from the permissible overload or proof-pressure rating.
+A low-range sensor may have a high survival rating, but that does not extend its calibrated range.
+
+
+
+
+Pressure sensing and pneumatic conveying                                                             3 of 26
+H2C Vacuum Debris Collection                                                     Assessment and Thesis Planning
+
+   Table 2. Initial range-selection approach; these are instrument ranges, not predicted operating pressures.
+
+Channel                    Range to consider                     Selection rationale
+Existing SP                Verify its existing range; 0–150 or   Retain the installed instrument if its calibrated
+                           0–200 PSIG is a typical candidate     range and pressure ratings suit the actual supply.
+                           range for a 100 PSIG operating        This is a verification criterion, not a new
+                           supply                                purchase recommendation.
+S2 pickup                  Approximately −100 to 0 kPa           A broad initial range while actual suction is
+                           gauge, or −100 to +100 kPa            being characterized. Narrow it later if small
+                           compound                              changes require better sensitivity.
+S1 discharge               Approximately 0 to 25 kPa gauge       More useful sensitivity for outlet resistance than
+                           initially                             a 0–150 PSI instrument.
+Bag/filter differential    A narrower differential range         Resolve small pressure changes associated with
+                           selected from measurements            filter loading.
+
+
+
+3 One Line Vac versus two closely coupled units
+
+3.1 What the manufacturer guidance supports
+
+EXAIR states that two Line Vacs can improve conveying performance, but they do not double performance.
+Its guidance identifies the greatest benefit in longer conveying runs: a second unit can be located farther
+downstream to maintain particle velocity, including near a sweeping bend. It recommends spacing
+multiple units along the conveying path instead of grouping them together [1].
+The two units in the supplied apparatus are close together. This arrangement may help, but the
+photographs cannot determine the additional pickup airflow, debris collection rate, or air consumption
+benefit. It should be compared with a correctly assembled single-unit arrangement.
+Engineering recommendation: for a short pickup-to-bag application, first establish a good single-Line-
+Vac baseline. Keep the second unit if measured collection improvement justifies the added compressed-air
+demand and collector airflow.
+
+3.2 Suction pressure is not a complete performance measurement
+
+Debris collection depends on air entering the nozzle fast enough to entrain particles and maintaining
+sufficient transport through the hose.
+An open pickup can move substantial air while showing modest negative pressure. Conversely, blocking
+the pickup can produce a more negative reading even though no pickup air or debris enters. A pressure
+reading alone cannot distinguish all useful and restricted-flow conditions.
+For a selected section,
+                                                      Q
+                                                    v=  ,                                              (1)
+                                                      A
+where v is mean air velocity, Q is actual volumetric airflow through that section, and A is its open area.
+Changing nozzle area also changes resistance and therefore Q. A smaller opening does not automatically
+improve collection and may increase plugging.
+Use collected debris mass per unit time as the primary performance outcome, supported by pressure
+
+Pressure sensing and pneumatic conveying                                                                    4 of 26
+H2C Vacuum Debris Collection                                                          Assessment and Thesis Planning
+
+and airflow measurements.
+
+3.3 Illustrative vacuum and air-consumption data
+
+Table 3 gives manufacturer catalog examples for standard aluminum Line Vacs. The exact model fitted
+to this apparatus could not be identified. All values are at 80 PSIG, not 100 PSIG [3].
+
+    Table 3. Examples from the EXAIR catalog. kPa values are calculated from the listed inches of water.
+
+Model             Nominal hose size Motive-air consumption                 Catalog vacuum
+6081              1 inch                   14.7 SCFM                       −42 inH2 O; approximately −10.5 kPa
+6083              1 21 inches              33 SCFM                         −36.8 inH2 O; approximately −9.2 kPa
+6084              2 inches                 45 SCFM                         −28.5 inH2 O; approximately −7.1 kPa
+
+
+These are catalog vacuum ratings, not guaranteed nozzle readings during debris pickup. SCFM in the
+table is compressed-air consumption; it is not pickup airflow. Do not scale the vacuum figures by
+100/80 to predict operation at 100 PSIG.
+For illustration only, two model 6083 units would have a combined catalog motive-air consumption of
+
+                                Qsupply,total = 2(33) = 66 SCFM         at 80 PSIG.                              (2)
+
+This is not a sizing result for the unidentified units in the photographs.
+
+3.4 Use the existing SP to assess the 100 PSI supply
+
+EXAIR’s aluminum Line Vac instructions cover normal shop-air supplies up to 100 PSIG and recommend
+checking pressure at the compressed-air inlet when flow or vacuum decreases [2].
+Record the existing SP readings with one unit operating and then with both operating. A no-flow
+pressure reading alone does not establish continuous air-delivery capability.
+Interpret the result according to the actual tap location. If SP is upstream of a restriction, a steady
+reading does not rule out pressure loss downstream. If needed, verify the pressure drop locally with
+suitable available instrumentation before deciding that more permanent sensors are required.
+The photographs show a common supply manifold and a quick disconnect. Their presence warrants
+investigation, not a conclusion that they are undersized. EXAIR cautions that restrictive quick-connect
+and push-lock fittings can reduce performance [4]. The compressor, regulator, manifold, branches, and
+fittings must pass the required continuous air volume.
+
+
+4 Collector, plumbing, and pressure-tap improvements
+
+4.1 The collection bag must vent the conveying air
+
+The bag is on the ejector discharge side. It receives the air drawn through the pickup plus the air injected
+by every active Line Vac. Conservation of air mass gives
+
+                                   ṁair,out = ṁair,pickup + ṁair,V1 + ṁair,V2 .                              (3)
+
+Pressure sensing and pneumatic conveying                                                                      5 of 26
+H2C Vacuum Debris Collection                                               Assessment and Thesis Planning
+
+The term for the removed unit disappears in the single-unit arrangement. Volumetric flows can be added
+only after expressing them at the same reference pressure and temperature.
+The engineering implication is that the second unit increases the airflow the bag must release, even if its
+pickup benefit is small. A restrictive collector can reduce the useful gain.
+EXAIR describes Line Vacs as discharging toward ambient conditions and cautions against opposing
+discharge pressure and undersized exhaust piping [5]. Use a collector with sufficient breathable filtration
+area, an adequately sized inlet, and filtration suitable for the actual particle size.
+A sealed plastic bag alone does not provide the required air outlet. It can serve as a liner within a
+suitably vented receiver, provided a filtered exhaust path remains. EXAIR documents a single-Line-Vac
+pellet-cleanup application using a large collection sack with a planned filtration path for the outgoing
+air [6]. This supports the architecture without establishing the appropriate model for the user’s debris.
+
+4.2 Changes to prioritize in the photographed assembly
+
+ 1. Simplify the outlet turn. Test a straighter outlet or a larger-radius bend in place of the nearly
+    180-degree turn immediately after V1 . The existing geometry presents turning losses and possible
+    debris-accumulation locations; the benefit of changing it should be measured.
+
+ 2. Preserve adequate discharge passage. Avoid reducing the discharge to fit a small bag collar.
+    Match the hose and connections to the manufacturer’s specified conveyance size.
+
+ 3. Keep the active Line Vac near the pickup. Use a short suction section and put most transport
+    distance downstream. EXAIR favors mounting near the suction point and minimizing bends [2].
+
+ 4. Use a smooth nozzle transition. Provide a passage appropriate for the largest expected debris
+    and a controlled air-entry gap when collecting from a surface. Hold these dimensions fixed in the
+    comparison test.
+
+ 5. Retain the existing supply-pressure instrumentation. Keep SP assigned to Psupply . Improve
+    the local taps for S1 and S2 as needed without moving them onto the compressed-air supply line.
+
+4.3 Updated schematics with the existing supply sensor
+
+Figure 1 explicitly includes the existing unshown supply sensor. Figure 2 shows the recommended
+single-unit baseline. Both are functional schematics, not dimensioned plumbing drawings. The connection
+to SP denotes its measurement role; its actual position relative to the regulator, coupling, and branches
+remains to be verified.
+
+4.4 Pressure taps and debris protection
+
+The existing S1 and S2 taps are located on bends. For more representative static-pressure measurements,
+use a straight suction section between the nozzle and the active Line Vac, and a straight discharge
+section toward the collector.
+Use flush, burr-free sidewall openings perpendicular to flow rather than probes projecting into the stream.
+DwyerOmega explains that turbulence, aspiration, and impingement at a static tap can materially affect
+readings [7].
+
+
+Pressure sensing and pneumatic conveying                                                             6 of 26
+H2C Vacuum Debris Collection                                                      Assessment and Thesis Planning
+
+
+
+
+               SP : existing                Compressed-air supply line
+               supply sensor               and distribution to both units
+
+
+
+
+                Pickup and                 Line Vac             Line Vac               Discharge
+              suction section                 V2                   V1                 and collector
+
+
+
+            S2 : pickup vacuum                                                    S1 : discharge pressure
+
+Figure 1. Existing tandem arrangement, including SP confirmed by the user but absent from the supplied diagram.
+Dashed lines indicate pressure-measurement connections. The collector represents the intended downstream bag
+or receiver.
+
+
+
+
+                                   Filtered and regulated            Retain existing SP
+                                   compressed-air supply           for supply monitoring
+
+
+
+
+                  Nozzle and               One active              Smooth               Vented bag or
+                 short suction              Line Vac           discharge hose          filtered receiver
+
+
+             S2 : vacuum-capable                              S1 : low-pressure
+                   sensor and                                     sensor and
+                 protected tap                                 protected tap
+
+Figure 2. Recommended single-unit baseline. The existing SP remains in its supply-monitoring role; the
+sensor-selection changes concern S2 and S1 .
+
+
+
+
+Pressure sensing and pneumatic conveying                                                                    7 of 26
+H2C Vacuum Debris Collection                                                 Assessment and Thesis Planning
+
+Place the transmitters outside the debris transport stream and use short sensing branches with accessible
+particulate protection suitable for vacuum service. A clogged branch can respond slowly or retain a stale
+pressure. Verify that the channel returns to atmospheric zero after shutdown.
+A sensing-line dust filter is not an overpressure protector. Normal low pressure in the process
+duct also does not establish the allowable pressure of the printed parts or sensors under an abnormal
+blocked condition. Keep the collector vented and select pressure protection and component ratings for
+the actual arrangement.
+
+
+5 Purchasable replacement sensors
+The following candidates address S2 and S1 . No additional supply-pressure transmitter is
+included by default, because SP is already installed. Prices are indicative U.S. listings checked on 17
+October 2026 and exclude cables, adapters, and interface electronics.
+
+5.1 Candidates for S2 : pickup vacuum
+
+          Table 4. Vacuum-sensor candidates. Full purchasing links are included in the references.
+
+ Candidate                      Measuring range          Output / supply                       Price
+
+ ProSense                       −14.5 to 0 PSIG;         4 mA at atmospheric gauge zero;       $169
+ PTD25-20-VH                    approximately −100       20 mA at full vacuum.
+                                to 0 kPa                 9.6–32 VDC supply.
+
+ ProSense                       −14.5 to +14.5 PSIG;     Selectable 4–20 mA or 0–10 V,         $360
+ EPS25-V14-1001                 approximately −100       plus switching output.
+                                to +100 kPa              18–30 VDC supply.
+
+ Omega                          0 to −15 PSIG            0–5 V output.                         $451.26
+ PX309-015V5V                   vacuum                   9–30 VDC supply.
+
+
+These ranges, outputs, and prices are supported by the product listings and manufacturer specifications [8,
+9, 10, 11, 12].
+
+
+ProSense PTD25-20-VH: economical industrial monitoring
+
+This transmitter is a practical choice for confirming suction and tracking substantial changes. It has
+a 1/4-inch male NPT process connection and an M12 electrical connector; purchase the mating cable
+separately.
+The vacuum output direction is important: 4 mA corresponds to 0 PSIG, and 20 mA corresponds to
+−14.5 PSIG. The installation manual lists 145 PSI permissible positive overload for this model. That is
+a survival specification, not a calibrated positive-pressure measuring range [9].
+The product page gives a conservative accuracy specification of ±0.75%. Applied to the full vacuum range,
+this is about ±0.75 kPa. The detailed installation manual lists a tighter model-specific characteristic
+
+
+Pressure sensing and pneumatic conveying                                                               8 of 26
+H2C Vacuum Debris Collection                                                 Assessment and Thesis Planning
+
+deviation; use the conservative figure unless the supplier confirms the specification for the delivered
+instrument [8, 9].
+Selection judgment: suitable for basic vacuum monitoring; it may be too coarse for small differences
+in weak suction.
+
+
+ProSense EPS25-V14-1001: commissioning and diagnostics
+
+This compound-pressure sensor provides a local display, analog output, and switching functions. It can
+distinguish normal vacuum from an abnormal positive-pressure condition. The process connection is
+1/4-inch male NPT; an M12 cable is required.
+The catalog lists 145 PSIG proof pressure. Its characteristic deviation is ±0.5% of span under the stated
+limit-setting convention, approximately ±1 kPa over the full roughly 200 kPa compound span [11].
+Selection judgment: useful for commissioning, direct readings, and thresholds. A narrower-range
+instrument is preferable when the task is resolving a small change in pickup vacuum. Rescaling the
+analog output does not automatically improve the underlying sensor accuracy.
+
+
+Omega PX309-015V5V: better stated static accuracy
+
+The Omega option has a 1/4-inch male NPT connection, attached cable, and ±0.25% BSL static
+accuracy for combined linearity, hysteresis, and repeatability. On its nominal 15 PSI vacuum range, this
+corresponds to
+                                  0.0025(15) = 0.0375 PSI ≈ 0.26 kPa.                                (4)
+This static-accuracy figure is not the complete temperature-inclusive error budget [12, 13].
+Selection judgment: a useful choice among these candidates for quantitative vacuum comparisons
+with a voltage output. Order the exact PX309-015V5V variant; similarly named compound versions can
+have different output polarity. Its specified overload does not support direct connection to a 100 PSI
+supply.
+
+5.2 Candidates for S1 : discharge pressure and bag restriction
+
+                    Table 5. Low-pressure candidates for the discharge/collector channel.
+
+ Candidate                      Measuring range          Output / supply                      Price
+
+ ProSense                       0–100 inH2 O;            4–20 mA.                             $176
+ PTD25-20-0100WCH               approximately 0–24.9     9.6–32 VDC supply.
+                                kPa or 0–3.61 PSIG
+
+ ProSense                       0–25 inH2 O              4–20 mA.                             $160
+ DPTA-20-25                     differential;            12–36 VDC supply.
+                                approximately 0–6.23
+                                kPa
+
+
+The PTD model measures positive gauge pressure only. It offers a threaded industrial connection and a
+
+Pressure sensing and pneumatic conveying                                                              9 of 26
+H2C Vacuum Debris Collection                                              Assessment and Thesis Planning
+
+wider low-pressure range. Its listing specifies ±0.75% accuracy [14]. It is the preferred practical
+starting candidate for S1 in this assessment.
+The DPTA is useful after confirming that the pressure difference stays within 6.23 kPa. Its ±1%
+full-range specification corresponds to about ±62 Pa. It is intended for clean, dry, noncorrosive gas and
+has a 15 PSIG maximum static line/proof rating. Keep it away from any possible 100 PSI exposure [16].
+The product listing was backordered when checked [15].
+For bag pressure relative to atmosphere, connect the DPTA high port to the upstream bag pressure tap
+and the low port to atmosphere. For an enclosed filter’s pressure drop, connect to opposite sides of the
+filter. This 25 inH2 O model should not be chosen for S2 without first confirming that maximum suction
+remains within its range.
+
+5.3 Electrical integration and procurement details
+
+These replacements are not all direct substitutes for the photographed 5 V-powered transmitter. The
+existing SP likewise retains its own, presently unspecified interface.
+
+• Provide each selected sensor’s required supply voltage.
+
+• Use an appropriate current-input interface for 4–20 mA models.
+
+• Scale voltage outputs to the permitted analog-input range.
+
+• Verify the exact connector pinout, process thread, and mating cable.
+
+• Update pressure conversion, zero, full-scale value, and output direction in software.
+
+A controller with a 3.3 V analog input requires suitable conditioning for 0–5 V or 0–10 V signals.
+Pressure-range compatibility alone does not establish electrical compatibility.
+
+
+6 A controlled single-versus-tandem comparison
+The following is a proposed bench procedure, not a report of completed testing. Use the existing SP for
+supply-pressure logging throughout.
+
+6.1 Prepare two meaningful configurations
+
+Configuration A: one powered Line Vac, with the other physically removed and replaced by a smooth
+connector of suitable bore.
+Configuration B: both Line Vacs operating in the tandem arrangement.
+Turning one unit off while leaving it installed retains its passive restriction. That can be a useful
+operating check, but it is not the same baseline as a properly assembled single-unit system.
+
+6.2 Keep the important conditions consistent
+
+Use the same nozzle geometry, nozzle-to-debris spacing, hose dimensions and routing, elevation, debris
+material and size distribution, starting mass, and bag/filter condition.
+
+Pressure sensing and pneumatic conveying                                                         10 of 26
+H2C Vacuum Debris Collection                                                       Assessment and Thesis Planning
+
+Record SP under flow in every trial. If its tap is upstream of important restrictions, account for that
+limitation when describing the motive pressure delivered to the active unit or units. If the available
+supply cannot maintain the intended operating condition with two units, record that outcome as part of
+the practical comparison.
+
+                   Table 6. Measurements for the comparison, using the existing supply sensor.
+
+Measurement                                What it establishes
+Existing SP under continuous flow          Supply pressure at its actual location and changes when the second unit
+                                           operates.
+S2 during pickup                           Suction-side operating pressure.
+S1 during pickup                           Discharge pressure associated with downstream resistance.
+Time to collect a known mass               Actual debris collection performance.
+Pickup airflow in a clean-air trial, if    Whether additional air enters through the nozzle.
+measurable
+Compressed-air consumption, if             Air demand associated with the collection improvement.
+measurable
+
+
+Use several repeat trials and compare both clean and representative loaded-filter conditions. A useful
+collection metric is
+                                                   mcollected
+                                            ṁd =             ,                                    (5)
+                                                       t
+reported with the debris description, nozzle setting, pressure readings, and collector condition.
+Measure pickup airflow rather than relying on exhaust flow: the second unit injects supply air, so more
+exhaust can occur without a corresponding increase in intake airflow.
+A brief closed-pickup check, with discharge open and all components within their ratings, can establish a
+maximum-suction endpoint. At that endpoint, pickup airflow is zero; it does not demonstrate collection
+performance. Do not deliberately block the discharge to conduct this check.
+
+
+
+
+Pressure sensing and pneumatic conveying                                                                  11 of 26
+H2C Vacuum Debris Collection                                                  Assessment and Thesis Planning
+
+6.3 Interpret pressures together with collection results
+
+        Table 7. Diagnostic interpretations to investigate; none is a diagnosis from photographs alone.
+
+Observed result                                         Interpretation to investigate
+Two units collect substantially more debris with        A useful tandem benefit may exist.
+adequate delivered motive pressure
+More exhaust with little collection improvement         Much of the added flow may be injected supply air.
+SP falls when both units operate                        The available supply or upstream delivery path may
+                                                        limit the tandem arrangement.
+SP remains steady, but it is upstream of restrictive    Downstream pressure loss remains possible; inspect the
+components                                              tap location and delivery path.
+S1 rises as the bag loads and pickup deteriorates       Collector or downstream resistance is becoming
+                                                        important.
+S2 becomes more negative while collection decreases     A pickup or hose restriction may be reducing useful
+                                                        airflow.
+
+
+
+7 Recommended revised configuration and remaining inputs
+For the first revision, use the following arrangement:
+
+ 1. Retain the existing supply sensor SP . Verify its specifications and tapping location, and log it
+    with the Line Vac operating.
+
+ 2. Establish a one-Line-Vac baseline near the pickup. Use a smooth, adequately sized discharge
+    route and compare it with the tandem assembly.
+
+ 3. Use a vacuum-capable instrument at S2 . Select the ProSense PTD25-20-VH for economical
+    monitoring, the EPS25-V14-1001 for a local display and diagnostics, or the Omega PX309-015V5V
+    when better stated static accuracy is the priority.
+
+ 4. Use a low-pressure instrument at S1 . The ProSense PTD25-20-0100WCH is a practical initial
+    candidate for discharge monitoring.
+
+ 5. Use an adequately vented collection bag or filtered receiver. Size its flow passage and
+    filtration area for all conveying air, and evaluate the effect of filter loading.
+
+The confirmation of SP changes the instrumentation recommendation: a supply-pressure sensor is already
+present, so neither photographed transmitter needs to be reassigned to that role. The assessment of the
+vacuum and discharge channels remains separate.
+The inputs still needed for final sizing are the exact Line Vac model and bore, sustained available
+compressed-air flow, hose lengths and diameters, nozzle dimensions, lift and bends, collector/filter
+resistance, debris size and density, and required collection rate. The exact model and location of SP
+would also make its operating data easier to interpret.
+The recommended next engineering step is to correct the unresolved measurement ranges and flow
+
+Pressure sensing and pneumatic conveying                                                                  12 of 26
+H2C Vacuum Debris Collection                                              Assessment and Thesis Planning
+
+restrictions, then use the existing supply measurement and controlled collection trials to decide whether
+the closely coupled second Line Vac provides a worthwhile benefit.
+
+
+
+
+Pressure sensing and pneumatic conveying                                                          13 of 26
+H2C Vacuum Debris Collection                                                  Assessment and Thesis Planning
+
+
+8 Research literature and the master’s thesis opportunity
+
+8.1 Research motivation and defensible knowledge gap
+
+The apparatus provides a tractable mechanical-engineering research platform because ejector performance,
+nozzle entrainment, pneumatic transport, and collector resistance are coupled. The main engineering
+question is not simply which configuration gives the most negative value at S2 . It is which configuration
+collects a defined mass of the intended debris, at a specified recovery requirement, with acceptable
+compressed-air consumption and repeatability. The compressed-air sensor SP is already installed (though
+absent from the supplied figure); it should be logged throughout the proposed studies. The pressure
+range and location of SP must be verified before using its reading as the delivered ejector motive pressure.
+The papers summarized below establish that commercial ejector performance, gas–solid entrainment,
+multiple air-amplifier arrangements, transport losses, filtration and control have each been investigated.
+Consequently, neither “using an ejector to vacuum powder” nor “putting two ejectors in series” is a
+sufficient novelty claim. A thesis contribution must instead specify a new, reproducible operating
+envelope, predictive model, design rule, diagnostic method, or experimentally validated
+control improvement for the selected debris and geometry. The exact EXAIR Line Vac model and
+the intended debris distribution remain to be confirmed; results from other devices cannot be directly
+transferred without validation.
+
+8.2 Verified journal publications mapped to this apparatus
+
+       Table 8. Peer-reviewed research foundations, proposed relevance, and transferability limitations.
+
+  Publication                     Finding relevant to the study           Limit when applied to H2C
+
+  Xu, Liu and Pang                Compare single-/double-Venturi          Double-Venturi geometry within
+  (2016) [18]                     powder ejectors experimentally and      an ejector is not equivalent to
+                                  with CFD–DEM; examine nozzle            two commercial Line Vacs
+                                  position and deposition.                placed close together.
+
+  Lee et al. (2023) [19]          Analyze serial mass-flow amplifiers;    The numerical study examines a
+                                  show that the geometry and flow         gas-flow amplifier arrangement,
+                                  split influence amplification.          not H2C’s particle pickup and
+                                                                          bag loading.
+
+  AbdEl-hamid et al.              Experimentally compare air–solid     Results refer to different
+  (2018) [20]                     ejector mixing/tail-section          internal ejector geometries; use
+                                  geometries and operating conditions. for mechanisms and test
+                                                                       variables, not predicted H2C
+                                                                       performance.
+
+  Ebrahimi, Crapper and           Validate a CFD–DEM approach            Their 6.5-m test line and
+  Ooi (2016) [21]                 against gas and particle velocities in particles differ from the short
+                                  a conveying line, identifying          H2C suction system.
+                                  quantitative discrepancies.
+
+
+
+Pressure sensing and pneumatic conveying                                                                   14 of 26
+H2C Vacuum Debris Collection                                                 Assessment and Thesis Planning
+
+
+  Publication                     Finding relevant to the study          Limit when applied to H2C
+
+  Saleem et al. (2012) [22]       Show how filtration velocity and       Pilot-scale pulse-jet bag filters
+                                  loading affect pressure drop and       are not the same as a small
+                                  deposited dust-cake properties.        passive collection bag.
+
+ Mittal and Mallick               Use pressure-signal characteristics    Dense-phase signals and
+ (2025) [23]                      to investigate incipient blockage in   thresholds cannot be adopted
+                                  dense-phase conveying.                 directly for an ejector-driven
+                                                                         short line.
+
+  de Freitas et al. (2022) [24] Develop an operating-condition           Demonstration uses a blow tank
+                                selection method for                     and a much longer line; a
+                                air-pressure/airflow and energy use      different apparatus requires a
+                                in a pneumatic conveyor.                 new calibrated map.
+
+ Ishiharada et al.                Examine how suction-nozzle and         Their nozzle includes an
+ (2021) [25]                      injection-pipe insertion lengths       injection pipe; use their
+                                  influence powder transport/loading     dimensional-analysis approach,
+                                  ratio.                                 not their optimum dimensions.
+
+
+Suggested literature-review structure for a student: begin with ejector fundamentals and
+commercial performance curves; then review gas–solid pickup, suction nozzle design, particle and bend
+losses, filter loading, and system efficiency. For each paper, document the apparatus dimensions, material,
+operating pressure, measured response, simulation/measurement uncertainty, and limitations relevant to
+H2C. Do not treat CFD-predicted performance or a published optimization result as validation of this
+particular prototype.
+
+
+
+
+Pressure sensing and pneumatic conveying                                                              15 of 26
+H2C Vacuum Debris Collection                                               Assessment and Thesis Planning
+
+
+9 Five candidate mechanical-engineering master’s thesis topics
+Each of the following is a separate potential thesis, rather than a set of five required research tasks.
+Topic A is the most direct use of the existing equipment. Topic C is a focused experimental alternative.
+Topic E is most appropriate after an operating map and repeatable pickup have been established. These
+proposed hypotheses require testing; they are not findings.
+
+9.1 Topic A — Single versus tandem Line Vacs: recovery and specific air use
+
+Proposed title: Experimental Characterization and Compressed-Air-Use Optimization of Single and
+Tandem Ejectors for Small-Debris Collection.
+Research question. Under what motive-pressure, nozzle and downstream-resistance conditions does
+operating both nearby Line Vacs increase actual debris recovery enough to justify the additional
+compressed-air requirement?
+Testable hypothesis. A tandem arrangement may increase debris capture or transport under some
+conditions, but the benefit will depend on collector resistance and available motive flow. When the two
+units are close together and the collector resistance is substantial, a properly configured single unit may
+have a lower specific air requirement at equal acceptable recovery.
+Independent variables. Ejector configuration (one or two); feasible delivered motive-pressure level;
+and controlled collector-resistance state. A secondary study could vary inter-ejector separation or
+discharge-bend radius, but this should not be added until the primary experiment is complete. The
+same material and nozzle configuration must be held constant across paired trials.
+Method. Establish a true single-unit configuration by replacing the removed unit with a smooth
+connector of appropriate bore; do not simply disable one ejector and leave its internal passage installed.
+Maintain matched hose length, outlet connection, nozzle height and debris presentation as closely as
+possible, documenting any unavoidable change. Compare:
+
+ 1. Equal delivered motive pressure at each active unit, where the air system can maintain that
+    condition. This tests the practical benefit of adding a unit at a common pressure, but the total
+    motive air use need not match.
+
+ 2. Equal total motive-air flow or air budget, over the feasible overlapping range. This tests
+    whether the tandem arrangement provides superior collection with the same air expenditure, and
+    may require independent regulators/valves and calibrated motive-air flow measurement.
+
+Report cases that cannot maintain the target pressure as supply-limited results rather than silently
+treating them as pressure-matched trials.
+Measurements. Use SP under flow; measure S2 and S1 with appropriately ranged instruments; weigh
+the debris before and after each trial; measure time, motive air consumed, and clean-air pickup flow
+where practical. For flow-based comparisons, verify the delivered pressure at the inlet of each active
+ejector or characterize restrictions between SP and those inlets.
+Analysis and contribution. Construct collection-rate, recovery-fraction, and specific air-consumption
+response surfaces with uncertainty intervals. Identify a practical operating envelope in which the second
+ejector is beneficial, neutral or detrimental. A negative result demonstrating the superiority of one
+ejector within defined conditions is a valid and publishable design finding. Published double-Venturi and
+
+Pressure sensing and pneumatic conveying                                                           16 of 26
+H2C Vacuum Debris Collection                                               Assessment and Thesis Planning
+
+serial-amplifier results motivate the comparison but do not predict it [18, 19, 20].
+Feasible master’s scope. One debris surrogate, one nozzle, two configurations, three pressure levels
+and three collector states for the main matrix; reserve spacing/geometry changes for a bounded follow-on
+study.
+
+9.2 Topic B — Nozzle geometry, pickup gap, and validated entrainment modeling
+
+Proposed title: Design and Experimental Validation of Pickup-Nozzle Geometry for an Ejector-Driven
+Debris Collector.
+Research question. How do nozzle entrance geometry, effective throat area and distance from the
+surface affect recovery, clean-air entrainment, and deposition for a fixed air budget?
+Testable hypothesis. An inlet transition optimized for the chosen particle-size distribution and a
+controlled stand-off distance can improve recovery without increasing motive-air consumption. An overly
+restrictive nozzle may make S2 more negative while decreasing useful pickup airflow.
+Proposed hardware. Fabricate a small set of interchangeable nozzle inserts: a plain circular opening,
+a radiused/bell-mouth opening, and a rectangular slot. Compare geometries at matched open area where
+feasible; retain the same downstream system and one Line Vac. A simple adjustable fixture should
+maintain stand-off height, yaw and pitch relative to the debris surface.
+Measurements and model. Obtain recovery, collection rate, S2 , motive flow and inlet air velocity or
+clean-air induced volume flow for each trial. Develop a clean-air CFD model of the nozzle/suction section
+with a measured downstream pressure/flow boundary condition. Validate the model against measured
+pressure and flow over an operating range; only then assess whether a limited Eulerian–Lagrangian or
+CFD–DEM particle model is needed. Mesh independence and sensitivity to turbulence closure should be
+reported, not assumed.
+Contribution. A validated geometry recommendation and a dimensionless design map using stand-off-
+to-nozzle size, entrance area, and particle-size-to-opening ratios. Relevant nozzle and gas–solid transport
+precedents are available [25, 20, 21]. Do not claim that these precedents establish the optimum for H2C.
+Feasible master’s scope. Three nozzles, two stand-off distances and three feasible pressure settings,
+with replicated debris tests and a clean-air CFD model. Full multiphase CFD–DEM is optional, not a
+prerequisite.
+
+9.3 Topic C — Filter loading, discharge resistance, and service criterion
+
+Proposed title: Experimental Modeling of Collector-Loading Effects on Pickup Performance in a
+Pneumatic Debris Collection System.
+Research question. How does accumulated material alter a collector’s air resistance and reduce recovery,
+and can a measured pressure-difference trend define a reliable servicing or replacement condition?
+Testable hypothesis. At controlled motive conditions and nozzle geometry, increasing collector
+resistance reduces induced suction airflow and eventually reduces debris recovery. Effective media area
+and loading history modify the shape of that degradation curve.
+Independent variables. Effective filter-media area (e.g., two verified areas using the same medium),
+mass loading or standardized resistance state, and a modest set of operating pressures. Keep the material
+
+
+Pressure sensing and pneumatic conveying                                                           17 of 26
+H2C Vacuum Debris Collection                                                 Assessment and Thesis Planning
+
+and particle-size distribution fixed during model development.
+Measurement boundary. Distinguish S1 (discharge-side pressure at its tap) from filter pressure drop,
+which requires pressure measurements immediately upstream and downstream of the media. If an added
+differential sensor is used, verify its static pressure and dust-protection ratings. Determine filter face
+velocity from the total actual volumetric airflow at the filter inlet divided by active filtration area; this
+airflow includes entrained pickup air and the ejectors’ motive air. Different flow quantities must not be
+mixed without converting them to a common state.
+Experimental method. Begin with a clean, unladen medium. Add standardized portions of debris,
+record the filter pressure difference, SP , S1 , S2 , collection performance and air consumption, then repeat
+across independent loading cycles. Treat checkpoints inside one loading cycle as correlated repeated
+measures, not independent replicates. Model the dependence of resistance on loading and face velocity
+and test a withheld loading cycle.
+Contribution. A validated collector-pressure-loss model and a service or filter-area criterion tied to
+a specified recovery threshold, with uncertainty. Bag-filter cake research demonstrates that filtration
+velocity can change cake resistance, but a small unpulsed bag may behave differently [22].
+Feasible master’s scope. Two media areas, a single debris material, one nozzle and one ejector, with
+multiple full loading cycles. This offers a strong thesis without needing to optimize internal ejector
+geometry.
+
+9.4 Topic D — Fault diagnosis from pressure, airflow, and recovery
+
+Proposed title: Experimental Development of Pressure and Airflow Diagnostics for Faults in an
+Ejector-Driven Debris Collector.
+Research question. Can a small, physically interpretable sensor set distinguish normal collection,
+partial inlet obstruction, an intake-hose leak and increased collector resistance?
+Testable hypothesis. Joint features from SP , S2 , S1 and an independent flow/recovery reference can
+distinguish at least some faults more reliably than an absolute threshold applied only to the suction
+pressure.
+Fault protocol. Impose a calibrated set of restrictions, controlled leak openings and repeatable
+filter-resistance states. Record ground-truth conditions from the imposed fault fixture plus weighing and
+flow measurement. Include healthy runs at different motive-pressure settings, because an operating-point
+change should not be misclassified as a fault.
+Data and inference. Start with mean gauge pressures, slopes, pressure ratios and run-to-run variance.
+Add band-limited transient features only after checking the sensor response time and sampling rate.
+Compare interpretable thresholds or a state machine with one bounded classifier, and evaluate a confusion
+matrix, false alarms and detection latency on entire runs or days withheld from training. In particular,
+do not randomly mix time windows from the same run between training and test sets.
+Contribution. A sensor-necessity assessment and reproducible diagnostic decision rules. Dense-phase
+blockage work motivates pressure-signal features, but the flow regime is different and published feature
+thresholds are not directly transferable [23].
+Feasible master’s scope. Four operating states (healthy plus three faults), two pressure levels, two
+debris-loading conditions, and repeated labeled runs. A complex neural-network model is unnecessary
+
+
+Pressure sensing and pneumatic conveying                                                             18 of 26
+H2C Vacuum Debris Collection                                               Assessment and Thesis Planning
+
+unless it consistently outperforms transparent baselines.
+
+9.5 Topic E — Feedback regulation and reduced compressed-air consumption
+
+Proposed title: Feedback Regulation of Motive Pressure for Reduced Compressed-Air Consumption in
+Pneumatic Debris Collection.
+Research question. Can automatic adjustment of motive pressure preserve a prescribed collection
+performance while reducing the standard volume of compressed air used per mass recovered as the
+collector becomes more restrictive?
+Testable hypothesis. A sensor-driven pressure schedule with a bounded PI correction may reduce air
+use relative to a conservative high-pressure setting, and in some conditions relative to a fixed pressure
+selected for a clean collector. Whether it outperforms the best feasible constant-pressure setting must be
+established experimentally.
+Actuation and model. Use a rated controllable regulator with known command/fail behavior. Perform
+steady tests at several pressure setpoints and resistance states to estimate a static map from measured
+delivered pressure to induced airflow, recovery and motive-air consumption. With one regulator feeding
+a fixed Line Vac, motive pressure and flow are coupled; do not claim independent control of both unless
+separate actuators exist.
+Control design and comparison. Start with an open-loop pressure schedule; implement bounded
+PI feedback with anti-windup, filtered measurements, and safe pressure limits only after verifying
+actuator authority and response speed. Compare (i) a feasible conservative high fixed pressure, (ii)
+the best constant pressure found during characterization, and (iii) the scheduled/feedback approach on
+comparable debris and collector-loading sequences.
+Outcomes and contribution. Report recovery constraints, air consumed per kilogram, collection time,
+steady-state pressure error and robustness to loading. Electrical energy reduction must not be claimed
+from air-volume savings alone; it requires measured compressor electric power or a validated, explicitly
+bounded compressor model. Research on pressure/airflow selection for other pneumatic conveyors
+provides a method precedent rather than direct H2C controller gains [24, 28].
+Feasible master’s scope. One ejector, one nozzle, three resistance states, a mapped regulator and one
+practical control method. More advanced MPC is optional after the basic schedule and PI comparisons
+are established.
+
+
+
+
+Pressure sensing and pneumatic conveying                                                           19 of 26
+H2C Vacuum Debris Collection                                                    Assessment and Thesis Planning
+
+9.6 Choosing a thesis with an achievable scope
+
+Table 9. Recommended thesis selection based on current apparatus readiness; qualitative judgments are planning
+assessments, not experimental results.
+
+Topic      Main research strength             Principal added          Scope recommendation
+                                              requirement
+A                                    Flow/air-use measurement
+           Directly decides one versus                                 Preferred first thesis; strongest
+           two units                 and a fair rebuildable            immediate application
+                                     baseline
+B          Geometry and flow-physics Repeatable fixture,               Good fluid-mechanics option
+           design                    interchangeable nozzles; CFD
+                                     validation
+C          Collector performance and Filter differential-pressure      Focused experimental alternative
+           service-life model        measurement and complete
+                                     loading cycles
+D          Condition monitoring and Controlled fault hardware          Good mechatronics/instrumentation
+           diagnosis                 and correctly split validation    topic
+                                     data
+E          Feedback and air-use      Rated pressure actuator,          Best after baseline experiments
+           efficiency                validated performance map
+
+
+
+10 Common experimental methodology for the thesis options
+
+10.1 Definitions, measurands, and performance criteria
+
+A negative suction-pressure reading alone cannot define collection success. Use a primary gravimetric
+recovery measurement with carefully specified experimental duration and material presentation:
+                                 mcollected                                        mcollected
+                   ηrecovery =              ,                         ṁcollection =          ,              (6)
+                                 moffered                                            trun
+                                 Z trun
+                                                                                   Vmotive,std
+                Vmotive,std =             Qmotive,std (t) dt,               Cair =              .            (7)
+                                  0                                                mcollected
+
+Here, moffered is the debris mass made available to the pickup, mcollected is mass retained in the collector
+within the run, trun is run time, and Qmotive,std is measured motive-air flow converted to a declared
+standard condition. Cair is therefore standard air volume per kilogram collected, not electrical compressor
+energy. State how debris remaining on the surface, lodged in the nozzle/hose, and retained by the
+filter is handled in the mass balance. A fixed-time study and a fixed-target-mass study answer different
+questions; use one as the primary protocol and report the other separately.
+When analyzing filters, define
+
+                                                                         Qf,actual
+                          ∆pf = pf,upstream − pf,downstream ,    uf =                 ,                      (8)
+                                                                        Amedia,active
+
+where vf is the mean filtration face velocity. Its airflow and area must correspond to the same physical
+control surface. Do not use the compressed-air supply SCFM alone as the filter’s local volumetric flow.
+
+
+
+Pressure sensing and pneumatic conveying                                                                 20 of 26
+H2C Vacuum Debris Collection                                                     Assessment and Thesis Planning
+
+10.2 Instrument plan, reference measurements, and calibration
+
+                  Table 10. Minimum data channels to support a quantitative master’s thesis.
+
+Quantity                   Instrument or method                   Verification requirement
+Supply pressure            SP , already present                   Confirm range, gauge/absolute reference, tap
+                                                                  position and live pressure with flow.
+Pickup pressure            Vacuum-rated S2 and protected          Atmospheric-zero check, range and
+                           static tap                             response-time verification.
+Discharge pressure         Low-range S1 ; add separate filter     Confirm positive pressure within rating;
+                           differential if needed                 distinguish hose losses from filter-only loss.
+Motive air use             Calibrated flow sensor/flow meter or State standard reference conditions and
+                           validated industrial air-meter       uncertainty.
+                           method
+Pickup-induced airflow     Clean-air baseline flow measurement Separate induced flow from injected motive
+                           or calibrated inlet test device     flow; check device restriction.
+Recovery and deposition    Weigh preconditioned                   Calibrated balance, repeatable dosing, moisture
+                           offered/collected/retained debris      and leakage controls.
+Collector state            Measured filter loading and pressure   Defined clean/loaded conditions; repeatability
+                           differential                           across independent cycles.
+
+Provide common time stamps and log regulator setting, commanded state, valve condition, temperatures
+if material, run ID, filter state, nozzle gap, and any audible or visible blockage. At each test day, check
+sensor zero and pressure/flow readings against a suitable reference; use a calibration curve rather than
+assuming linear response beyond a sensor’s specified range. Express combined uncertainty following the
+JCGM Guide to the Expression of Uncertainty in Measurement [27]. Establish acceptable uncertainty
+for the difference between configurations, not merely for individual readings.
+
+10.3 Proposed initial experiment matrix for Topic A
+
+Use a screening pilot to establish safe and feasible delivered pressure values and representative resistance
+states. One defensible initial balanced matrix is:
+
+N = 2 configurations ×3 pressure levels ×3 collector states ×5 independent repeats = 90 debris trials .
+                                                                                                     (9)
+The count is a starting workload estimate, not a statistical power calculation. Adjust the number of
+repeats after evaluating pilot variance and a practically important minimum difference. Some conditions
+may be infeasible with the available compressed-air supply; report these feasibility bounds rather
+than forcing nominal settings. If stable air-delivery pressure differs across configurations, separate
+actual-delivered-pressure comparisons from equal-upstream-gauge comparisons.
+Randomize configuration and pressure-order within practical blocks (for example, test day, fixed material
+batch or filter conditioning). Standardize preparation between trials. Compare the average effects and
+interaction terms with confidence intervals using a factorial/blocking model or equivalent mixed-effects
+analysis, and inspect residuals. Treat repeated readings within the same debris run and checkpoints
+within the same filter-loading cycle as correlated observations. NIST’s experiment-design guidance covers
+
+
+Pressure sensing and pneumatic conveying                                                                    21 of 26
+H2C Vacuum Debris Collection                                                         Assessment and Thesis Planning
+
+randomized blocks, factorials and response-surface extensions [26].
+
+10.4 Validation, uncertainty, and completion criteria
+
+The student should declare, before the final experiment, a minimum acceptable recovery fraction, relevant
+debris class, maximum collection time and acceptable motive-air use. These are project requirements to
+be selected with the advisor; the apparatus photographs do not establish suitable numerical thresholds.
+Report (i) the mean and uncertainty of each response, (ii) effect estimates and intervals between
+configurations, (iii) retained/deposited mass and unaccounted debris, and (iv) a validation campaign on
+conditions not used to fit any model. For Topic B or E, reserve distinct test combinations for validation;
+for Topic C reserve whole filter-loading cycles; for Topic D reserve full runs or days. Consider the
+complete measurement system, including flow-meter pressure-drop effects, supply fluctuation, balance
+repeatability and filter state, in the uncertainty budget [27, 26].
+For any claim of electrical-energy improvement, add compressor input-power measurements and calculate
+                                      Z trun
+                                                                                 Eelec
+                            Eelec =            Pcompressor (t) dt,   espec =                .                  (10)
+                                       0                                       mcollected
+
+Declare whether the compressor, dryer, controls, reservoir losses and standby periods belong to the
+system boundary. U.S. DOE compressed-air guidance supports separating supply-system efficiency from
+pressure and flow at the pneumatic user [28].
+
+10.5 Safety and apparatus protection
+
+Use only pressure-rated regulators, hoses, fittings, tubing, isolation valves and properly restrained
+connections suitable for the maximum compressor pressure. Never pressure-test a low-range vacuum or
+differential sensor by exposing it to the 100-PSI motive line. Ensure the collector is vented/filter-rated for
+the combined ejector-plus-pickup airflow, and prevent excessive pressure accumulation in the bag/receiver.
+Add accessible isolation and emergency shutoff measures, inspect leaks, and consider noise protection.
+Characterize the debris for toxicity, respirability, combustibility and electrostatic hazards before testing;
+do not begin with hazardous dust or unknown fine powder. These controls must be set through the
+laboratory’s formal risk assessment, not inferred from the design photograph.
+
+
+
+
+Pressure sensing and pneumatic conveying                                                                    22 of 26
+H2C Vacuum Debris Collection                                                     Assessment and Thesis Planning
+
+
+11 Proposed 12-month master’s research schedule
+
+Table 11. A realistic planning sequence for one selected topic; timing is illustrative and depends on laboratory
+access.
+
+Months              Primary work                       Gate / tangible deliverable
+1–2                 Define research question, survey   Approved scoped proposal, measurement requirements,
+                    literature, characterize the       preliminary hazard analysis
+                    debris, verify Line Vac model
+                    and SP tap
+3–4                 Complete apparatus                 Working data-acquisition system; repeatability, feasible
+                    modifications, calibrations,       pressure range and estimated variance
+                    sampling plan and pilot trials
+5–7                 Conduct randomized main            Versioned test protocol and reproducible raw/processed
+                    experimental campaign and          data set
+                    document any failures
+8–9                 Fit interpretable engineering      Response surfaces, model assumptions and uncertainty
+                    model, quantify uncertainty and    budget
+                    compare alternatives
+10                  Run independent validation tests   Performance bounds and verified contribution statement
+                    under withheld operating points
+                    or test days
+11–12               Write and revise thesis; prepare   Completed thesis, documented hardware/software and
+                    journal/conference manuscript      presentation
+                    and defense
+
+
+     Suggested initial thesis selection
+
+     Choose Topic A if the immediate project decision is whether the existing two-Line-Vac arrange-
+     ment offers a meaningful improvement over a single unit. It uses the present test rig most directly
+     and creates a measured system operating map. Choose Topic C if the research should concentrate
+     on a narrower, statistically well-controlled filtration problem. Topics B, D and E can follow once
+     pressure sensing and clean-air/debris baselines are repeatable.
+     A defensible thesis need not demonstrate that two units are better. A measured finding that a
+     single ejector achieves similar or greater recovery with less compressed-air use can yield a valuable
+     design rule, provided the experimental comparison is fair and the uncertainty is quantified.
+
+
+
+
+Pressure sensing and pneumatic conveying                                                                  23 of 26
+H2C Vacuum Debris Collection                                                     Assessment and Thesis Planning
+
+
+References: Journal Research, Methods, Hardware and Apparatus
+Reference classification. The 28 sources comprise eight verified journal publications, three standards/method
+resources, 16 manufacturer/supplier resources, and the four-page user-provided H2C apparatus source (internal
+project document, not peer reviewed). The journal references establish scientific precedents; supplier literature
+supports specifications and purchasing. The .tex document uses a built-in bibliography and diagrams, with no
+external .bib or graphics files. Its needspace handling is optional for compatibility with TeXstudio installations
+that lack that package.
+
+
+
+ [1] EXAIR, One Line Vac or Two?, 2 August 2013. Manufacturer guidance on multiple Line Vacs and placement.
+     https://blog.exair.com/2013/08/02/one-line-vac-or-two/
+
+ [2] EXAIR, Line Vac (Aluminum): Installation & Maintenance, LIT 6402. Supply pressure, installation, and
+     troubleshooting guidance. https://www.exair.com/media/productcms/pdf/Aluminum_Line_Vac.pdf
+
+ [3] EXAIR, Air Operated Conveyors, catalog section. Standard Line Vac performance table, printed p. 171 (PDF
+     p. 8). https://www.exair.com/media/productcms/pdf/LineVac_AirOperatedConveyors2_1.pdf
+
+ [4] EXAIR, Proper Air Supply Line Size Equals Proper Performance, 27 September 2018. https://blog.exair.com
+     /2018/09/27/proper-air-supply-line-size-equals-proper-performance/
+
+ [5] EXAIR, Line Vac Back Pressure, 30 May 2013. https://blog.exair.com/2013/05/30/line-vac-back-pressure/
+
+ [6] EXAIR, Stainless Steel Line Vac Turns Super Sack into a Large Vacuum Bag, 10 June 2016. https://blog.exa
+     ir.com/2016/06/10/stainless-steel-line-vac-turns-super-sack-into-a-large-vacuum-bag/
+
+ [7] DwyerOmega, Air Velocity Measurement. Static-pressure taps and flow-related measurement errors. https:
+     //www.dwyeromega.com/en-us/resources/air-velocity-measurement
+
+ [8] AutomationDirect, ProSense PTD25-20-VH Vacuum Transmitter. Product specifications and purchase listing.
+     https://www.automationdirect.com/adc/shopping/catalog/process_control_-a-_measurement/pressure_s
+     ensors/pressure_transmitters/ptd25-20-vh
+
+ [9] AutomationDirect, ProSense PTD25 Installation Instructions. Model ranges, output direction, and permissible
+     overload. https://cdn.automationdirect.com/static/manuals/prosense/prosense_ptd25_installation.pdf
+
+[10] AutomationDirect, ProSense EPS25-V14-1001 Digital Pressure Sensor. Product specifications and purchase
+     listing. https://www.automationdirect.com/adc/shopping/catalog/process_control_-a-_measurement/pr
+     essure_sensors/digital_pressure_switches_-z-_transmitters/eps25-v14-1001
+
+[11] AutomationDirect, EPS Series 1001 Digital Pressure Sensors. Ranges, proof pressure, electrical specifications,
+     and accuracy. https://cdn.automationdirect.com/static/specs/prosenseeps1001dps.pdf
+
+[12] DwyerOmega, Omega PX309-015V5V. 0 to −15 PSI vacuum, 0–5 V output; product and purchase listing.
+     https://www.dwyeromega.com/en-us/general-purpose-stainless-steel-pressure-transducers/PX309/p/PX3
+     09-015V5V
+
+[13] DwyerOmega, PX309 Series Transducer/Transmitter Specifications. Static accuracy, electrical options, and
+     pressure limits. https://assets.dwyeromega.com/pdf/test-and-measurement-equipment/pressure/pressure-tra
+     nsducers/PX309.pdf
+
+[14] AutomationDirect, ProSense PTD25-20-0100WCH Pressure Transmitter. 0–100 inches of water, positive
+     gauge-pressure product listing. https://www.automationdirect.com/adc/shopping/catalog/process_control_
+     -a-_measurement/pressure_sensors/pressure_transmitters/ptd25-20-0100wch
+
+Pressure sensing and pneumatic conveying                                                                   24 of 26
+H2C Vacuum Debris Collection                                                      Assessment and Thesis Planning
+
+[15] AutomationDirect, ProSense DPTA-20-25 Differential Pressure Transmitter. Product and purchase listing.
+     https://www.automationdirect.com/adc/shopping/catalog/process_control_-a-_measurement/pressure_s
+     ensors/differential_pressure_transmitters/dpta-20-25
+
+[16] AutomationDirect, DPTA Series Differential Air Pressure Transmitters. Media, measuring ranges, electrical
+     requirements, and pressure limits. https://cdn.automationdirect.com/static/specs/prosensedptatransmitters
+     .pdf
+
+[17] H2C Vacuum Debris Collection System, H2C_vacuum(1).pdf, four-page user-supplied apparatus photographs
+     (side view, top view, commercial Line Vac labels and pressure transmitters), supplied October 2026. An
+     additional pressure sensor on the compressed-air line was confirmed separately by the user; its exact
+     specification and location are not shown in the source file. Internal project source, not a journal
+     publication.
+
+[18] J. Xu, X. Liu and M. Pang, “Numerical and experimental studies on transport properties of powder ejector
+     based on double venturi effect,” Vacuum, vol. 134, pp. 92–98, 2016.
+     https://doi.org/10.1016/j.vacuum.2016.10.007
+
+[19] D.-S. Lee, H.-S. Yoo, S.-B. Kim, S.-H. Bae and Y.-J. Kim, “Flow Characteristics of Mass Flow Amplifiers in
+     Serial Arrangement Conditions,” The KSFM Journal of Fluid Machinery, vol. 26, no. 6, pp. 69–78, 2023.
+     https://doi.org/10.5293/kfma.2023.26.6.069
+
+[20] A. A. AbdEl-hamid, N. H. Mahmoud, Mofreh H. Hamed and A. A. Hussien, “Gas-solid flow through the
+     mixing duct and tail section of ejectors: Experimental studies,” Powder Technology, vol. 328, pp. 148–155,
+     2018.
+     https://doi.org/10.1016/j.powtec.2018.01.011
+
+[21] M. Ebrahimi, M. Crapper and J. Ooi, “Numerical and experimental study of horizontal pneumatic transporta-
+     tion of spherical and low-aspect-ratio cylindrical particles,” Powder Technology, vol. 293, pp. 48–59, 2016.
+     https://doi.org/10.1016/j.powtec.2015.12.019
+
+[22] M. Saleem, G. Krammer, R. U. Khan and M. S. Tahir, “Influence of operating parameters on cake formation
+     in pilot scale pulse-jet bag filter,” Powder Technology, vol. 224, pp. 28–35, 2012.
+     https://doi.org/10.1016/j.powtec.2012.02.016
+
+[23] A. Mittal and S. S. Mallick, “Pressure signal analysis for early blockage detection in dense phase pneumatic
+     conveying,” Powder Technology, vol. 464, article 121243, 2025.
+     https://doi.org/10.1016/j.powtec.2025.121243
+
+[24] A. G. de Freitas, V. F. de Oliveira, R. B. dos Santos, L. A. M. Riascos and R. Zou, “Optimization method
+     for pneumatic conveying parameters and energy consumption performance analysis of a compact blow tank,”
+     Journal of Pressure Vessel Technology, vol. 144, no. 6, article 064504, 2022.
+     https://doi.org/10.1115/1.4055111
+
+[25] S. Ishiharada, M. Fukuhara, T. Takamatsu, Y. Murakami, T. Ishigai, Y. Nakamura and M. Nakao, “Effects
+     of Insertion Length of Suction Nozzle and Injection Pipe on Pneumatic Conveying Characteristics of Suction
+     Nozzle with Injection Pipe,” Journal of the Society of Powder Technology, Japan, vol. 58, no. 6, pp. 294–301,
+     2021.
+     https://doi.org/10.4164/sptj.58.294
+
+[26] National Institute of Standards and Technology (NIST)/SEMATECH, e-Handbook of Statistical Methods,
+     Sec. 5.3, “Choosing an experimental design.” Includes randomization, blocking, full/fractional factorial designs
+     and response-surface methods.
+     https://www.itl.nist.gov/div898/handbook/pri/section3/pri3.htm
+
+
+
+Pressure sensing and pneumatic conveying                                                                     25 of 26
+H2C Vacuum Debris Collection                                               Assessment and Thesis Planning
+
+[27] Joint Committee for Guides in Metrology (JCGM), Evaluation of Measurement Data—Guide to the Expression
+     of Uncertainty in Measurement, JCGM 100:2008(E).
+     https://doi.org/10.59161/JCGM100-2008E
+
+[28] U.S. Department of Energy, Improving Compressed Air System Performance: A Sourcebook for Industry, 3rd
+     ed., DOE/EE-1340, 2016.
+     https://www.govinfo.gov/content/pkg/GOVPUB-E-PURL-gpo176573/pdf/GOVPUB-E-PURL-gpo1765
+     73.pdf
+
+
+
+
+Pressure sensing and pneumatic conveying                                                            26 of 26
+

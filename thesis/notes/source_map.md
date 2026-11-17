@@ -17,14 +17,14 @@ Theophile Pierre's thesis is the closer subject match because it treats a Hanfor
 
 - Confirm the current FIU graduate-school formatting rules before submission.
 - Confirm the final thesis title, defense year, major professor, committee, and approval-page wording.
-- Confirm that the author's preferred title-page name is Juan J. Hernandez (confirmed in conversation).
+- The author's preferred title-page name is Juan J. Hernandez (confirmed in conversation).
 - Verify each technical claim and bibliography entry against the final source document before citing it.
 - Resolve the proposal's project timeline inconsistencies independently; no timeline was copied into the thesis.
 
 
 ## Citation tracking
 
-The bibliography is `../references/references.bib`. See [the source register](../references/source_register.md) for the sources used in Sections 1.1--1.4 and their citation keys. The register also distinguishes author-supplied design inputs and planned CTF validation from verified external evidence, and tracks mentor confirmations and figure attribution still needed. Template examples are layout references, not evidence for technical claims.
+The bibliography is `../references/references.bib`. See [the source register](../references/source_register.md) for citation keys and evidence throughout the thesis. The register distinguishes external sources, author-supplied design inputs, completed qualitative CTF demonstrations, and planned quantitative efficiency testing. Entries are chronological: later explicit author corrections supersede earlier assumptions. Template examples are layout references, not evidence for technical claims.
 
 ## Internship report use
 

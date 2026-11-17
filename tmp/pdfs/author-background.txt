@@ -1,0 +1,984 @@
+         STUDENT SUMMER INTERNSHIP TECHNICAL REPORT
+
+
+
+
+Development of a Robotic Vacuum Crawler for
+          Hanford Double-Shell Tank Annuli
+
+             DOE-FIU SCIENCE & TECHNOLOGY
+              WORKFORCE DEVELOPMENT PROGRAM
+
+
+                                                 Date submitted:
+                                                          08, 2026
+
+
+
+                                         Principal Investigators:
+                              Juan J Zapata (DOE Fellow Student)
+                                   Florida International University
+
+                  Josue Estrada Martinez BS. (H2C Engineer/SME)
+                  Hanford Tank Waste Operations & Closure (H2C)
+
+                            Anthony Abrahao Ph.D., P.E. (Mentor)
+                                  Florida International University
+
+                                    Mackenson Telusma (Mentor)
+                                   Florida International University
+
+                         Ravi Gudavalli Ph.D. (Program Manager)
+                                 Florida International University
+
+                    Leonel Lagos Ph.D., PMP® (Program Director)
+                                  Florida International University
+
+
+                                                    Submitted to:
+                                       U.S. Department of Energy​
+                            Office of Environmental Management​
+                  Under Cooperative Agreement # DE-EM0005358
+                                        DISCLAIMER
+This report was prepared as an account of work sponsored by an agency of the United States
+government. Neither the United States government nor any agency thereof, nor any of their
+employees, nor any of its contractors, subcontractors, nor their employees makes any warranty,
+express or implied, or assumes any legal liability or responsibility for the accuracy,
+completeness, or usefulness of any information, apparatus, product, or process disclosed, or
+represents that its use would not infringe upon privately owned rights. Reference herein to any
+specific commercial product, process, or service by trade name, trademark, manufacturer, or
+otherwise does not necessarily constitute or imply its endorsement, recommendation, or favoring
+by the United States government or any other agency thereof. The views and opinions of authors
+expressed herein do not necessarily state or reflect those of the United States government or any
+agency thereof.
+FIU-ARC-2026-FA1-04C--xxx​                             ​                         Short
+Development of a Robotic Vacuum Crawler for Hanford Double-Shell Tank Annuli
+​
+
+
+                                EXECUTIVE SUMMARY​
+
+This research work has been supported by the DOE-FIU Science & Technology Workforce
+Development Initiative, an innovative program developed by the U.S. Department of Energy’s
+Office of Environmental Management (DOE-EM) and Florida International University’s Applied
+Research Center (FIU-ARC). During the summer of 2026, a DOE Fellow intern, Juan Zapata,
+spent 10 weeks doing a summer internship at the Hanford site and under the H2C mentor Josue
+Estrada company. The intern’s project was initiated on Month 05, 2026, and continued through
+Month 08, 2026 with the objective of Developing a Robotic Vacuum Crawler for the Hanford
+Double-Shell Tank Annuli.
+
+
+
+
+                                                           3
+FIU-ARC-2026-FA1-04C--xxx​                             ​                                                                 Short
+Development of a Robotic Vacuum Crawler for Hanford Double-Shell Tank Annuli
+​
+​
+                                           TABLE OF CONTENTS
+
+EXECUTIVE SUMMARY................................................................................................................
+LIST OF FIGURES...........................................................................................................................
+TRADEMARKS................................................................................................................................
+LIST OF ACRONYMS.....................................................................................................................
+1.0 INTRODUCTION..................................................................................................................... 1
+    1.1 Institutional Framework and Strategic Alignment...............................................................1
+    1.2 Overview of Hanford’s Tank Infrastructure and Maintenance Challenges......................... 1
+    1.3 Project Overview and Objectives.........................................................................................3
+2.0 RESEARCH DESCRIPTION....................................................................................................4
+    2.1 Deployment strategies..........................................................................................................5
+    2.2 Mechanical Design...............................................................................................................8
+        2.21 Dimensional Reduction and Center of Gravity (CoG) Optimization.......................... 8
+        2.22 Increased Wheel Diameter for Obstacle Clearance:.................................................... 9
+        2.23 Electronics Isolation and Maintainability : Redesign.................................................. 9
+        2.24 Modular Wheel Hub and Motor Assembly:...............................................................10
+        2.25 Vacuum Head Geometry and Angle of Attack Optimization.................................... 11
+        2.26 TPU Cover Integration for Enhanced Traction:.........................................................12
+    2.3 Vacuum System Design & Development...........................................................................12
+        2.31 System Architecture and Series Configuration..........................................................12
+        2.32 Fluid Mechanics and Component Optimization........................................................ 13
+    2.4 Electronics & Controls.......................................................................................................14
+        2.41 Hardware Architecture & Control Interface.............................................................. 14
+        2.42 ROS2 Software Ecosystem & Node Architecture..................................................... 16
+3.0 RESULTS AND ANALYSIS.................................................................................................. 16
+    3.1 Deployment Testing........................................................................................................... 18
+        3.11 Deployment Testing Result........................................................................................ 19
+    3.2 Maneuverability Testing.................................................................................................... 19
+        3.21 Maneuverability Testing Result................................................................................. 20
+    3.3 Vacuum Performance and Surface Cleaning Testing.........................................................21
+        3.31 Vacuum Performance and Surface Cleaning Testing.................................................22
+    3.4 ROS2 Architecture Validation........................................................................................... 22
+        3.41 ROS2 Architecture Validation Result........................................................................ 22
+4.0 CONCLUSION........................................................................................................................23
+5.0 FUTURE WORK.....................................................................................................................24
+5.0 REFERENCES........................................................................................................................ 26
+                                                            4
+FIU-ARC-2026-FA1-04C--xxx​                             ​                             Short
+Development of a Robotic Vacuum Crawler for Hanford Double-Shell Tank Annuli
+​
+
+
+
+                                          LIST OF FIGURES
+
+Figure 1. Underground Double-Shell Tanks constructed in 1968-1986​                              2
+Figure 2. Representation of tank surface degradation on left and surface without degradation on
+right (3D printed model)​                                                                       2
+Figure 3. Debris Inside Double Shell Tank AY-101​                                               3
+Figure 4. Cold Test Facility Double- Shell Annulus Tank Deployment Mock​                        5
+Figure 5. Diagram of the Developed Deployment Strategy​                                         6
+Figure 6. Deployment Mock-up​                                                                   7
+Figure 7. Debris extraction early testing​                                                      7
+Figure 8. Vacuum Chassis Prototype V2​                                                         8
+Figure 9. Side and front view for the Vacuum Chassis Prototype V3​                             8
+Figure 10. Side and front view for the Vacuum Chassis Prototype V3​                            9
+Figure 11. Vacuum Electronics distribution V2​                                                 9
+Figure 12. New Vacuum Electronics distribution V3​                                            10
+Figure 14. Vacuum wheel hub V3​                                                               11
+Figure 15. Vacuuming Angle of attack​                                                         11
+Figure 16. Sullair Air Compressor Used for Validation of the Vacuum Performance​              12
+Figure 17. In Series configuration of vacuum line (1in main line to 0.5in line)​              13
+Figure 18. Electronic system of the new vacuum​                                               14
+Figure 19. Raspberry pi + Teensy PCB​                                                         15
+Figure 20. New Control Interface Featuring a Custom Control Box.​                             15
+Figure 21. VCS ROS2 Planned architecture Diagram​                                             16
+Figure 22. Control table inside CTF tank​                                                     17
+Figure 23. Deployment testing at CTF​                                                         18
+Figure 24. Deployment Mock-up at CTF​                                                         19
+Figure 25. Full Vacuum Deployment at CTF​                                                     20
+Figure 26. Type of debris tested and collected​                                               21
+
+
+
+                                             TRADEMARKS
+
+    ●​ Exair Line Vac 6080 is a registered trademark of EXAIR, 11510 Goldcoast Dr
+    ●​ Cincinnati, OH, USA.
+    ●​ Intel® RealSense™ D415 camera is a registered trademark of Intel Corporation, USA.
+    ●​ Stratasys F170 3D printer is a registered trademark of Stratasys, 7665 Commerce Way
+    ●​ Eden Prairie, MN USA
+                                                 5
+FIU-ARC-2026-FA1-04C--xxx​                             ​                       Short
+Development of a Robotic Vacuum Crawler for Hanford Double-Shell Tank Annuli
+​
+
+
+                                       LIST OF ACRONYMS
+
+    ●​ ABS: Acrylonitrile Butadiene Styrene
+    ●​ ASA: Acrylonitrile Styrene Acrylate
+    ●​ CTF: Cold Test Facility
+    ●​ CTO: Chief Technology Office
+    ●​ DOE-EM: Department of Energy’s Office of Environmental Management
+    ●​ DSTs: Double-Shell Tanks
+    ●​ FIU: Florida International University
+    ●​ FIU-ARC: Florida International University’s Applied Research Center
+    ●​ H2C: Hanford Tank Waste Operations & Closure
+    ●​ PCB: Printed Circuit Board
+    ●​ SCFM: Standard Cubic Feet per Minute
+    ●​ SPC: Special Protective Coating
+    ●​ TAPI: Tank and Pipeline Integrity
+    ●​ TEDS: Technology Element Description Summary
+    ●​ TLR: Technology Readiness Level
+    ●​ VCS: Vacuum Crawler System
+
+
+
+
+                                                           6
+FIU-ARC-2026-FA1-04C--xxx​                             ​                                         Short
+Development of a Robotic Vacuum Crawler for Hanford Double-Shell Tank Annuli
+​
+                                     1.0 INTRODUCTION​
+
+
+1.1 Institutional Framework and Strategic Alignment
+
+During the summer of 2026, Juan J. Zapata, a master's student in mechanical engineering from
+Florida International University (FIU), joined the Office of the Chief Technology Officer (CTO)
+at Hanford Tank Waste Operations & Closure (H2C). This research and development initiative is
+embedded within H2C's Tank and Pipeline Integrity (TAPI) organization, directly contributing to
+the U.S. Department of Energy’s (DOE) overarching environmental remediation and waste
+management goals. This engineering effort is executed in strict alignment with the strategic
+objectives of the Technology and Innovation Roadmap, RPP-PLAN-43988 (Rev. 09). This
+roadmap formally establishes the mandate for developing automated robotic platforms and
+remote technologies           designed for         radiological      surveying, inspections,   and physical
+manipulations, with the ultimate objective of minimizing human exposure to high-radiation
+environments. The explicit operational criteria driving this deployment are detailed within the
+Technology Element Description Summary (TEDS) MTW-89. This document highlights the
+specific regulatory and technical requirements for the remote cleaning of concrete surfaces
+treated with a Special Protective Coating (SPC). Under this framework, the core focus of the
+current project is the systematic design, development, and refinement of a remotely operated
+robotic vacuum crawler system tailored specifically to navigate, vacuum, and maintain the
+complex internal geometries of the DST annulus space.
+
+
+
+1.2 Overview of Hanford’s Tank Infrastructure and Maintenance Challenges
+
+The Hanford Site’s 28 in-service underground Double-Shell Tanks (DSTs), constructed between
+1968 and 1986, serve as critical infrastructure for the safe isolation and storage of high-level
+radioactive and chemical waste. Ensuring the structural integrity of these containment systems
+requires rigorous, routine maintenance and inspection protocols. A primary component of this
+effort is the periodic assessment of tank wall thinning and degradation via ultrasonic testing
+(UT), which must be performed on both the primary tank walls and the secondary tank bottoms.
+
+
+                                                           1
+FIU-ARC-2026-FA1-04C--xxx​                             ​                                               Short
+Development of a Robotic Vacuum Crawler for Hanford Double-Shell Tank Annuli
+​
+
+
+
+
+                       Figure 1. Underground Double-Shell Tanks constructed in 1968-1986
+
+However, a major operational bottleneck is the accumulation of various forms of physical debris
+on the annulus floor. This debris—often resulting from the extensive mechanical work required
+to clear corrosion from the primary tank's outer surface—creates a dense barrier that interferes
+with and heavily hinders crucial UT inspection procedures. The urgency of addressing this debris
+accumulation has escalated due to recent cold spray repair operations, which have introduced a
+new form of waste: a fine, powdered residue that layers on top of the pre-existing debris on the
+annulus floor.
+
+
+
+
+  Figure 2. Representation of tank surface degradation on left and surface without degradation on right (3D printed
+                                                       model)
+
+
+
+                                                           2
+FIU-ARC-2026-FA1-04C--xxx​                             ​                                 Short
+Development of a Robotic Vacuum Crawler for Hanford Double-Shell Tank Annuli
+​
+Because the annulus space is an extremely confined and radiologically hazardous
+environment—measuring roughly 30 inches wide with restrictive entry risers ranging from only
+12 to 24 inches in diameter—manual cleanup is impossible due to severe worker exposure risks
+and strict physical access limits. To overcome these constraints, the Annulus Vacuum Crawler
+project was initiated to develop a robust, remotely operated robotic platform capable of
+navigating these hazardous, tightly constrained spaces to safely remove debris and clear the path
+for mandatory structural inspections.
+
+
+
+
+                                  Figure 3. Debris Inside Double Shell Tank AY-101
+
+1.3 Project Overview and Objectives
+
+Entering its third consecutive year, this project focuses on the iterative optimization, technical
+refinement, and software modernization of the existing Annulus Vacuum Crawler prototype.
+Building upon empirical performance data, field testing, and engineering feedback gathered
+during Year 2, the current phase transitions the platform from a proof-of-concept prototype into a
+robust, deployment-ready operational system. The primary objective is to enhance both the
+mechanical reliability and software architecture of the crawler to ensure seamless navigation and
+debris extraction within the highly constrained and radiologically hazardous Double-Shell Tank
+(DST) annulus space.
+
+
+                                                           3
+FIU-ARC-2026-FA1-04C--xxx​                             ​                                  Short
+Development of a Robotic Vacuum Crawler for Hanford Double-Shell Tank Annuli
+​
+To achieve this goal, the project is structured around four core technical objectives:
+
+    ●​ Mechanical Refinement and Prototype Optimization: Re-engineer and upgrade the
+         physical crawler chassis based on Year 1 feedback to resolve operational bottlenecks.
+         This includes optimizing the physical footprint for 12-to-24-inch riser deployment and
+         upgrading the debris extraction interface.
+    ●​ Software Modernization and ROS2 Migration: Overhaul the existing control software
+         to migrate the crawler’s architecture to a Robot Operating System 2 (ROS2) framework.
+         This upgrade ensures a modular, deterministic, and scalable software stack, providing
+         improved real-time node communication, enhanced safety critical guardrails, and
+         standardized message packages for remote operations.
+    ●​ Optimization of Remotely Operated Control Systems: Refine remote telemetry, live
+         sensor feedback, and operator control interfaces. By utilizing ROS2's improved
+         middleware, the system will deliver lower-latency data feeds to operators executing
+         precise cleaning maneuvers from outside the high-radiation boundary.
+    ●​ Facilitation of Non-Destructive Testing (NDT): Ensure the optimized system reliably
+         clears a path along the primary tank walls and secondary tank bottoms. By systematically
+         removing legacy mechanical corrosion debris and fine cold spray residue, the crawler
+         directly enables subsequent ultrasonic testing (UT) crawlers to achieve unobstructed
+         acoustic coupling for mandatory wall-thinning assessments.
+
+Ultimately, this third-year phase bridges the gap between initial prototyping and field
+deployment—delivering a smarter, more ruggedized, ROS2-compatible robotic solution that
+minimizes human radiation exposure and supports Hanford’s long-term environmental
+remediation mission.
+
+
+
+
+                                                           4
+FIU-ARC-2026-FA1-04C--xxx​                             ​                                       Short
+Development of a Robotic Vacuum Crawler for Hanford Double-Shell Tank Annuli
+​
+                               2.0 RESEARCH DESCRIPTION
+
+2.1 Deployment strategies
+
+To ensure seamless integration with existing field procedures, the Year 3 operational phase
+maintains the baseline deployment strategy established during the initial project cycle.
+Engineering enhancements are designed to fit directly into the pre-existing workflow,
+minimizing the need for operational retraining or changes to auxiliary equipment. Crucially, all
+physical testing and validation are conducted at the Hanford Cold Test Facility (CTF). The CTF
+provides a non-radiological, full-scale mockup environment that precisely replicates the
+geometric and material constraints of the actual DST annulus space. This allows for rigorous,
+risk-free validation of the mechanical upgrades and the new ROS2 software architecture prior to
+actual tank deployment
+
+
+
+
+                     Figure 4. Cold Test Facility Double- Shell Annulus Tank Deployment Mock
+
+
+
+
+                                                           5
+FIU-ARC-2026-FA1-04C--xxx​                             ​                                  Short
+Development of a Robotic Vacuum Crawler for Hanford Double-Shell Tank Annuli
+​
+
+The deployment framework is executed across three distinct operational phases:
+
+
+    ●​ Phase I (Riser Insertion and Vertical Deployment): The robotic crawler utilizes the
+         exact deployment vector validated during Year 1, entering the Double-Shell Tank (DST)
+         annulus through standard 12-to-24-inch diameter inspection risers. The system is lowered
+         vertically to the annulus floor via a heavy-duty tether management system. This system
+         manages the structural deployment lines, power distribution umbilical, and
+
+
+
+
+                              Figure 5. Diagram of the Developed Deployment Strategy
+
+
+
+    ●​ Phase II (Surface Transition and Annulus Floor Navigation): Upon making contact
+         with the 30-inch-wide annulus floor, the crawler’s wheels leverage the face-down
+         orientation to immediately establish traction. The crawler drives forward, automatically
+         orienting itself correctly upon landing to transition to horizontal locomotion. The baseline
+         strategy relies on navigating the curved, metallic surfaces while maintaining a precise
+         orientation to avoid high-radiation obstacles and structural protrusions. This is where the
+         Year 2 ROS2 software upgrade becomes critical: the introduction of a ROS2-driven
+         control architecture allows for highly deterministic real-time communication, giving
+         operators finer control over the crawler's traction, alignment, and velocity as it transitions
+         from landing to operational driving.
+
+
+
+                                                           6
+FIU-ARC-2026-FA1-04C--xxx​                             ​                               Short
+Development of a Robotic Vacuum Crawler for Hanford Double-Shell Tank Annuli
+​
+
+
+
+
+                                            Figure 6. Deployment Mock-up
+
+    ●​ Phase III (Debris Extraction and Post-Inspection Clearance): The primary functional
+         mandate remains unchanged: the crawler systematically travels a pre-mapped cleaning
+         path to clear legacy mechanical corrosion and fine cold spray powder residue. By
+         adhering to the established pathing strategy but utilizing the newly optimized vacuum
+         extraction interface and upgraded ROS2 telemetry, the platform ensures a uniformly
+         cleared surface. This guarantees that subsequent Ultrasonic Testing (UT) crawlers can be
+         deployed into the exact same riser and travel an unhindered path to achieve the acoustic
+         coupling required for precise wall-thinning assessments.
+
+
+
+
+                                       Figure 7. Debris extraction early testing
+
+
+
+​
+                                                           7
+FIU-ARC-2026-FA1-04C--xxx​                             ​                                     Short
+Development of a Robotic Vacuum Crawler for Hanford Double-Shell Tank Annuli
+​
+2.2 Mechanical Design
+
+Building upon empirical feedback from the Year 2 prototype, the mechanical architecture of the
+crawler was systematically re-engineered to resolve physical bottlenecks, simplify field
+maintenance, and optimize maneuverability within the tight constraints of the DST annulus. The
+specific hardware upgrades and structural modifications executed during this phase include:
+
+2.21 Dimensional Reduction and Center of Gravity (CoG) Optimization
+
+Reduced the overall length of the crawler by from 27.5in to 22.5in and the overall diameter by
+1.25 inches to facilitate smoother deployment through restrictive 12-inch risers. Additionally, the
+Venturi vacuum system was relocated to the center of the chassis, shifting the center of gravity to
+the exact middle of the platform to improve stability and traction on the curved annulus floor.
+
+
+
+
+                                       Figure 8. Vacuum Chassis Prototype V2
+
+
+
+
+                         Figure 9. Side and front view for the Vacuum Chassis Prototype V3
+
+
+
+
+                                                           8
+FIU-ARC-2026-FA1-04C--xxx​                             ​                                     Short
+Development of a Robotic Vacuum Crawler for Hanford Double-Shell Tank Annuli
+​
+2.22 Increased Wheel Diameter for Obstacle Clearance:
+Increased the wheel diameter from 4 inches to 5 inches. This adjustment provides greater ground
+clearance and a better angle of approach, allowing the crawler to effortlessly roll over conduits
+and other structural obstacles on the annulus floor.
+
+
+
+
+                        Figure 10. Side and front view for the Vacuum Chassis Prototype V3
+
+
+
+2.23 Electronics Isolation and Maintainability : Redesign
+
+Fully isolated the onboard electronics enclosure from the vacuum system to prevent dust
+contamination from the cold spray powder. The entire chassis was overhauled with a modular,
+maintenance-focused design to eliminate the serviceability difficulties identified in the previous
+iteration.
+
+
+
+
+                                         Figure 11. Vacuum Electronics distribution V2
+
+
+
+
+                                                           9
+FIU-ARC-2026-FA1-04C--xxx​                             ​                             Short
+Development of a Robotic Vacuum Crawler for Hanford Double-Shell Tank Annuli
+​
+
+
+
+
+                                 Figure 12. New Vacuum Electronics distribution V3
+
+
+
+2.24 Modular Wheel Hub and Motor Assembly:
+
+Developed a custom wheel hub design that decouples the drivetrain from the main chassis. This
+engineering change allows operators to rapidly swap out or service an electric motor without
+needing to disassemble the entire robotic platform, drastically reducing downtime during field
+operations.
+
+
+
+
+                                      Figure 13. Vacuum wheel distribution V2
+
+
+                                                          10
+FIU-ARC-2026-FA1-04C--xxx​                             ​                              Short
+Development of a Robotic Vacuum Crawler for Hanford Double-Shell Tank Annuli
+​
+
+
+
+
+                                          Figure 14. Vacuum wheel hub V3
+
+
+
+2.25 Vacuum Head Geometry and Angle of Attack Optimization
+
+To maximize aerodynamic lift and particulate disruption at the floor surface, the testing regimen
+evaluated different custom-designed vacuum heads. Each head geometry featured a distinct angle
+of attack relative to the annulus floor to determine the optimal balance between high-velocity
+airflow and physical debris engagement.
+
+
+
+
+                                        Figure 15. Vacuuming Angle of attack
+
+
+                                                           11
+FIU-ARC-2026-FA1-04C--xxx​                             ​                                           Short
+Development of a Robotic Vacuum Crawler for Hanford Double-Shell Tank Annuli
+​
+2.26 TPU Cover Integration for Enhanced Traction:
+Researched and implemented custom Thermoplastic Polyurethane (TPU) wheel covers. The
+material properties of the TPU covers maximize friction and wheel engagement against the
+smooth, curved steel surfaces of the tank floor, preventing slipping while navigating debris
+
+
+
+
+2.3 Vacuum System Design & Development
+
+2.31 System Architecture and Series Configuration
+
+The baseline design, which positioned one vacuum module on the crawler and a second on the
+umbilical harness was superseded to eliminate pressure drops across the tether. The refined
+architecture integrates two EXAIR Line Vac pneumatic vacuum modules mounted directly
+onboard the crawler in a series configuration.
+
+
+
+
+                 Figure 16. Sullair Air Compressor Used for Validation of the Vacuum Performance
+
+
+This onboard integration was made possible by re-engineering the chassis to feature a custom
+CNC-machined cage, which allows the debris collection bag to be mounted directly to the
+platform. By positioning the modules in series and directly on the crawler, the system drastically
+maximizes both airflow and pull force at the cleaning nozzle, utilizing the first module to
+generate high primary suction and the second to accelerate the material through the exhaust.
+
+
+
+                                                          12
+FIU-ARC-2026-FA1-04C--xxx​                             ​                                              Short
+Development of a Robotic Vacuum Crawler for Hanford Double-Shell Tank Annuli
+​
+2.32 Fluid Mechanics and Component Optimization
+Pneumatic efficiency is highly sensitive to flow restrictions and pressure drops over distance. To
+optimize the system's fluid dynamics, several critical hardware adjustments were implemented
+based on empirical testing:
+    ●​ Coupling and Fitting Upgrades: During development, the pneumatic coupling size was
+         increased from 3/8 inch to 1/2 inch. This modification expanded the internal volume,
+         minimizing the airflow restrictions and pressure losses commonly caused by standard,
+         narrow-diameter quick-connectors.
+    ●​ Hose Line Stratification: For operational demonstration, a 1-inch hose line was utilized
+         for high-velocity material intake, which subsequently adapted to a 1/2-inch line feeding
+         the crawler's pneumatic supply.
+    ●​ Line Vac Operational Mechanics: The EXAIR modules operate by injecting compressed
+         air through an inlet into an annular plenum chamber. The air is then throttled through
+         directed nozzles into the throat, creating a venture-driven vacuum at the intake. Because
+         the Line Vac features a large, smooth bore with no moving parts, it prevents clogging and
+         provides maintenance-free conveyance of highly abrasive radiological waste over long
+         vertical lines.
+
+
+
+
+                    Figure 17. In Series configuration of vacuum line (1in main line to 0.5in line)
+
+
+
+
+                                                          13
+FIU-ARC-2026-FA1-04C--xxx​                             ​                                Short
+Development of a Robotic Vacuum Crawler for Hanford Double-Shell Tank Annuli
+​
+2.4 Electronics & Controls
+
+To maintain operational continuity and hardware reliability during the Year 2 development cycle,
+the core electronic component stack was preserved from the previous iteration. The system
+continues to leverage a dual-controller architecture utilizing a Raspberry Pi as the high-level
+computer, a Teensy microcontroller for low-level hardware abstraction, RoboClaw motor
+controllers, and high-torque Pololu metal gearmotors.
+Rather than altering this proven hardware foundation, the Year 2 engineering focus was strictly
+directed toward overhauling the system's software architecture. The previous iteration's control
+framework exhibited communication faults and node instability; therefore, this phase completely
+modernized the software ecosystem by migrating to a robust, deterministic Robot Operating
+System 2 (ROS2) environment while optimizing the custom physical control interface.
+
+
+
+
+                                   Figure 18. Electronic system of the new vacuum
+
+
+2.41 Hardware Architecture & Control Interface
+Signal integrity and field serviceability are maintained through a custom-designed Printed
+Circuit Board (PCB). This centralized PCB establishes clean, trace-routed connections between
+the Raspberry Pi, Teensy, and RoboClaw motor controllers. By consolidating these components
+onto a single board, the design eliminates erratic wiring harnesses, mitigates electromagnetic
+interference (EMI), and enhances overall system stability within the electromagnetically noisy
+environments of the tank infrastructure.
+
+                                                          14
+FIU-ARC-2026-FA1-04C--xxx​                             ​                                    Short
+Development of a Robotic Vacuum Crawler for Hanford Double-Shell Tank Annuli
+​
+
+
+
+
+                                        Figure 19. Raspberry pi + Teensy PCB
+
+
+The operator interacts with the crawler via a professional, self-contained control box featuring an
+integrated touchscreen interface running an Ubuntu Linux operating system. To simplify field
+operations and ensure precise maneuvering, the traditional industrial joystick was replaced with
+an ergonomic Logitech gamepad controller. This controller allows for intuitive, simultaneous
+manipulation of the crawler’s drivetrain, pan-and-tilt camera servo mounts, and high-intensity
+onboard lighting arrays. The integrated touchscreen acts as the primary human-machine interface
+(HMI), rendering live, real-time video feeds from the deployment zone to provide operators with
+critical situational awareness.
+
+
+
+
+                         Figure 20. New Control Interface Featuring a Custom Control Box.
+
+
+
+
+                                                          15
+FIU-ARC-2026-FA1-04C--xxx​                             ​                                Short
+Development of a Robotic Vacuum Crawler for Hanford Double-Shell Tank Annuli
+​
+2.42 ROS2 Software Ecosystem & Node Architecture
+The core software logic was entirely reconstructed using modular ROS2 nodes to eliminate
+latency bottlenecks and communication dropouts. The new control stack utilizes a decentralized
+topology where tasks are isolated into dedicated, predictable processes:
+    ●​ Input Processing (joy and teleop_twist_joy nodes): Raw hardware inputs from the
+         Logitech controller are captured by a standardized joy_node. These inputs are passed to a
+         telemetry-handling node that translates button presses and analog stick deflections into
+         precise linear and angular velocity commands (Geometry_Msgs/Twist).
+    ●​ Low-Level Abstraction and Actuation: The velocity commands are ingested by the
+         Raspberry Pi and communicated down to the Teensy microcontroller. The Teensy
+         executes real-time motor control loops via the RoboClaw drivers to regulate the Pololu
+         motors, while simultaneously commanding the pulse-width modulation (PWM) servos
+         governing camera orientation.
+    ●​ Dual-Camera Feed Management: A dedicated video streaming node manages the
+         dual-camera configuration, compressing and publishing high-frame-rate visual data over
+         the network to the operator's console without lagging the primary control loops.
+    ●​ Unified Launch System: To streamline field initialization, a comprehensive ROS2 launch
+         script was written. This single script handles node parameter configuration, establishes
+         the Data Distribution Service (DDS) middleware layer, and activates all operational
+         nodes concurrently, ensuring a reliable, plug-and-play startup sequence.
+
+
+
+
+                                 Figure 21. VCS ROS2 Planned architecture Diagram
+
+
+
+
+                                                          16
+FIU-ARC-2026-FA1-04C--xxx​                             ​                                Short
+Development of a Robotic Vacuum Crawler for Hanford Double-Shell Tank Annuli
+​
+                                3.0 RESULTS AND ANALYSIS
+
+The Vacuum Crawler System (VCS) underwent a series of functional tests at the Cold Test
+Facility (CTF) to evaluate the performance of the mechanical, vacuum, and control-system
+modifications developed during this project. Testing was focused on four primary areas:
+deployment through the tank access riser, maneuverability within a simulated annulus
+environment, debris removal and vacuum performance, and validation of the ROS2 control
+architecture. The testing activities were designed to replicate key operational constraints
+associated with deployment and operation within the Double-Shell Tank (DST) annulus.
+
+
+
+
+                                       Figure 22. Control table inside CTF tank
+
+
+
+
+                                                          17
+FIU-ARC-2026-FA1-04C--xxx​                             ​                                   Short
+Development of a Robotic Vacuum Crawler for Hanford Double-Shell Tank Annuli
+​
+3.1 Deployment Testing
+
+Deployment testing was conducted to evaluate the ability of the VCS to be inserted through the
+restricted access geometry of a 12-inch riser and transitioned onto the annulus floor. A 12-inch
+riser section was used to replicate the dimensional constraint encountered during field
+deployment. The crawler was manually positioned and lowered through the riser by a field
+operator familiar with the deployment procedures used for tank operations. This test provided an
+operational assessment of the redesigned crawler in addition to the dimensional verification
+performed during the development process.
+
+
+
+
+                                        Figure 23. Deployment testing at CTF
+
+
+Particular attention was given to the crawler's orientation during deployment. The previous
+crawler configuration incorporated a relatively flat front face, which caused the system to
+naturally rotate toward the wheel side as it passed through the riser and approached the annulus
+floor. This behavior could complicate deployment and require additional operator intervention to
+correctly orient the crawler. The VCS was redesigned to improve its deployment behavior and
+facilitate a more controlled transition from vertical insertion to horizontal operation.
+
+
+                                                          18
+FIU-ARC-2026-FA1-04C--xxx​                             ​                               Short
+Development of a Robotic Vacuum Crawler for Hanford Double-Shell Tank Annuli
+​
+3.11 Deployment Testing Result
+
+The redesigned crawler was successfully deployed through the 12-inch riser without significant
+difficulty. During the test, the crawler exhibited improved orientation behavior and transitioned
+more predictably toward the wheel-side position upon reaching the deployment surface.
+Following the test, the field operator evaluated the deployment process and indicated that the
+redesigned VCS was easier to deploy compared with the previous year's crawler configuration.
+The operator feedback provided additional validation that the mechanical modifications
+improved the practical deployment procedure and reduced the complexity associated with
+positioning the crawler during insertion.
+
+3.2 Maneuverability Testing
+
+Maneuverability testing was performed using a full-scale simulated annulus section constructed
+inside the CTF. A temporary annulus structure was assembled using tarp material to reproduce
+the restricted operating environment between the tank walls. The simulated annulus was
+configured to approximately 32 inches in width, corresponding to the wall-to-wall spacing of the
+targeted annulus environment.
+
+
+
+
+                                       Figure 24. Deployment Mock-up at CTF
+
+
+
+                                                          19
+FIU-ARC-2026-FA1-04C--xxx​                             ​                                Short
+Development of a Robotic Vacuum Crawler for Hanford Double-Shell Tank Annuli
+​
+To evaluate the crawler's ability to navigate representative obstacles, obstacles were placed along
+the simulated annulus floor to represent the approximately 1-inch thermocouple pipes and other
+potential obstructions present within the operating environment. The VCS was then operated
+throughout the simulated annulus while performing forward and reverse motion, directional
+changes, and full turns. The crawler was also driven directly over and around the representative
+obstacles to evaluate its ability to maintain traction and continue controlled motion within the
+confined space.
+
+
+
+
+                                     Figure 25. Full Vacuum Deployment at CTF
+
+
+3.21 Maneuverability Testing Result
+
+The VCS successfully traversed the simulated annulus while maintaining controlled movement
+within the 32-inch-wide environment. The crawler completed full directional turns and
+successfully negotiated the simulated thermocouple obstacles without becoming immobilized.
+The test demonstrated that the increased wheel diameter and revised chassis configuration
+provided sufficient clearance and maneuverability for the representative annulus geometry.
+Overall, the results confirmed that the VCS was capable of performing the required driving and
+turning operations within the constrained environment used for testing.
+
+
+                                                          20
+FIU-ARC-2026-FA1-04C--xxx​                             ​                             Short
+Development of a Robotic Vacuum Crawler for Hanford Double-Shell Tank Annuli
+​
+3.3 Vacuum Performance and Surface Cleaning Testing
+
+Vacuum performance and surface-cleaning testing were conducted to verify the functionality of
+the onboard debris-removal system. The crawler was positioned on the test surface and
+connected to the compressed-air supply used to operate the onboard vacuum system. Once the
+compressor was activated and the required pneumatic pressure was established, the vacuum
+system was initiated and the crawler was operated across the test surface.
+
+
+
+
+                                    Figure 26. Type of debris tested and collected
+
+
+The VCS successfully generated the required suction to collect and remove debris from the test
+surface during operation. The crawler was driven across areas containing representative debris
+while the vacuum system remained active, allowing the combined mobility and debris-extraction
+functions to be evaluated simultaneously. The system successfully collected the material
+encountered during the test, demonstrating that the onboard vacuum configuration could perform
+surface-cleaning operations while integrated with the crawler platform.
+
+
+
+
+                                                          21
+FIU-ARC-2026-FA1-04C--xxx​                             ​                             Short
+Development of a Robotic Vacuum Crawler for Hanford Double-Shell Tank Annuli
+​
+3.31 Vacuum Performance and Surface Cleaning Testing
+
+The successful cleaning test provided functional validation of the redesigned onboard vacuum
+architecture and demonstrated that the VCS could perform its intended debris-removal operation
+without requiring the vacuum system to remain externally mounted. These results support the use
+of the integrated vacuum configuration for future testing and continued development toward
+operation within the DST annulus environment.
+
+
+
+3.4 ROS2 Architecture Validation
+
+The VCS control architecture was validated using the Robot Operating System 2 (ROS2)
+development and visualization tools, including rqt and rqt_graph. These tools were used to
+verify the communication structure between the individual ROS2 nodes and confirm that the
+software components were properly initialized and communicating through the intended
+architecture.
+
+The rqt_graph interface was used to visualize the active ROS2 nodes and their
+communication pathways during system operation. The resulting node graph confirmed the
+expected connections between the input, teleoperation, control, and other system processes. This
+verification provided evidence that the migrated ROS2 architecture was functioning as intended
+and that the individual software components were communicating through the defined ROS2
+framework.
+
+3.41 ROS2 Architecture Validation Result
+
+
+The successful ROS2 validation confirmed the functionality of the software architecture
+implemented during this development phase. Combined with the physical maneuverability and
+deployment testing, the results demonstrate that the VCS achieved functional operation across its
+primary mechanical, vacuum, and software subsystems.
+
+
+
+
+                                                          22
+FIU-ARC-2026-FA1-04C--xxx​                             ​                                Short
+Development of a Robotic Vacuum Crawler for Hanford Double-Shell Tank Annuli
+​
+                                             4.0 CONCLUSION
+
+The third-year development of the Vacuum Crawler System (VCS) resulted in significant
+improvements to the crawler's mechanical configuration, deployment characteristics,
+debris-removal capability, and software architecture. The redesigned platform was developed to
+address limitations identified during previous project iterations, with particular emphasis on
+operation within the highly constrained geometry of the Double-Shell Tank (DST) annulus.
+
+Functional testing at the Cold Test Facility (CTF) demonstrated that the redesigned crawler could
+be successfully deployed through a 12-inch riser and operated within a simulated 32-inch-wide
+annulus environment. Deployment testing also demonstrated improved handling and orientation
+during riser insertion, with field-operator feedback indicating that the new configuration was
+easier to deploy than the previous year's design. Maneuverability testing further demonstrated the
+crawler's ability to perform directional turns and negotiate representative obstacles within the
+confined annulus environment.
+
+The integrated vacuum system was also successfully demonstrated during surface-cleaning tests.
+The crawler was able to operate the onboard vacuum system and remove representative debris
+from the test surface, validating the functionality of the revised vacuum configuration. In
+parallel, the migration to a ROS2-based control architecture was verified using ROS2
+visualization and diagnostic tools, including rqt and rqt_graph. The successful
+communication between the system's software components confirmed the functionality of the
+updated control architecture.
+
+Overall, the results demonstrate that the VCS has progressed beyond the limitations identified in
+previous iterations and now provides a more compact, maneuverable, and integrated platform for
+remote debris-removal operations. The combination of mechanical refinement, onboard vacuum
+integration, and ROS2-based control establishes a strong foundation for continued testing and
+optimization. Further development will focus on improving the crawler's reliability,
+debris-removal versatility, obstacle negotiation, and sensing capabilities in preparation for
+increasingly representative operational testing.
+
+
+                                                          23
+FIU-ARC-2026-FA1-04C--xxx​                             ​                               Short
+Development of a Robotic Vacuum Crawler for Hanford Double-Shell Tank Annuli
+​
+
+
+                                           5.0 FUTURE WORK
+
+Based on the feedback from operators and mentors, future development of the Vacuum Crawler
+System (VCS) will focus on improving its maneuverability, durability, vacuum-system
+versatility, obstacle avoidance, and environmental perception. The following areas have been
+identified as priorities for continued development:
+
+    ●​ Wheel Profile and Traction Optimization: Continue evaluating different wheel
+         profiles, tread geometries, materials, and wheel combinations to improve traction, surface
+         engagement, stability, and maneuverability within the confined and curved DST annulus
+         environment. Testing will focus on identifying the configuration that provides the best
+         balance between grip, obstacle clearance, and turning performance.
+    ●​ Upward-Facing Vacuum Connection: Redesign the vacuum hose interface so that the
+         connection between the hose and the onboard vacuum system is oriented upward. This
+         configuration is expected to improve hose routing, reduce interference with the crawler
+         and surrounding structures, and provide a more suitable connection arrangement for
+         deployment and operation within the confined annulus.
+    ●​ Manufacturing and Abrasion Protection of 3D-Printed Components: Transition
+         critical 3D-printed components from prototype fabrication toward more durable
+         manufacturing methods and materials. Components exposed to continuous debris contact
+         or abrasive operating conditions will also be evaluated for the application of protective
+         coatings to improve wear resistance and service life.
+    ●​ Vacuum Head and Collection-Bag Optimization: Develop and evaluate different
+         combinations of vacuum-head geometries and debris-collection bags to accommodate
+         varying debris types and particle sizes. This modular approach would allow the VCS to
+         be configured according to the characteristics of the material encountered during a
+         specific cleaning operation.
+    ●​ Vacuum Head Retention: Improve the mechanical attachment method used to secure the
+         3D-printed vacuum head to the crawler. A more robust retention mechanism will be
+         investigated to prevent the vacuum head from becoming detached during operation,
+         particularly when the crawler encounters obstacles or uneven surfaces.
+                                                24
+FIU-ARC-2026-FA1-04C--xxx​                             ​                             Short
+Development of a Robotic Vacuum Crawler for Hanford Double-Shell Tank Annuli
+​
+    ●​ Adjustable Vacuum Head: Investigate the development of a vertically adjustable
+         vacuum head capable of moving upward and downward relative to the crawler chassis.
+         This mechanism could improve obstacle avoidance while allowing the vacuum head to
+         remain close to the cleaning surface during debris-removal operations.
+    ●​ LiDAR Integration: Incorporate the LiDAR package developed and tested as part of the
+         related sensing project into the VCS platform. The integration of LiDAR with the
+         existing ROS2 architecture could provide enhanced environmental perception, obstacle
+         detection, spatial awareness, and potential mapping capabilities within the DST annulus.
+         Combining LiDAR-based sensing with the existing mobility, vacuum, and ROS2 control
+         systems represents an important step toward a more capable and potentially
+         semi-autonomous robotic platform.
+
+Collectively, these developments will support the continued transition of the VCS from a
+functional prototype toward a more robust, adaptable, and deployment-ready robotic system
+capable of performing reliable debris-removal operations within the constrained DST annulus
+environment.
+
+
+
+
+                                                          25
+FIU-ARC-2026-FA1-04C--xxx​                             ​                           Short
+Development of a Robotic Vacuum Crawler for Hanford Double-Shell Tank Annuli
+​
+                                             5.0 REFERENCES
+
+    ●​ U.S. Department of Energy, Office of Environmental Management, “Hanford Uses
+       Innovative Robotic System to Inspect Bottom of Waste Storage Tanks,” Mar. 10, 2020.
+
+    ●​ U.S. Department of Energy, Office of Environmental Management, “Tank Refurbishment
+       Technology Under Development at Hanford,” 2024.
+
+    ●​ U.S. Department of Energy, “Hanford Tank Farms Technology Development Roadmap,”
+       RPP-PLAN-43988, Rev. 09.
+
+    ●​ U.S. Department of Energy, Office of Environmental Management, “Hanford
+       Collaborates With Universities on Robots to Evaluate Tank Integrity,” May 3, 2022.
+
+    ●​ EXAIR Corporation, “Line Vac: Air Operated Conveyors,” EXAIR, 2026.
+
+    ●​ Open Robotics, “ROS 2 Documentation: Interfaces (Topics, Services, Actions),” ROS 2
+       Documentation.
+
+    ●​ Open Robotics, “Understanding ROS 2 Topics and rqt_graph,” ROS 2 Documentation.
+
+
+
+
+                                                          26
+FIU-ARC-2026-FA1-04C--xxx​                             ​                       Short
+Development of a Robotic Vacuum Crawler for Hanford Double-Shell Tank Annuli
+​
+                                                 APPENDIX
+
+
+
+
+                                                          27
+

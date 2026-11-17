@@ -1,0 +1,259 @@
+% !TeX root = ../main.tex
+\chapter{Prototype Implementation and Experimental Validation}
+\label{chap:validation}
+\label{chap:methods}
+\label{chap:results}
+\begingroup
+\clubpenalty=10000
+\widowpenalty=10000
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcommand{\validationpanel}[2]{%
+\begin{minipage}[t]{0.47\textwidth}\centering\singlespacing\small
+\fbox{\parbox[c][25mm][c]{0.90\linewidth}{\centering\textbf{IMAGE PLACEHOLDER}\\#2}}\par\smallskip #1
+\end{minipage}}
+\newcommand{\validationimage}[3]{%
+\begin{figure}[htbp]\centering
+\fbox{\parbox[c][32mm][c]{0.88\textwidth}{\centering\small\singlespacing\textbf{IMAGE PLACEHOLDER}\\#1}}
+\caption{#2}\label{#3}\end{figure}}
+
+The second-iteration manufactured prototype of the Vacuum Crawler System (VCS) was tested during the author's internship at the U.S. Department of Energy (DOE) Hanford Site Cold Test Facility (CTF). The facility provided a representative setting for demonstrating deployment, mobility, maneuverability, and retrieval within a simulated double-shell tank annulus. CTF mock-ups have also supported deployment and navigation demonstrations of other robotic equipment \citep{doe2024CTFDemonstration}; the VCS observations presented here concern the author's project demonstrations.
+
+This chapter presents the physical prototype, its fabrication and assembly, and the qualitative outcomes of the Hanford demonstrations. These activities built on earlier crawler development; the inherited platform and deployment concept are distinguished from the author's refinements. The engineering basis is retained in Chapter~\ref{chap:crawler}, vacuum-subsystem characterization in Chapter~\ref{chap:vacuum}, and control implementation in Chapter~\ref{chap:controls}.
+
+The subsequent thesis experiment proposed here measures integrated debris collection efficiency using known sand masses and defined floor distributions. It has not yet produced results, and its location and dates remain to be confirmed; it is not represented as part of the completed CTF campaign. Together, the demonstrations and proposed measurements address complete-system functionality while distinguishing observed operation from quantitative performance and qualification.
+
+\section{Final Prototype Design and Manufacturing}
+\label{sec:as-built-tests}
+The manufactured prototype translated the CAD assembly into a four-wheel crawler carrying the vacuum equipment, collection hardware, electronics, and service connections. Its realization during the internship involved adapting component arrangements and mounts to the available fabrication capabilities and assembling the subsystems into an operable platform. Figure~\ref{fig:validation-final-cad} reserves the final assembly view, and Figure~\ref{fig:validation-prototype-views} reserves matching photographs.
+
+\validationimage{Final CAD assembly, isometric view; identify the manufactured revision.}{Final CAD assembly of the manufactured VCS prototype. Rendering and revision identification pending.}{fig:validation-final-cad}
+\begin{figure}[htbp]\centering
+\validationpanel{(a) Isometric view}{Complete manufactured crawler}\hfill
+\validationpanel{(b) Front view}{Pickup and front wheel arrangement}\par\medskip
+\validationpanel{(c) Rear view}{Retrieval and service connections}\hfill
+\validationpanel{(d) Side view}{Chassis, wheels, and collection hardware}
+\caption{Manufactured VCS prototype in four complementary views. Photographs must show the same assembly revision and identify equipment removed for visibility.}
+\label{fig:validation-prototype-views}
+\end{figure}
+
+\subsection{Design Refinements and Improvements}
+\label{sec:prototype-refinements}
+The author's internship refinements addressed deployment orientation, packaging, and access to serviceable components. The chassis layout was shortened and the vacuum equipment moved toward its center. These changes addressed insertion and equipment distribution, but no measured center-of-gravity location or stability margin is available. Deployment handling also motivated changes to the forward geometry: the earlier configuration tended to rotate during lowering, whereas the revised crawler made a more predictable transition onto its wheels during the demonstration.
+
+The electronics enclosure was separated from the vacuum equipment to limit exposure to collected material and improve access. A modular wheel-hub and motor arrangement allowed motor access without dismantling the complete platform. The collection-bag support and onboard vacuum installation required coordinated mounting space within the deployment envelope. Table~\ref{tab:prototype-refinements} summarizes these documented changes. Reductions in maintenance time, contamination ingress, or pneumatic losses have not been measured.
+
+\begin{table}[htbp]\centering
+\caption{Documented prototype refinements and their implementation purpose.}
+\label{tab:prototype-refinements}
+\begingroup\small\singlespacing\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\textwidth}{@{}XXX@{}}\toprule
+Earlier arrangement & Manufactured refinement & Purpose and evidence limit \\\midrule
+Longer chassis and less central vacuum placement & Shortened layout and centrally positioned equipment & Address packaging and weight distribution; final dimensions and mass properties pending. \\
+Deployment orientation requiring correction & Revised forward geometry & More predictable transition onto wheels; qualitative operator observation. \\
+Electronics adjacent to vacuum equipment & Separated electronics enclosure & Improve separation and access; ingress performance untested. \\
+Motor access coupled to chassis disassembly & Modular wheel-hub/motor assembly & Facilitate servicing; service-time comparison unavailable. \\
+Collection hardware requiring onboard support & Machined collection-bag cage and integrated vacuum mounting & Package collection on the crawler; installed configuration to be recorded. \\
+\bottomrule\end{tabularx}\endgroup
+\end{table}
+
+\draftnote{Configuration reconciliation: the internship background uses V2/V3 identifiers and describes a change from 4-inch to 5-inch wheels, whereas Chapter~\ref{chap:crawler} uses preliminary 4-inch wheels. Confirm which final CAD and manufactured assembly correspond to the second-iteration designation used here. Do not transfer the assumed mass, candidate motor, modeled envelope, or centered mass distribution to the tested assembly without inspection. Final dimensions, installed drive identification, measured mass, and retrieval-attachment details remain to be entered.}
+
+\subsection{Design for Manufacturing and Assembly}
+\label{sec:prototype-manufacturing}
+The crawler components were manufactured and assembled in-house using the available fabrication capabilities. Computer numerical control (CNC) machining was used for custom mechanical hardware, including the collection-bag cage. Chapter~\ref{chap:crawler} specifies aluminum 6061 for the frame and custom machined parts; this design specification requires confirmation against the as-built component record before it is assigned to every manufactured part. Additive manufacturing was used for prototype components, including the vacuum head. The available record does not establish the material, process settings, or fastening details for each printed component.
+
+Assembly brought together the chassis, wheel-drive modules, vacuum equipment, bag support, and electronics enclosure. Component access and the modular motor arrangement were relevant to fitting and servicing the crawler. A fabrication record is still needed to connect each drawing revision to its manufactured component and document fits, fasteners, and final connections. Figure~\ref{fig:validation-fabrication} provides locations for fabrication photographs without assigning unsupported tolerances or manufacturing parameters.
+
+\begin{figure}[htbp]\centering
+\validationpanel{(a) CNC machining}{Machining operation and identified part}\hfill
+\validationpanel{(b) Manufactured components}{Parts before assembly}\par\medskip
+\validationpanel{(c) Assembly}{Wheel drives, frame, and equipment mounting}\hfill
+\validationpanel{(d) Completed crawler}{Completed in-house assembly}
+\caption{In-house fabrication and assembly sequence for the VCS. Photographs, part identifications, and manufacturing records pending.}
+\label{fig:validation-fabrication}
+\end{figure}
+
+\section{Riser Passage and Retrieval Validation}
+\label{sec:hanging-test}
+During the Hanford campaign, the assembled crawler was suspended from its retrieval attachment, passed through the 12-inch access riser, and was retrieved through the opening. An operator guided the lowering sequence and placement onto the test surface. The demonstrated passage and retrieval establish functional access for the tested configuration, addressing Section~\ref{sec:deployment-requirements}. Figure~\ref{fig:validation-riser} reserves the photographic sequence.
+
+Suspension and retrieval are supplied as project observations; the available deployment narrative documents insertion and floor transition but does not provide a separate retrieval record. Assembly mass, carried service-line load, clearance, suspension duration, and attachment inspection remain to be documented. This demonstration does not establish a rated lifting capacity, validate the full stress field in Section~\ref{sec:retrieval-structure}, or demonstrate recovery of an immobilized crawler.
+
+\begin{figure}[htbp]\centering
+\validationpanel{(a) Suspension}{Crawler hanging from retrieval attachment}\hfill
+\validationpanel{(b) Riser passage}{Crawler inside 12-inch opening}\par\medskip
+\validationpanel{(c) Retrieval}{Crawler returning through riser}
+\caption{Suspension, riser passage, and retrieval during the Hanford demonstration. Photographs and configuration record pending; no load rating is inferred.}
+\label{fig:validation-riser}
+\end{figure}
+
+\section{Deployment and Mobility Evaluation}
+\label{sec:mobility-tests}
+\label{sec:ctf-validation}
+After deployment, the VCS was operated within a simulated annulus at CTF. Temporary tarp boundaries defined an approximately 32-inch-wide operating corridor. This arrangement represented restricted lateral clearance; it did not reproduce every feature of the actual tank walls or curved floor. The crawler traveled forward and in reverse, changed direction, and completed full turns within the available space. Figure~\ref{fig:validation-mobility} reserves views of these maneuvers.
+
+Representative obstructions were placed along the route, and the crawler was driven over and around them. Continued controlled travel and obstacle negotiation without immobilization were observed in the demonstrated course. These observations support the ability to reposition the pickup within a confined corridor. They do not supply a turning radius, travel speed, maximum obstacle capability, or repeatability estimate. Table~\ref{tab:mobility-validation} distinguishes the demonstrations from the remaining requirement-specific check.
+
+\begin{figure}[htbp]\centering
+\validationpanel{(a) Deployed crawler}{Crawler on simulated annulus floor}\hfill
+\validationpanel{(b) Obstacle course}{Travel within temporary annulus boundaries}\par\medskip
+\validationpanel{(c) Conduit maneuver}{Crossing or maneuvering around test obstacle}\hfill
+\validationpanel{(d) Full turn}{Turning within available lateral clearance}
+\caption{CTF deployment and mobility demonstrations. Photographs should identify the test obstacles and show the attached service-line arrangement.}
+\label{fig:validation-mobility}
+\end{figure}
+
+\begin{table}[htbp]\centering
+\caption{Deployment and mobility validation.}
+\label{tab:mobility-validation}
+\begingroup\small\singlespacing\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\textwidth}{@{}XXXX@{}}\toprule
+Test or maneuver & Objective & Observed outcome & Validation status \\\midrule
+Annulus deployment & Reach floor through riser & Insertion and transition completed & Qualitatively demonstrated \\
+Forward/reverse travel & Move within corridor & Controlled travel observed & Qualitatively demonstrated \\
+Obstacle course & Navigate obstructions & Over/around maneuvers completed without immobilization & Demonstrated for tested course \\
+Full turning & Reorient within corridor & Full turns completed & Demonstrated; radius and repetitions unmeasured \\
+Specified protective pipe & Meet Section~\ref{sec:mobility-requirements} & [Pending matched pipe/support configuration] & Not yet verified \\
+\bottomrule\end{tabularx}\endgroup
+\end{table}
+
+\draftnote{The background describes approximately 1-inch test obstacles, while Section~\ref{sec:mobility-requirements} specifies a 0.75-inch outside-diameter pipe. Record actual obstacle dimensions, support elevation, approach, and floor condition before treating these as the same test. Travel distance, turn extent, attempts and successes, payload, and complete hose/cable routing were not quantified. A larger nominal diameter alone does not establish compliance under different support and loading conditions.}
+
+\section{Debris Collection Efficiency}
+\label{sec:recovery-tests}
+The CTF campaign included qualitative surface-cleaning operation with the vacuum equipment mounted on the moving crawler. Debris pickup was observed, establishing that travel and collection could operate together. Initial and recovered masses were not supplied, so no efficiency is assigned to that demonstration. The proposed experiment below addresses this missing quantitative evidence by measuring material retained by the complete system after a defined cleaning operation.
+
+\subsection{Experimental Setup and Methodology}
+\label{sec:collection-method}
+A controlled sand-recovery experiment is proposed on a defined test floor. Sand will serve as a surrogate for the dust and sand-type debris in Section~\ref{sec:collection-requirements}. The sand source, particle-size description, moisture condition, and preparation method must be recorded. Surface material, dimensions, boundaries, and condition must likewise be fixed. Test location, equipment identification, scale capacity and resolution, and calibration checks remain to be entered.
+
+Four distributions are proposed: uniform coverage, a concentrated patch, a linear deposit, and a randomized distribution. Total initial mass should be held constant across conditions so that the comparison primarily addresses spatial distribution. Marked placement regions, photographs, and a recorded placement procedure will make deposits reproducible. For randomized placement, a recorded layout or placement seed should be retained for each trial. Figure~\ref{fig:collection-distributions} reserves photographs of the conditions.
+
+\begin{figure}[htbp]\centering
+\validationpanel{(a) Uniform}{Sand across defined test area}\hfill
+\validationpanel{(b) Concentrated patch}{Sand in a defined local region}\par\medskip
+\validationpanel{(c) Linear}{Sand along a defined strip}\hfill
+\validationpanel{(d) Randomized}{Recorded randomized placement}
+\caption{Proposed sand distributions for integrated recovery testing. Photographs will document actual deposits and test-area boundaries after procedure confirmation.}
+\label{fig:collection-distributions}
+\end{figure}
+
+The proposed sequence for each trial is:
+\begin{enumerate}
+\item Clean the floor and material path, empty the collector, and check the precision scale using the specified verification procedure. Weigh the sand deposited on the test surface, accounting for material remaining in the preparation container; record the net initial mass.
+\item Prepare and photograph the assigned distribution within the marked boundary. Record the collector condition and installed crawler, nozzle, and vacuum configuration.
+\item Operate the complete crawler and vacuum system over the area using the prescribed path, number of passes, and duration. Record deviations, interruptions, blockage, and service-line interference.
+\item Stop collection at the defined endpoint. Recover and weigh the net sand retained in the designated collector using a tared container. Measure floor residue and material retained in the nozzle, hose, or other transport components separately where practicable.
+\item Calculate efficiency, document residual deposits, and restore the specified initial condition before repeating the trial.
+\end{enumerate}
+
+Collection efficiency is defined as
+\begin{equation}
+\eta_{\mathrm{collection}}=\frac{m_{\mathrm{recovered}}}{m_{\mathrm{initial}}}\times100\% ,
+\label{eq:recovery}
+\end{equation}
+where $\eta_{\mathrm{collection}}$ is collection efficiency, $m_{\mathrm{initial}}$ is net sand mass deposited within the test boundary, and $m_{\mathrm{recovered}}$ is net sand mass retained in the designated collector at the trial endpoint. Both masses are measured in the same units. Material lodged upstream of the collector is recorded separately and is not counted as recovered merely because it has left the floor. The endpoint must specify whether a fixed clearing interval is included; any such interval must be identical across trials and included in the reported duration.
+
+Initial mass, operating pressure, duration, floor surface, nozzle configuration, and crawler operation must be controlled. The pressure record must identify units, gauge or absolute reference, measurement location, and pressure during flow. The same vacuum configuration, collection hardware, service-line routing, and pickup setting should be used throughout a comparison. Crawler path and speed should be prescribed and observed; a commanded speed alone is insufficient because Chapter~\ref{chap:controls} describes open-loop wheel control. This experiment holds the pickup configuration fixed and does not repeat nozzle or standoff optimization.
+
+A minimum of three independent trials per distribution is proposed, with deposits recreated between trials. Trial order should be randomized or balanced to reduce systematic changes associated with operating sequence. Table~\ref{tab:collection-matrix} is an unfilled test matrix; numerical settings and final repetition count require confirmation. Acceptance limits have not been established, so the measurements will initially characterize performance rather than assign a numerical pass or fail.
+
+\begin{table}[htbp]\centering
+\caption{Debris collection experimental test matrix (proposed; settings pending).}
+\label{tab:collection-matrix}
+\begingroup\footnotesize\singlespacing\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\textwidth}{@{}XXXXXX@{}}\toprule
+Test condition & Sand distribution & Initial mass (g) & Number of trials & Test duration (s) & Operating pressure \\\midrule
+U & Uniform & [TBD] & [TBD] & [TBD] & [TBD] \\
+P & Concentrated patch & [TBD] & [TBD] & [TBD] & [TBD] \\
+L & Linear & [TBD] & [TBD] & [TBD] & [TBD] \\
+R & Randomized & [TBD] & [TBD] & [TBD] & [TBD] \\
+\bottomrule\end{tabularx}\endgroup
+\par\smallskip{\footnotesize TBD: to be determined before testing. Pressure units, reference, and measurement point must accompany final entries.}
+\end{table}
+
+Mass accounting should compare the initial deposit with collector recovery, floor residue, and material retained in the transport path. Any remaining difference is reported as an unaccounted mass balance, rather than attributed automatically to a particular loss mechanism. Scale resolution, calibration, tare stability, and transfer losses must be considered using the uncertainty approach in Section~\ref{sec:vacuum-measurements}. Trial-to-trial standard deviation describes repeatability and should be distinguished from measurement uncertainty. Figure~\ref{fig:collection-setup} reserves views of the apparatus and integrated operation.
+
+\begin{figure}[htbp]\centering
+\validationpanel{(a) Experimental setup}{Test floor, air supply, collector, and crawler}\hfill
+\validationpanel{(b) Mass measurement}{Precision scale and tared container}\par\medskip
+\validationpanel{(c) Recovery trial}{Complete crawler collecting sand}
+\caption{Proposed integrated debris-recovery experiment. Setup, scale, and operating photographs will be added after the test configuration is established.}
+\label{fig:collection-setup}
+\end{figure}
+
+\subsection{Collection Efficiency Testing and Results}
+\label{sec:collection-results}
+Quantitative sand-recovery testing remains pending. Table~\ref{tab:collection-trials} provides the per-trial record, and Table~\ref{tab:collection-summary} provides the distribution-level summary. Bracketed entries denote missing measurements, not zero recovery. Additional rows will be added for every completed trial, including interrupted trials with their disposition explained. No illustrative efficiencies are substituted for experimental observations.
+
+\begin{table}[htbp]\centering
+\caption{Debris collection efficiency results (measurements pending).}
+\label{tab:collection-trials}
+\begingroup\small\singlespacing\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\textwidth}{@{}XXXXX@{}}\toprule
+Test condition & Trial number & Initial mass (g) & Recovered mass (g) & Collection efficiency (\%) \\\midrule
+U & [Pending] & [Pending] & [Pending] & [Pending] \\
+P & [Pending] & [Pending] & [Pending] & [Pending] \\
+L & [Pending] & [Pending] & [Pending] & [Pending] \\
+R & [Pending] & [Pending] & [Pending] & [Pending] \\
+\bottomrule\end{tabularx}\endgroup
+\end{table}
+
+For each distribution, the final analysis will report the number of completed trials, arithmetic mean of individual efficiencies, and sample standard deviation. The standard deviation of efficiencies expressed in percent will be reported in percentage points. Figure~\ref{fig:collection-comparison} reserves a comparison graph; its caption must specify whether bars represent standard deviation, a confidence interval, or propagated measurement uncertainty. Individual trial values should be shown alongside the summary where practical.
+
+\begin{table}[htbp]\centering
+\caption{Summary of collection efficiency by test condition (results pending).}
+\label{tab:collection-summary}
+\begingroup\small\singlespacing\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\textwidth}{@{}XXXXX@{}}\toprule
+Distribution & Number of trials & Mean collection efficiency (\%) & Standard deviation (\%) & Observations \\\midrule
+Uniform & [Pending] & [Pending] & [Pending] & [Pending] \\
+Concentrated patch & [Pending] & [Pending] & [Pending] & [Pending] \\
+Linear & [Pending] & [Pending] & [Pending] & [Pending] \\
+Randomized & [Pending] & [Pending] & [Pending] & [Pending] \\
+\bottomrule\end{tabularx}\endgroup
+\end{table}
+
+\validationimage{Plot measured efficiency by distribution with individual trials and defined uncertainty or variability bars.}{Comparison of integrated collection efficiency across sand distributions. Graph reserved for measured results; no data are currently available.}{fig:collection-comparison}
+
+\draftnote{Condition effects and repeatability: compare measured efficiencies and trial spread across distributions. Identify path deviations, interruptions, and exclusions. Discuss whether differences can be distinguished from measurement uncertainty and run-to-run variability.}
+
+\draftnote{Integrated recovery: relate collector mass to floor residue, transport-path retention, and blockage. Describe where debris was left behind and effects associated with coverage, pressure variation, collection loading, or service-line interference. Do not infer a nozzle-performance improvement from whole-system recovery alone.}
+
+\draftnote{Surrogate limitations: document the tested sand's particle sizes and moisture condition. Limit conclusions to that material, surface, and procedure; equivalence to actual annulus debris, adhered deposits, or mixed debris has not been established.}
+
+\section{Integrated Control and Operator Interface Validation}
+\label{sec:control-tests}
+During the CTF demonstrations, operator commands produced crawler motion, and software visualization was used to inspect active communication paths. This provides qualitative evidence of command-to-motion integration for the demonstrated configuration. Live camera viewing is described in the project background, but a synchronized operating record remains to be added to Figure~\ref{fig:validation-interface}. The demonstrated software revision has not been matched to the revision reviewed in Chapter~\ref{chap:controls}; the earlier demonstrations therefore do not validate every function of that later implementation.
+
+The custom graphical user interface (GUI) remains pending in Chapter~\ref{chap:controls}. Operational verification must document connection status, movement and stop commands, corresponding crawler response, live camera feedback, and whichever readings are actually implemented. No verified live pressure or inertial display, latency, reliability, or response-time result is available. The proposed command-link-loss and deliberate-restart checks in Section~\ref{sec:operator-requirements} remain unverified; adopted tests must record stop time and travel distance under defined speed and hose load and check that restored communication alone does not restart motion.
+
+\begin{figure}[htbp]\centering
+\validationpanel{(a) Operator display}{GUI or camera-viewing screen during operation; identify revision}\hfill
+\validationpanel{(b) Physical response}{Crawler under operator control in the same trial}
+\caption{Operator interface and physical crawler during integrated operation. Matched screenshot and photograph pending; a camera-viewing tool must not be labeled as a completed custom GUI.}
+\label{fig:validation-interface}
+\end{figure}
+
+\section{Experimental Findings and Limitations}
+\label{sec:validation-findings}
+The manufactured VCS supported qualitative demonstrations of riser deployment, travel, obstacle negotiation, turning, and integrated debris pickup at CTF. Suspension and retrieval are recorded as author-supplied campaign outcomes pending their supporting configuration record. These findings establish functional progress from the assembled prototype. Table~\ref{tab:prototype-validation} relates that evidence to Chapter~\ref{chap:introduction} while distinguishing a demonstration from completed requirement-level validation.
+
+\begin{table}[htbp]\centering
+\caption{Summary of prototype validation.}
+\label{tab:prototype-validation}
+\begingroup\small\singlespacing\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\textwidth}{@{}XXXX@{}}\toprule
+System requirement or capability & Evaluation method & Result or observation & Validation status \\\midrule
+Prototype realization & In-house fabrication and assembly & Operable manufactured crawler & Demonstrated; revision record pending \\
+Access and retrieval (Section~\ref{sec:deployment-requirements}) & Riser passage and suspension/retrieval & Passage completed; suspension/retrieval supplied as campaign outcomes & Qualitative; load and retrieval records pending \\
+Confined mobility (Section~\ref{sec:mobility-requirements}) & Travel, turns, and obstacle course & Maneuvers completed & Demonstrated course only; matched pipe test pending \\
+Debris collection (Section~\ref{sec:collection-requirements}) & CTF pickup; proposed mass-recovery experiment & Pickup observed; efficiency unavailable & Qualitative pickup demonstrated; quantitative test planned \\
+Operator feedback/control (Section~\ref{sec:operator-requirements}) & Commanded travel; proposed interface checks & Motion observed; GUI and feedback record incomplete & Partial functional evidence; remaining checks pending \\
+\bottomrule\end{tabularx}\endgroup
+\end{table}
+
+The temporary annulus boundaries and test obstacles represented selected geometric constraints. They did not establish performance under actual tank surface conditions, radiation, contamination, or all service-bundle loads. The tested wheel configuration and obstacle placement require reconciliation with the preliminary design and project pipe requirement. No repeated drawbar-pull or matched bundle-resistance measurements are available to validate the calculated drive margins. Existing pulling-test proposals remain supplementary work rather than completed results.
+
+Quantitative recovery and repeatability remain unmeasured. Sand-test conclusions will apply only to the recorded surrogate and procedure. Fault handling and sustained communication reliability also remain unverified. These demonstrations do not establish readiness for deployment in radioactive tanks.
+\par\endgroup

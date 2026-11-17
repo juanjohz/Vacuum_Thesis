@@ -1,0 +1,75 @@
+% !TeX root = ../main.tex
+\chapter{Experimental Validation and Design Improvements}
+\label{chap:validation}
+\label{chap:methods}
+\label{chap:results}
+
+\section{As-Built Prototype and Test Configuration}
+\label{sec:as-built-tests}
+\draftnote{Record assembly revision, actual mass/payload, installed drives, service bundle, floor/fixture conditions, instruments, calibration, and uncertainty. Distinguish as-built values from Chapter~\ref{chap:crawler}'s design assumptions; use the uncertainty approach in Section~\ref{sec:vacuum-measurements}.}
+
+\section{Retrieval Attachment Hanging Test}
+\label{sec:hanging-test}
+\draftnote{Document the tested assembly, lifting interface, applied crawler and carried-line load, hold duration, observations, and acceptance criteria corresponding to Section~\ref{sec:retrieval-structure}. Sustaining the tested load establishes behavior only for that configuration and duration; it does not validate the full finite element stress field, ultimate strength, or stuck-crawler recovery capacity. No test result is yet reported.}
+
+\section{Crawler Pulling-Capability Tests}
+\label{sec:pulling-validation}
+\draftnote{Develop the drawbar and bundle-resistance proposals retained in the source notes. Separate starting peak from sustained pull at speed, report repeats and uncertainty, and compare matched conditions. Drawbar pull is external pulling capability after self-propulsion; avoid double counting rolling resistance or bundle drag.}
+% Retained previous Chapter 4 draft for later development; not completed tests.
+% \subsection{Drawbar-Pull Measurement}
+% The proposed drawbar test measures the pulling capability of the assembled crawler, including traction, drivetrain, and controller limitations. It does not directly measure isolated motor torque. Use a calibrated force transducer or load cell in a rated tension fixture connected at the actual rear attachment height. Record the pull angle; the horizontal component is $F_{\mathrm{DB}}=T\cos\theta$ for a planar tension reading $T$ at angle $\theta$ above the floor. Upward or downward components must be retained when interpreting wheel loading.
+%
+% Specify floor material and condition, empty or loaded payload mass and location, tire configuration, commanded speed, measured motor-terminal voltage, and controller settings. For moving tests, use a controllable resisting load that permits a measured travel speed. A restrained test may establish a short-duration peak, but must be reported separately from sustained pull at speed. Increase load in controlled increments within the verified attachment, fixture, and drive limits. Stop at excessive slip, motor slowdown, current limiting, loss of contact, or a predefined thermal/load limit; do not require a prolonged stall.
+%
+% Record force versus time and, where feasible, vehicle speed, wheel rotation, motor current, and temperature. Identify whether slip, loss of speed, or electronic limiting set the observed limit; if the cause cannot be distinguished, report it as unresolved. The initial proposal is three independent repeats for each selected payload condition, with fixed run duration and averaging interval established during preliminary checks. Report peak and sustained force separately, run-to-run spread, calibration uncertainty, and alignment error using the uncertainty approach in Section~\ref{sec:vacuum-measurements}.
+%
+% \mechanicalplaceholder{Insert a photograph or drawing of the load cell, tension fixture, rear attachment, pull direction, floor, and representative ballast locations.}{Proposed crawler drawbar-pull test arrangement---setup image pending.}{fig:drawbar-test-setup}
+%
+% Measure the actual hose/tether bundle resistance along the representative straight route with the same support partition, pressure state, connector arrangement, and pull height used in operation. Record starting peak and sustained resistance at the intended travel speed, with repeated runs. This supplies an endpoint demand to compare with the line-force model and available drawbar pull. The forward demand $F_{\mathrm{req}}$ includes the crawler's own rolling resistance; measured drawbar pull is the external pulling capability remaining after the crawler propels itself. Compare measured bundle resistance directly with drawbar capability under matched conditions, or add the crawler resistance back before comparing with total wheel force. Do not subtract or count that resistance twice.
+%
+%
+\section{Mobility and Deployment Tests}
+\label{sec:mobility-tests}
+\label{sec:ctf-validation}
+\draftnote{Record forward and reverse travel, turns, pipe crossing, deployment, interference, and failures with the complete bundle. Define distances, repetitions, and acceptance criteria before testing. Retain the planned Cold Test Facility context and photograph from the source notes; facility demonstrations \citep{doe2024CTFDemonstration} do not establish this crawler's results or radioactive-environment qualification.}
+% Retained mobility proposal and facility figure; enable only when drafting this section.
+% Loaded travel will use the operating equipment and ballast reproducing the specified debris mass and bag location. Test starting, sustained forward/reverse travel, turning in both directions, and crossing the representative protective pipes with the actual service bundle connected. Record route geometry, pipe diameter and support height, approach direction, travel distance, run duration, completed maneuvers, interference, and failures. Repeat the selected maneuvers and report the number of successes and attempts. The existing criteria require completion without immobilization, overturning, or damage that prevents operation; travel distances, repetition counts, and numerical limits remain to be fixed. A stationary pull test does not establish these capabilities.
+%
+% \mechanicalplaceholder{Insert force--time or force--speed plots, measured bundle resistance, uncertainty, and a maneuver-outcome table after testing.}{Measured pulling capability and loaded mobility outcomes---results pending.}{fig:drawbar-results}
+%
+% \subsection{Integrated Validation and Retained Recovery Method}
+% \label{sec:ctf-validation}
+% Full-system validation remains planned at Hanford's Cold Test Facility (CTF), which has supported mockup demonstrations of deployment and navigation in a simulated annulus \citep{doe2024CTFDemonstration}. Figure~\ref{fig:ctf} retains the available facility photograph. The project tests will connect the mechanical checks to deployment, retrieval, debris recovery, and operator feedback with the hose and control system attached. Facility arrangements, test geometry, and acceptance criteria still require confirmation. No radiation or environmental qualification follows from this mechanical demonstration.
+%
+% \begin{figure}[htbp]
+% \centering
+% \thesisimage{CTF_Picture.png}
+% \caption{Cold Test Facility in Richland, Washington.}
+% \label{fig:ctf}
+% \end{figure}
+%
+%
+\section{Vacuum and Debris-Recovery Tests}
+\label{sec:recovery-tests}
+\draftnote{Link Chapter~\ref{chap:vacuum}'s air-only characterization to known deposited and collected debris masses. Report operating conditions, nozzle/generator configuration, retained material, collection time, blockage, air use, repeats, and uncertainty. Retain the existing recovery metric:
+\begin{equation}
+ \eta_{\mathrm{recovery}}=\frac{m_{\mathrm{collected}}}{m_{\mathrm{deposited}}}\times100\%.
+ \label{eq:recovery}
+\end{equation}
+No debris-recovery results are supplied yet.}
+% Retained method draft; not an experimental result.
+% The existing debris-recovery method is retained here to link air-only characterization to loaded crawler operation. With known deposited mass $m_{\mathrm{deposited}}$ and recovered collector mass $m_{\mathrm{collected}}$,
+% \begin{equation}
+%  \eta_{\mathrm{recovery}}=\frac{m_{\mathrm{collected}}}{m_{\mathrm{deposited}}}\times100\%.
+%  \label{eq:recovery}
+% \end{equation}
+% Specify surrogate properties, initial and recovered mass measurement, material remaining on the floor or in the line, pickup path, cleaning time, and scale uncertainty. Hold the collector and supply conditions documented in Chapter~\ref{chap:vacuum}. Record operator visibility and command behavior during these trials; the previously proposed latency, telemetry, restart, and communication-loss checks remain to be defined with the control implementation. They are not established mechanical results.
+%
+%
+\section{Control-System Performance Tests}
+\label{sec:control-tests}
+\draftnote{Report latency, telemetry reliability, command/stop behavior, communication-loss response, deliberate restart, and operator observations under documented conditions. Distinguish implementation in Chapter~\ref{chap:controls} from measured performance; set thresholds before testing.}
+
+\section{Design Improvements and Retesting}
+\label{sec:design-retesting}
+\draftnote{Trace each change to a measured limitation, identify the affected configuration, and compare repeat tests with the baseline using sample sizes and uncertainty. Preserve the former integrated-system tradeoff discussion: explain benefits and costs across subsystems without inventing results.}

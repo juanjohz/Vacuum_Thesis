@@ -11,3 +11,12 @@ thesis/main.pdf
 *.out
 *.synctex.gz
 *.toc
+
+# Generated page previews only; recovery drafts and source extracts stay visible to Git.
+/tmp/*.png
+/tmp/pdfs/*.png
+/thesis/tmp/pdfs/*.png
+
+# Temporary source-review checkouts, not the active thesis or experiment projects.
+/tmp/github-vacuum-review/
+/tmp/vacuum_crawler_ch5/
